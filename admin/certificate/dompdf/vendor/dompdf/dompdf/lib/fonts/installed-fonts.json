@@ -1,0 +1,14 @@
+{
+    "blmelody-bold": {
+        "normal": "C:\\xampp\\htdocs\\PTC\\User_Dashboard\\CERTIFICATE\\dompdf\\vendor\\dompdf\\dompdf\/lib\/fonts\/BLMelody-Bold",
+        "bold": "C:\\xampp\\htdocs\\PTC\\User_Dashboard\\CERTIFICATE\\dompdf\\vendor\\dompdf\\dompdf\/lib\/fonts\/BLMelody-Bold",
+        "italic": "C:\\xampp\\htdocs\\PTC\\User_Dashboard\\CERTIFICATE\\dompdf\\vendor\\dompdf\\dompdf\/lib\/fonts\/BLMelody-Bold",
+        "bold_italic": "C:\\xampp\\htdocs\\PTC\\User_Dashboard\\CERTIFICATE\\dompdf\\vendor\\dompdf\\dompdf\/lib\/fonts\/BLMelody-Bold"
+    },
+    "blmelody-light": {
+        "normal": "C:\\xampp\\htdocs\\PTC\\User_Dashboard\\CERTIFICATE\\dompdf\\vendor\\dompdf\\dompdf\/lib\/fonts\/BLMelody-Light",
+        "bold": "C:\\xampp\\htdocs\\PTC\\User_Dashboard\\CERTIFICATE\\dompdf\\vendor\\dompdf\\dompdf\/lib\/fonts\/BLMelody-Light",
+        "italic": "C:\\xampp\\htdocs\\PTC\\User_Dashboard\\CERTIFICATE\\dompdf\\vendor\\dompdf\\dompdf\/lib\/fonts\/BLMelody-Light",
+        "bold_italic": "C:\\xampp\\htdocs\\PTC\\User_Dashboard\\CERTIFICATE\\dompdf\\vendor\\dompdf\\dompdf\/lib\/fonts\/BLMelody-Light"
+    }
+}

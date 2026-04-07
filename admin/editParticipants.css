@@ -1,0 +1,101 @@
+/* Container to hold both input and button */
+.form__container {
+    max-width: 600px; /* Limit form width */
+    margin: 0 auto; /* Center the form */
+}
+
+/* Styling for the search input */
+#search__participant {
+    flex-grow: 1; /* Make the input field take up all available space */
+    padding: 10px 50px 10px 20px; /* Padding inside the input field */
+    border-radius: 20px; /* Rounded corners */
+    border: 1px solid #ccc; /* Light border */
+    font-size: 16px; /* Font size */
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+}
+
+
+/* Styling for the search button */
+.search__button {
+    background-color: transparent;
+    border: none; 
+    border-radius: 20px; /* Rounded corners to match input */
+    padding: 10px; /* Padding inside the button */
+    color: gray; /* White icon color */
+    font-size: 20px; /* Icon size */
+    cursor: pointer; /* Change cursor to pointer */
+    z-index:100;
+}
+
+/* Align the button inside the input field */
+.input-group {
+    position: relative;
+    display: flex; /* Use flex to align input and button */
+    width: 100%;
+}
+
+.input-group .search__button {
+    position: absolute; /* Position the button inside the input field */
+    right: 0px; /* Align button to the right */
+    top: 50%; /* Vertically center the button */
+    transform: translateY(-50%); /* Adjust for perfect centering */
+}
+
+.search__button:hover {
+    color:black; 
+}
+
+/* Styling for the Back to Dashboard button */
+.btn.btn-danger {
+    background-color: #dc3545; /* Red background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Padding inside the button */
+    border-radius: 5px; /* Rounded corners */
+    text-decoration: none; /* Remove underline */
+    font-weight: bold; /* Bold text */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.btn.btn-danger:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
+.table-input{
+    width:fit-content !important;
+    text-align: center;
+    text-wrap: wrap !important;
+}
+
+.colored-toast.swal2-icon-success {
+  background-color: #a5dc86 !important;
+}
+
+.colored-toast.swal2-icon-error {
+  background-color: #f27474 !important;
+}
+
+.colored-toast.swal2-icon-warning {
+  background-color: #f8bb86 !important;
+}
+
+.colored-toast.swal2-icon-info {
+  background-color: #3fc3ee !important;
+}
+
+.colored-toast.swal2-icon-question {
+  background-color: #87adbd !important;
+}
+
+.colored-toast .swal2-title {
+  color: white;
+}
+
+.colored-toast .swal2-close {
+  color: white;
+}
+
+.colored-toast .swal2-html-container {
+  color: white;
+}

@@ -1,0 +1,61 @@
+@font-face {
+ font-family: Melody;
+ src:url(../fonts/BLMelodyMono-Bold.otf);
+}
+@font-face {
+ font-family: MelodyBold;
+ src:url(../fonts/BLMelody-Bold.otf);
+}
+@font-face {
+ font-family: MelodyRegular;
+ src:url(../fonts/BLMelody-Regular.otf);
+}
+@font-face {
+ font-family: MelodySemibold;
+ src:url(../fonts/BLMelodyMono-SemiBold.otf);
+}
+@font-face {
+ font-family: MelodyLight;
+ src:url(../fonts/BLMelody-Light.otf);
+}
+@font-face {
+ font-family: MelodyMedium;
+ src:url(../fonts/BLMelody-Medium.otf);
+}
+
+
+
+table {
+	
+	width: 100%;	
+  	border-spacing: 0;
+  	width: 100%;
+}
+
+td {
+	font-family: MelodyLight;
+}
+
+th {
+	font-family: MelodyBold;
+}
+
+#title_part{
+	align-items: center;
+	display: flex;
+}
+#title_part img{
+	width: 60px;
+}
+#title_part h2{
+	font-family: MelodyBold;
+	font-size: 35px;
+	padding-top: 15px;
+	padding-left: 10px;
+}
+.tbl_name{
+	border-bottom: solid 3px;
+}
+.con_part{
+	margin-top: 100px;
+}

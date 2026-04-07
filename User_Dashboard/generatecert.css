@@ -1,0 +1,99 @@
+
+@font-face {
+ 	font-family: MelodyBold;
+ 	src:url(../../fonts/BLMelody-Bold.otf);
+}
+@font-face {
+ 	font-family: MelodyRegular;
+	 src:url(.../fonts/BLMelody-Regular.otf);
+}
+@font-face {
+	 font-family: MelodySemibold;
+ 	src:url(../fonts/BLMelodyMono-SemiBold.otf);
+}
+@font-face {
+ 	font-family: MelodyLight;
+ 	src:url(../../fonts/BLMelody-Light.otf);
+}
+@font-face {
+ 	font-family: MelodyMedium;
+ 	src:url(../../fonts/BLMelody-Medium.otf);
+}
+.concert{
+	background: rgba(13, 30, 83, 0.09);
+	border-radius: 20px;
+	max-width: 1200px;
+	padding-bottom: 100px;
+	margin-top: 100px;
+	margin-bottom: 100px;
+}
+.gencert_title{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #FFD103;
+	border-top-left-radius: 20px;
+	border-top-Right-radius: 20px;
+	width: 100%;
+	padding-bottom: 9px;
+	padding-top: 7px;
+}
+.gencert_title img{
+	width: 40px;
+}
+.gencert_title h1{
+	font-size: 30px;
+	padding-top: 15px;
+	padding-left: 15px;
+	font-size: 30px;
+	color: #000000;
+	font-family: MelodyRegular;
+	font-weight: bold;
+}
+
+.gencert_button{
+	margin-top: 20px;
+}
+.gencert_button a{
+	font-family: MelodyBold;
+	font-size: 20px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 15px;
+	padding-right: 15px;
+	border-radius: 15px;
+	background-color:#234fd9;
+	color: #fff;
+	border: none;
+	transition: 0.5s;
+	text-decoration: none;
+}
+.gencert_button a:hover{
+	background-color:#0D1E53;
+	color: #fff;
+}
+.gencert_button a i{
+	padding-right: 10px;
+}
+
+
+
+/*.gencert_button .print{
+	float: right;
+
+}*/
+/*.gencert_button .download{
+	margin-left: 145px;
+}*/
+.gencert_button{
+	float: right;
+}
+.certimg{
+	margin-top: 20px;
+	justify-content: center;
+
+}
+.certimg img{
+	width: 100%;
+	justify-self: center;
+}

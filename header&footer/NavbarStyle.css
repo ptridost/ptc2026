@@ -1,0 +1,174 @@
+/* =================================================================== */
+/* FINAL, FAITHFUL STYLES FOR THE UNIFIED NAVBAR                     */
+/* =================================================================== */
+
+/* --- 1. Font Definitions --- */
+@font-face {
+  font-family: "MelodyBold";
+  src: url(../fonts/BLMelody-Bold.otf);
+}
+@font-face {
+  font-family: "MelodyRegular";
+  src: url(../fonts/BLMelody-Regular.otf);
+}
+/* ... other fonts ... */
+
+/* --- 2. Main Navbar Container --- */
+.main-navbar {
+  background: #ffffff;
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+  z-index: 1050;
+}
+
+.navbar-brand#brand {
+  padding: 0;
+}
+
+#logog {
+  max-height: 70px;
+  width: auto;
+}
+
+/* --- 3. Navigation Links --- */
+.main-navbar .nav-link {
+  font-family: "MelodyBold", sans-serif;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #000000 !important;
+  padding: 10px 20px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.main-navbar .nav-link:hover,
+.main-navbar .nav-link:focus {
+  color: #ffffff !important;
+  background: #1d3a89;
+}
+
+/* In NavbarStyle.css */
+
+/* --- Main Navigation Dropdown ("Past Events") --- */
+.main-navbar .dropdown-menu {
+  border: 1px solid #dee2e6;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.main-navbar .navbar-nav {
+  margin-left: 20px;
+  gap: 1rem;
+}
+.main-navbar .dropdown-item {
+  text-align: center;
+  font-family: "MelodyBold", sans-serif;
+  color: #0e2369; /* Use your primary blue for the text */
+  padding: 0.5rem 1.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.main-navbar .dropdown-item:hover,
+.main-navbar .dropdown-item:focus {
+  background-color: #0e2369; /* On hover, use a blue background */
+  color: #fff; /* and white text */
+}
+
+/* --- 4. Custom Action Buttons (Login/Register) --- */
+.btn-nav-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 45px;
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  font-family: "MelodyBold", sans-serif;
+  font-size: 14px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  overflow: hidden;
+  padding: 0; /* Remove default padding */
+}
+.btn-nav-action .buttontext {
+  padding: 0 15px;
+}
+.btn-nav-action .buttonicon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  background-color: rgba(0, 0, 0, 0.15);
+  height: 100%;
+}
+.btn-nav-action:hover {
+  color: #fff;
+  background: #000000;
+}
+
+/* Color Modifiers */
+.btn-nav-action--primary {
+  background: #1f3e8c;
+} /* Blue for Login */
+.btn-nav-action--danger {
+  background: #cd1821;
+} /* Red for Register */
+
+/* --- 5. User Profile Dropdown --- */
+.profile-pic {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #0e2369;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-family: "MelodyBold", sans-serif;
+}
+.notification-bell {
+  font-size: 1.25rem;
+  color: #333;
+  position: relative;
+  cursor: pointer;
+}
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  font-size: 0.7rem;
+  width: 18px;
+  height: 18px;
+}
+
+/* --- 6. Responsive Styles for Navbar Toggler --- */
+.navbar-toggler {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 991px) {
+  /* This centers the main links like HOME, PROGRAMME, etc. */
+  .main-navbar .navbar-nav {
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* This makes all list items full-width for consistent spacing */
+  .main-navbar .nav-item {
+    width: 100%;
+    margin: 0.5rem 0;
+  }
+
+  /* THIS IS THE NEW FIX: */
+  /* It specifically targets the list item containing the Login/Register buttons */
+  /* and uses flexbox to perfectly center the button inside it. */
+  .main-navbar .navbar-nav.ms-auto .nav-item {
+    display: flex;
+    justify-content: center;
+  }
+}

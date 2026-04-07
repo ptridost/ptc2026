@@ -1,0 +1,334 @@
+/**{
+    margin: 0;
+    padding: 0;
+
+}
+.rate {
+    float: left;
+    height: 46px;
+    padding: 0 10px;
+}
+.rate:not(:checked) > input {
+    position:absolute;
+    top:-9999px;
+}
+.rate:not(:checked) > label {
+    float:right;
+    width:1em;
+    overflow:hidden;
+    white-space:nowrap;
+    cursor:pointer;
+    font-size:30px;
+    color:#ccc;
+}
+.rate:not(:checked) > label:before {
+    content: '★ ';
+}
+.rate > input:checked ~ label {
+    color: #ffc700;    
+}
+.rate:not(:checked) > label:hover,
+.rate:not(:checked) > label:hover ~ label {
+    color: #deb217;  
+}
+.rate > input:checked + label:hover,
+.rate > input:checked + label:hover ~ label,
+.rate > input:checked ~ label:hover,
+.rate > input:checked ~ label:hover ~ label,
+.rate > label:hover ~ input:checked ~ label {
+    color: #c59b08;
+}
+*/
+table {
+  font-family: MelodyBold;
+  border-collapse: collapse;
+  width: 100%;
+
+
+
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+
+
+
+}
+tr:nth-child(even) {
+  background-color: #dddddd;
+
+
+}
+#rating {
+  position: relative;
+  display: inline-block;
+  border: none;
+  font-size: 14px;
+  
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#rating input {
+  border: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  opacity: 0;
+}
+
+#rating label {
+  position: relative;
+  float: right;
+  color: #C8C8C8;
+}
+
+#rating label:before {
+  margin: 5px;
+  content: "\f005";
+  font-family: FontAwesome;
+  display: inline-block;
+  font-size: 1.5em;
+  color: #ccc;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+      user-select: none;
+}
+
+#rating input:checked ~ label:before {
+  color: #FFC107;
+}
+
+#rating label:hover ~ label:before {
+  color: #ffdb70;
+}
+
+#rating label:hover:before {
+  color: #FFC107;
+}
+
+/*---------------------------------------------*/
+
+#rating1 {
+  position: relative;
+  display: inline-block;
+  border: none;
+  font-size: 14px;
+  
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#rating1 input {
+  border: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  opacity: 0;
+}
+
+#rating1 label {
+  position: relative;
+  float: right;
+  color: #C8C8C8;
+}
+
+#rating1 label:before {
+  margin: 5px;
+  content: "\f005";
+  font-family: FontAwesome;
+  display: inline-block;
+  font-size: 1.5em;
+  color: #ccc;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+      user-select: none;
+}
+
+#rating1 input:checked ~ label:before {
+  color: #FFC107;
+}
+
+#rating1 label:hover ~ label:before {
+  color: #ffdb70;
+}
+
+#rating1 label:hover:before {
+  color: #FFC107;
+}
+
+/*---------------------------------*/
+
+#rating2 {
+  position: relative;
+  display: inline-block;
+  border: none;
+  font-size: 14px;
+  
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#rating2 input {
+  border: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  opacity: 0;
+}
+
+#rating2 label {
+  position: relative;
+  float: right;
+  color: #C8C8C8;
+}
+
+#rating2 label:before {
+  margin: 5px;
+  content: "\f005";
+  font-family: FontAwesome;
+  display: inline-block;
+  font-size: 1.5em;
+  color: #ccc;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+      user-select: none;
+}
+
+#rating2 input:checked ~ label:before {
+  color: #FFC107;
+}
+
+#rating2 label:hover ~ label:before {
+  color: #ffdb70;
+}
+
+#rating2 label:hover:before {
+  color: #FFC107;
+}
+
+/*-----------------------------------------*/
+
+#rating3 {
+  position: relative;
+  display: inline-block;
+  border: none;
+  font-size: 14px;
+  
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#rating3 input {
+  border: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  opacity: 0;
+}
+
+#rating3 label {
+  position: relative;
+  float: right;
+  color: #C8C8C8;
+}
+
+#rating3 label:before {
+  margin: 5px;
+  content: "\f005";
+  font-family: FontAwesome;
+  display: inline-block;
+  font-size: 1.5em;
+  color: #ccc;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+      user-select: none;
+}
+
+#rating3 input:checked ~ label:before {
+  color: #FFC107;
+}
+
+#rating3 label:hover ~ label:before {
+  color: #ffdb70;
+}
+
+#rating3 label:hover:before {
+  color: #FFC107;
+}
+
+/*------------------------------------*/
+#speakerRate {
+  position: relative;
+  display: inline-block;
+  border: none;
+  font-size: 14px;
+  
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#speakerRate input {
+  border: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  position: absolute !important;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  opacity: 0;
+}
+
+#speakerRate label {
+  position: relative;
+  float: right;
+  color: #C8C8C8;
+}
+
+#speakerRate label:before {
+  margin: 5px;
+  content: "\f005";
+  font-family: FontAwesome;
+  display: inline-block;
+  font-size: 1.5em;
+  color: #ccc;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+      user-select: none;
+}
+
+#speakerRate input:checked ~ label:before {
+  color: #FFC107;
+}
+
+#speakerRate label:hover ~ label:before {
+  color: #ffdb70;
+}
+
+#speakerRate label:hover:before {
+  color: #FFC107;
+}
+/*---------------------------------------------------------*/
+
+
+/*------------------------------------------------*/
+

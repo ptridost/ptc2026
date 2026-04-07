@@ -1,0 +1,63 @@
+@font-face {
+ 	font-family: Melody;
+	 src:url(../../fonts/BLMelodyMono-Bold.otf);
+}
+@font-face {
+ 	font-family: MelodyBold;
+ 	src:url(../../fonts/BLMelody-Bold.otf);
+}
+@font-face {
+ 	font-family: MelodyRegular;
+	 src:url(../../fonts/BLMelody-Regular.otf);
+}
+@font-face {
+	 font-family: MelodySemibold;
+ 	src:url(../../fonts/BLMelodyMono-SemiBold.otf);
+}
+@font-face {
+ 	font-family: MelodyLight;
+ 	src:url(../../fonts/BLMelody-Light.otf);
+}
+@font-face {
+ 	font-family: MelodyMedium;
+ 	src:url(../../fonts/BLMelody-Medium.otf);
+}
+.navbar-custom{
+	background-color: #071132;
+	align-items: center;
+}
+#footlogo{
+	width: 150px;
+	height: 70px;
+}
+.footercontacts a{
+	color: #fff;
+	font-family: MelodyLight;
+	height: 15px;
+	text-decoration: none;
+}
+.footercontacts {
+	transform: translate(0%, 8%);
+}
+.footercontacts i{
+	font-size: 20px;
+	transform: translate(0%, 12%);
+}
+.otheritem p{
+	color: #fff;
+	font-family: MelodyLight;
+	font-size: 12px;
+	height: 5px;
+}
+.otheritem{
+	margin-top: 5px;
+}
+.straightline{
+	background-color: #fff;
+	width: 3px;
+	height: 61px;
+	margin-top: 5px;
+}
+.rightfoot{
+	
+}

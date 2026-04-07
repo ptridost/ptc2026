@@ -1,0 +1,245 @@
+/* =================================================================== */
+/* FINAL, FAITHFUL STYLES FOR USER DASHBOARD                         */
+/* This version is a complete, responsive recreation of the original design.*/
+/* =================================================================== */
+
+/* --- 1. Font Definitions --- */
+@font-face { font-family: 'MelodyBold'; src:url(../fonts/BLMelody-Bold.otf); }
+@font-face { font-family: 'MelodyRegular'; src:url(../fonts/BLMelody-Regular.otf); }
+@font-face { font-family: 'MelodySemibold'; src:url(../fonts/BLMelodyMono-SemiBold.otf); }
+@font-face { font-family: 'MelodyLight'; src:url(../fonts/BLMelody-Light.otf); }
+@font-face { font-family: 'MelodyMedium'; src:url(../fonts/BLMelody-Medium.otf); }
+
+/* --- 2. Main Layout --- */
+.user-dashboard {
+    margin-top: 100px;
+    padding-bottom: 3rem;
+}
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.dashboard-header img {
+    width: 45px;
+    height: 35px;
+}
+.dashboard-header h1 {
+    font-size: 35px;
+    font-family: 'MelodyRegular', sans-serif;
+    font-weight: bold;
+    color: #000000;
+    margin: 0;
+}
+
+/* --- 3. Main User Card --- */
+.user-card-wrapper {
+    margin-top: 20px;
+    margin-bottom: 3rem;
+}
+.user-card {
+    background-color: #C7000D;
+    color: #fff;
+    border-radius: 28px;
+    display: flex;
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+}
+.user-card__image-wrapper {
+    flex-shrink: 0;
+    width: 40%;
+    margin-right: 2rem;
+}
+.user-card__image {
+    width: 100%;
+    height: auto;
+}
+.user-card__content {
+    flex-grow: 1;
+    position: relative;
+    z-index: 1;
+}
+.user-card__name {
+    font-size: 1.8rem;
+    font-family: 'MelodyBold', sans-serif;
+}
+.user-card__professions {
+    margin-top: -10px;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+    opacity: 0.9;
+    font-size: 0.9rem;
+}
+.user-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.user-card hr {
+    background: #fff;
+    border-top: solid 2px #fff;
+    opacity: 0.5;
+}
+.prc-section__title {
+    font-family: 'MelodyBold', sans-serif;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+.prc-list {
+    font-family: 'MelodyRegular', sans-serif;
+}
+.prc-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 0;
+    font-size: 0.9rem;
+}
+.prc-item strong {
+    font-family: 'MelodySemibold', sans-serif;
+    font-size: 0.95rem;
+}
+.cpd-item {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 0.5rem; color: #fff;
+    font-family: 'MelodyRegular', sans-serif; font-size: 0.9rem;
+}
+.cpd-item i { font-size: 1rem; color: #fff; opacity: 0.7; }
+.cpd-item strong { font-family: 'MelodyBold', sans-serif; }
+
+/* --- 4. Session Sections & Cards --- */
+.sessions-section {
+    margin-top: 3rem;
+}
+.sessions-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+.sessions-header.all-sessions-header {
+    justify-content: space-between;
+}
+.sessions-header img { width: 45px; height: 35px; }
+.sessions-header h1 { font-size: 35px; font-family: 'MelodyRegular', sans-serif; font-weight: bold; color: #000000; margin: 0; }
+.no-session-title {
+    font-family: 'MelodyBold', sans-serif;
+    font-style: italic;
+    color: rgba(0,0,0,0.25);
+}
+.session_inner_item {
+    border: solid 3px #0E2369;
+    border-radius: 20px;
+    background-color: #fff;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.session_header {
+    background: #0E2369;
+    padding: 10px 20px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    text-align: center;
+}
+.session_header h1 {
+    font-family: 'MelodyRegular', sans-serif;
+    font-size: 1.5rem;
+    color: #fff;
+    font-weight: bold;
+    margin: 0;
+}
+.session_header p {
+    font-family: 'MelodyRegular', sans-serif;
+    color: #fff;
+    margin: 0;
+    opacity: 0.8;
+}
+.inner_context {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 20px;
+    flex-grow: 1;
+}
+.leftpic {
+    width: 25%;
+    height: auto;
+    flex-shrink: 0;
+}
+.right_context h2 {
+    font-family: 'MelodyRegular', sans-serif;
+    font-weight: bold;
+    font-size: 1.25rem;
+    margin: 0;
+}
+.right_context h5 {
+    margin: 0.25rem 0 0 15px;
+    font-family: 'MelodyLight', sans-serif;
+    font-size: 1rem;
+}
+.session-button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 20px 20px;
+    margin-top: auto;
+}
+
+/* --- 5. UNIFIED BUTTON STYLES --- */
+.btn-ptc {
+    border: none;
+    box-shadow: 0px 6px 4px rgba(0, 0, 0, 0.25);
+    transition: all 0.4s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+.btn-ptc:not(:disabled):hover {
+    box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.35);
+    transform: translateY(-4px);
+}
+.btn-ptc--session-card {
+    padding: 8px 20px;
+    border-radius: 50px;
+    width: 100%;
+    max-width: 320px;
+}
+.btn-ptc--profile { font-size: 14px; border-radius: 10px; padding: 8px 12px; }
+.btn-ptc--font-regular { font-family: 'MelodyRegular', sans-serif; font-weight: bold; }
+.btn-ptc--font-bold { font-family: 'MelodyBold', sans-serif; }
+.btn-ptc--primary { background-color: #0D1E53; color: #fff; }
+.btn-ptc--danger { background-color: #C7000D; color: #fff; }
+.btn-ptc--warning { background-color: #FED300; color: #000; }
+.btn-ptc:disabled, .btn-ptc[disabled] {
+    
+    cursor: not-allowed;
+}
+.btn-ptc.btn-ptc--danger:disabled, .btn-ptc.btn-ptc--danger[disabled] { background-color: rgba(199, 0, 13, 0.65) !important; color: #fff !important; }
+.btn-ptc.btn-ptc--primary:disabled, .btn-ptc.btn-ptc--primary[disabled] { background-color: rgba(13, 30, 83, 0.65) !important; color: #fff !important; }
+.year-filter-group .btn-dashboard { font-family: 'MelodyBold', sans-serif; }
+.year-filter-group .btn-dashboard.selected { background: #173AAD !important; color: white !important; }
+
+/* --- 6. MODAL STYLES --- */
+.modal-header { background-color: #0D1E53; color: #fff; text-transform: uppercase; }
+.modal-title { font-family: 'MelodyBold', sans-serif; }
+.btn-close-white { filter: invert(1) grayscale(100%) brightness(200%); }
+
+/* --- 7. RESPONSIVE STYLES --- */
+@media (max-width: 767px) {
+    .user-card { flex-direction: column; text-align: center; }
+    .user-card__image-wrapper { display: none; }
+    .user-card__content { padding: 1.5rem; }
+    .user-card__actions { justify-content: center; }
+    .prc-section { text-align: left; }
+    .sessions-header.all-sessions-header { flex-direction: column; gap: 1.5rem; }
+    .inner_context { flex-direction: column; text-align: center; }
+    .leftpic { width: 40%; margin-bottom: 1rem; }
+}

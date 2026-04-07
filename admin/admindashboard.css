@@ -1,0 +1,506 @@
+@font-face {
+  font-family: Melody;
+  src: url(BLMelodyMono-Bold.otf);
+}
+@font-face {
+  font-family: MelodyBold;
+  src: url(BLMelody-Bold.otf);
+}
+@font-face {
+  font-family: MelodyRegular;
+  src: url(BLMelody-Regular.otf);
+}
+@font-face {
+  font-family: MelodySemibold;
+  src: url(BLMelodyMono-SemiBold.otf);
+}
+@font-face {
+  font-family: MelodyLight;
+  src: url(BLMelody-Light.otf);
+}
+@font-face {
+  font-family: MelodyMedium;
+  src: url(BLMelody-Medium.otf);
+}
+
+.admindash_con {
+  margin-top: 100px;
+}
+.session_inner {
+  margin-top: 10px;
+}
+.ptc_sessions_row {
+  margin-top: 50px;
+}
+
+.session_header {
+  border: none;
+  background: #0e2369;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 1px;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+}
+.session_header h1 {
+  text-align: center;
+  font-family: MelodyRegular;
+  font-size: 30px;
+  color: #fff;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  height: 40px;
+}
+.session_header p {
+  text-align: center;
+  font-family: MelodyRegular;
+  color: #fff;
+}
+.session_inner_item {
+  border: solid 3px #0e2369;
+  border-radius: 20px;
+  padding-bottom: 20px;
+}
+.leftpic {
+  width: 25%;
+  margin-top: 10px;
+  object-fit: contain;
+  max-height: 150px;
+}
+.inner_context {
+  display: flex;
+  margin-left: 10px;
+  padding-bottom: 10px;
+}
+.inner_context h2,
+h5 {
+  font-family: MelodyRegular;
+  font-weight: bold;
+  margin-top: 20px;
+  font-size: 25px;
+  padding-left: 10px;
+}
+.right_context img {
+  width: 10%;
+}
+
+.session_btn {
+  margin-top: 12px;
+}
+
+.dot_action {
+  height: 15px;
+  width: 15px;
+  background: #c7000d;
+  border-radius: 50%;
+}
+
+.btn_float {
+  float: right;
+  border: none;
+  padding-left: 7px;
+  padding-right: 7px;
+  padding-top: 5px;
+  border-radius: 50%;
+  background-color: #fff;
+}
+#sess {
+  margin-bottom: 15px;
+}
+#colsess {
+  margin-top: 15px;
+}
+#col2 {
+  margin-top: 15px;
+}
+.con2 {
+  margin-bottom: 40px;
+}
+.admin_dashboard {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 1rem; /* Use gap for consistent spacing between items */
+  justify-content: center; /* Center items on mobile by default */
+  margin-bottom: 1rem; /* Add some space below the header */
+}
+
+.sessions-header img,
+.livesessions-header img {
+  width: 50px;
+}
+.ptc_sessions {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.admin_dashboard h1 {
+  padding-top: 10px;
+  font-family: MelodyRegular;
+  font-size: 30px;
+  padding-left: 10px;
+  font-weight: bold;
+}
+.admin_dashboard img {
+  width: 50px;
+}
+.ptc_sessions h1 {
+  padding-top: 10px;
+  font-family: MelodyRegular;
+  font-size: 30px;
+  padding-left: 10px;
+  font-weight: bold;
+}
+.ptc_sessions img {
+  width: 50px;
+}
+.graph {
+  grid-auto-rows: 1fr;
+  align-items: center;
+  vertical-align: middle;
+}
+.graph h1 {
+  text-align: center;
+  font-family: MelodyRegular;
+  font-weight: bold;
+  font-size: 30px;
+  background-color: #0e2369;
+  color: #fff;
+  padding-top: 15px;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  margin-bottom: 0;
+}
+.graph h6 {
+  text-align: center;
+  font-family: MelodyRegular;
+  font-weight: bold;
+  font-size: 23px;
+  background-color: #0e2369;
+  color: #fff;
+  padding-bottom: 20px;
+}
+.graph_inner {
+  padding-bottom: 5px;
+  border: solid 3px #0e2369;
+  border-radius: 30px;
+
+  /* --- ADD THESE THREE LINES FOR CENTERING --- */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.gender_graph_color {
+  display: flex;
+  justify-items: center;
+  justify-content: center;
+  margin-top: 150px;
+}
+.gender_graph_color p {
+  font-family: MelodyLight;
+  font-size: 12px;
+  padding-left: 3px;
+  padding-right: 5px;
+  font-weight: bold;
+}
+
+.gender_graph_color .box1 {
+  border: none;
+  width: 8px;
+  height: 15px;
+  background-color: #1e90ff;
+}
+.gender_graph_color .box2 {
+  border: none;
+  width: 8px;
+  height: 15px;
+  background-color: #ff69b4;
+}
+.gender_graph_color .box3 {
+  border: none;
+  width: 8px;
+  height: 15px;
+  background-color: #ba55d3;
+}
+.Profession_graph_color {
+  display: flex;
+  justify-items: center;
+  justify-content: center;
+  margin-top: 150px;
+}
+.Profession_graph_color p {
+  font-family: MelodyLight;
+  font-size: 12px;
+  padding-left: 3px;
+  padding-right: 5px;
+  font-weight: bold;
+}
+
+.Profession_graph_color .box1 {
+  border: none;
+  width: 8px;
+  height: 15px;
+  background-color: #0d1e53;
+}
+.Profession_graph_color .box2 {
+  border: none;
+  width: 8px;
+  height: 15px;
+  background-color: #fed300;
+}
+.Profession_graph_color .box3 {
+  border: none;
+  width: 8px;
+  height: 15px;
+  background-color: #507aff;
+}
+.Profession_graph_color .box4 {
+  border: none;
+  width: 8px;
+  height: 15px;
+  background-color: #c7000d;
+}
+.agebracket_graph_color {
+  display: flex;
+  justify-items: center;
+  justify-content: center;
+  margin-top: 150px;
+}
+.agebracket_graph_color p {
+  font-family: MelodyLight;
+  font-size: 12px;
+  padding-left: 3px;
+  padding-right: 5px;
+  font-weight: bold;
+}
+
+.agebracket_graph_color .box1 {
+  border: none;
+  width: 8px;
+  height: 15px;
+  background-color: #fed300;
+}
+.agebracket_graph_color .box2 {
+  border: none;
+  width: 8px;
+  height: 15px;
+  background-color: #0d1e53;
+}
+.agebracket_graph_color .box3 {
+  border: none;
+  width: 8px;
+  height: 15px;
+  background-color: #507aff;
+}
+.agebracket_graph_color .box4 {
+  border: none;
+  width: 8px;
+  height: 15px;
+  background-color: #c7000d;
+}
+.agebracket_graph_color .box5 {
+  border: none;
+  width: 8px;
+  height: 15px;
+  background-color: #fed300;
+}
+
+/* =================================================================== */
+/* START: Custom Styles for Admin Control Buttons                    */
+/* =================================================================== */
+
+.btn-admin-control {
+  font-family: MelodySemibold, sans-serif;
+  border-radius: 8px;
+  border: none;
+  padding: 0.5rem 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem; /* Adds space between the icon and the text */
+}
+
+.btn-admin-control:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Color Modifiers --- */
+
+/* For "Add" buttons (Green) */
+.btn-admin-add {
+  background-color: #198754; /* A nice green */
+}
+.btn-admin-add:hover {
+  background-color: #157347;
+  color: white;
+}
+
+/* For "View/Manage" buttons (Your Theme's Blue) */
+.btn-admin-view {
+  background-color: #0e2369;
+}
+.btn-admin-view:hover {
+  background-color: #0d1e53;
+  color: white;
+}
+
+/* For "Settings/Config" buttons (Gray) */
+.btn-admin-config {
+  background-color: #6c757d;
+}
+.btn-admin-config:hover {
+  background-color: #5c636a;
+  color: white;
+}
+
+/* =================================================================== */
+/* START: Custom Styles for Chart Legends                            */
+/* =================================================================== */
+
+.chart-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.chart-canvas-container {
+  justify-content: center; /* Horizontally centers everything */
+  align-items: center;
+  flex-shrink: 0; /* Prevents the canvas from shrinking too much */
+}
+
+.chart-legend {
+  padding-left: 20px;
+  font-family: MelodyRegular, sans-serif;
+}
+
+.chart-legend ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.chart-legend li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.legend-color-box {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+/* --- END: Custom Styles for Chart Legends --- */
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  width: 100%;
+  padding: 0 1rem;
+}
+
+/* Color specific classes */
+.btn-edit-info {
+  background-color: #507aff;
+}
+.btn-edit-speakers {
+  background-color: #0d1e53;
+}
+.btn-attendance-list {
+  background-color: #c7000d;
+}
+.btn-view-feedback {
+  background-color: #fed300;
+  color: #000;
+}
+.btn-view-feedback ion-icon {
+  color: #000;
+}
+.btn-summary-report {
+  background-color: #343a40;
+} /* Bootstrap dark color */
+.btn-recorded-session {
+  background-color: #343a40;
+} /* Bootstrap dark color */
+
+/* =================================================================== */
+/* START: FINAL UNIFIED ADMIN BUTTON STYLES                          */
+/* =================================================================== */
+
+/* Base style for ALL custom admin buttons */
+.btn-admin-action {
+  font-family: MelodyRegular, sans-serif;
+  border-radius: 20px;
+  font-weight: bold;
+  padding: 8px 18px;
+  color: #fff;
+  border: none;
+  box-shadow: 0px 6px 4px rgba(0, 0, 0, 0.25);
+  transition: all 0.4s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-admin-action:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 8px 8px rgba(0, 0, 0, 0.35);
+  color: #fff; /* Ensure text stays white on hover */
+}
+.btn-admin-action ion-icon {
+  font-size: 1.2em;
+}
+
+/* --- COLOR MODIFIERS --- */
+.btn-admin-blue {
+  background-color: #507aff;
+} /* For Edit Info / Add */
+.btn-admin-darkblue {
+  background-color: #0d1e53;
+} /* For Edit Speakers / View */
+.btn-admin-red {
+  background-color: #c7000d;
+} /* For Attendance List */
+.btn-admin-yellow {
+  background-color: #fed300;
+  color: #000;
+} /* For Feedback */
+.btn-admin-darkgray {
+  background-color: #343a40;
+} /* For Reports / Settings */
+.btn-admin-green {
+  background-color: #0edc5d;
+} /* For Reports / Settings */
+/* Keep text black on yellow buttons */
+.btn-admin-yellow:hover {
+  color: #000;
+}
+.btn-admin-yellow ion-icon {
+  color: #000;
+}
+
+/* =================================================================== */
+/* END: FINAL UNIFIED ADMIN BUTTON STYLES                            */
+/* =================================================================== */
+#toggle-charts-btn {
+  margin-left: 1rem;
+
+  white-space: nowrap; /* Prevents the text from wrapping on small screens */
+  flex-shrink: 0; /* Prevents the button from shrinking */
+}

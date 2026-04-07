@@ -1,0 +1,13 @@
+
+}
+.container:nth-of-type(odd){
+	transform: translateX(-400%);
+	transition: 0.4s ease;
+}
+
+.container:nth-of-type(even){
+	transform: translateX(-400%);
+}
+.container.show{
+	transform: translateX(0);
+}

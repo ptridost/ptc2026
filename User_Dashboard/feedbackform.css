@@ -1,0 +1,214 @@
+/* --- UNIFIED DESIGN STYLES --- */
+:root {
+  --primary-color: #0d1e53;
+  --secondary-color: #9f0003;
+  --accent-color: #2ba3d9;
+  --light-gray: #f8f9fa;
+  --dark-text: #343a40;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: var(--light-gray);
+  color: var(--dark-text);
+}
+
+.feedback-container {
+  margin-top: 6rem;
+  margin-bottom: 5rem;
+}
+
+.feedback-card {
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Ensures header corners are rounded */
+}
+
+.feedback-header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 2rem;
+  text-align: center;
+}
+
+.session-logo {
+  max-width: 90px;
+  border-radius: 50%;
+  border: 3px solid white;
+  margin-bottom: 1rem;
+}
+
+.speaker-avatar-list img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 5px;
+  border: 2px solid var(--accent-color);
+}
+
+.feedback-body {
+  padding: 2.5rem;
+}
+
+@media (max-width: 767px) {
+  .feedback-body {
+    padding: 1.5rem;
+  }
+}
+
+.form-section {
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #dee2e6;
+}
+.form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+h2.section-title {
+  color: var(--primary-color);
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+h4.question-title {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.text-muted {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.form-check-label {
+  margin-left: 0.5rem;
+}
+
+.form-check {
+  margin-bottom: 0.5rem;
+  padding-left: 2em; /* Align checkboxes nicely */
+}
+
+/* Table styles */
+.table {
+  font-size: 0.95rem;
+}
+
+.table th {
+  background-color: var(--light-gray);
+}
+
+.speaker-image-feedback {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 4px solid var(--accent-color);
+}
+
+/* --- FINAL 1-to-5 RATING STYLES with Correct Hover --- */
+
+.rating-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row-reverse;
+  /* No flex-direction: row-reverse; for 1-2-3-4-5 order */
+}
+
+/* Hide the default radio button */
+.rating-wrapper input[type="radio"] {
+  display: none;
+}
+
+/* Style the label itself as the numbered circle */
+.rating-wrapper label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--primary-color);
+  width: 32px;
+  height: 32px;
+  margin: 0 4px;
+  border-radius: 50%;
+  background-color: #e0e0e0;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Style for when you hover over a circle and all siblings before it */
+.rating-wrapper label:hover,
+.rating-wrapper label:hover ~ label {
+  /* This part is crucial for forward hover */
+  background-color: #a6d8ee;
+  transform: scale(1.1);
+}
+
+/* Style for the selected circle using the adjacent sibling selector */
+/* This highlights the selected circle */
+.rating-wrapper input[type="radio"]:checked + label {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+/* Style for all labels AFTER the checked radio button */
+/* This ensures circles to the left of the checked one are also highlighted */
+.rating-wrapper input[type="radio"]:checked ~ label {
+  background-color: var(--accent-color);
+  color: white;
+}
+.btn-submit-feedback {
+  background-color: var(--secondary-color);
+  color: white;
+  font-weight: 600;
+  padding: 12px 30px;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn-submit-feedback:hover {
+  background-color: #830002;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* --- NEW SPEAKER HEADER STYLES --- */
+
+.speaker-header {
+  display: flex;
+  align-items: center; /* Vertically aligns image and text */
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.speaker-header-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+
+  border: 3px solid var(--accent-color);
+  margin-right: 1.5rem; /* Space between image and text */
+}
+
+@media (max-width: 576px) {
+  /*
+      This code only applies to screens 576px wide or smaller (like mobile phones).
+      It makes the rating circles more compact to prevent overflow.
+    */
+  .rating-wrapper label {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    margin: 0 3px;
+  }
+}

@@ -1,0 +1,438 @@
+/* =================================================================== */
+/* STYLES FOR 2024 ANALYTICS DASHBOARD                               */
+/* =================================================================== */
+
+/* --- 1. Global Styles & Theme --- */
+:root {
+  --primary-color: #0e2369;
+  --secondary-color: #cd1821;
+  --light-gray: #2462a0;
+  --border-color: #dee2e6;
+  /* Or try this one for a more pronounced effect */
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+body {
+  background-color: var(--light-gray);
+  font-family: "MelodyRegular", sans-serif;
+}
+
+/* --- 2. Main Dashboard Layout --- */
+.analytics-dashboard {
+  margin-top: 120px;
+  padding-bottom: 3rem;
+}
+
+/* --- 4. Dashboard Cards --- */
+.dashboard-card {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 1.5rem; /* For hidden tables */
+}
+
+.kpi-card {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.kpi-cards-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  align-items: stretch; /* This is the key property for equal height */
+}
+
+.kpi-card .count-display {
+  /* This makes the number area grow to fill all available vertical space */
+  flex-grow: 1;
+
+  /* These three lines perfectly center the number vertically and horizontally */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* This handles cases where the text might wrap (like a long profession name) 
+   by making the font slightly smaller to help it fit. */
+.kpi-card .top-profession-text {
+  font-size: 3.5rem;
+}
+/* Replace the old rule with this one */
+.card-title {
+  font-family: "MelodyBold", sans-serif;
+  font-size: 1.25rem;
+  text-align: center;
+
+  /* --- NEW HEADER STYLES --- */
+  background-color: #0e2369; /* Your primary dark blue */
+  color: #fff; /* White text for contrast */
+  padding: 0.75rem 1.5rem;
+
+  /* This makes the header span the full width of the card, breaking out of the padding */
+  margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+
+  /* This makes the header's corners match the card's rounded corners */
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+.card-subtitle {
+  text-align: center;
+  margin-top: -1.25rem;
+  margin-bottom: 1rem;
+  font-style: italic;
+  color: #6c757d;
+}
+
+/* --- 5. Specific Card Content --- */
+.count-display {
+  font-family: "MelodyBold", sans-serif;
+  font-size: 6rem;
+  text-align: center;
+  color: var(--primary-color);
+  line-height: 1;
+}
+.chart-container,
+.chart-container-bar {
+  position: relative;
+  height: 300px;
+}
+.chart-container-bar {
+  height: 350px;
+}
+
+/* --- 6. Tables --- */
+.toggle-tables-btn {
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  transition: all 0.2s ease;
+}
+.toggle-tables-btn:hover {
+  opacity: 0.9;
+}
+.tables-wrapper {
+  margin-top: 2rem;
+}
+.table {
+  font-family: "MelodyRegular", sans-serif;
+}
+.table thead th {
+  background-color: var(--primary-color);
+  color: white;
+  font-family: "MelodyBold", sans-serif;
+  text-align: center;
+}
+.demographics-table th:first-child {
+  border-top-left-radius: 0.25rem;
+}
+.demographics-table th:last-child {
+  border-top-right-radius: 0.25rem;
+}
+.count-table td {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Add this to the end of analytics2024.css */
+
+/* =================================================================== */
+/* THEME-ALIGNED YEAR SELECTOR BUTTONS
+/* =================================================================== */
+
+.tables-wrapper .table th,
+.tables-wrapper .table td {
+  text-align: center;
+  vertical-align: middle; /* This also centers the text top-to-bottom */
+}
+
+/* --- Styles for the new Data Summary Card --- */
+.summary-card .card-title {
+  margin-bottom: 1rem; /* A little less space for the summary */
+}
+
+.summary-text {
+  font-family: "MelodyRegular", sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.8;
+  text-align: left;
+  color: #495057;
+}
+
+.summary-text strong {
+  color: var(--primary-color);
+  font-family: "MelodyBold", sans-serif;
+}
+
+.kpi-card__main-metric {
+  text-align: center;
+  border-right: 1px solid var(--border-color);
+}
+
+.kpi-card__main-metric .count-display {
+  font-size: 3.8rem; /* Slightly smaller for this layout */
+  padding-bottom: 0;
+}
+
+.kpi-card__main-metric span {
+  font-family: "MelodyRegular", sans-serif;
+  font-size: 1rem;
+  color: #6c757d;
+}
+
+.kpi-card__top-list ol {
+  list-style: none;
+  padding-left: 1rem;
+  margin: 0;
+}
+
+.kpi-card__top-list li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  padding: 0.35rem 0;
+  font-family: "MelodyRegular", sans-serif;
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.kpi-card__top-list li:last-child {
+  border-bottom: none;
+}
+
+.kpi-card__top-list li strong {
+  font-family: "MelodyBold", sans-serif;
+  color: var(--primary-color);
+}
+
+.chart-container-bar-large {
+  position: relative;
+  height: 400px; /* Adjust this value to make the chart taller or shorter */
+}
+
+/* =================================================================== */
+/* STYLES FOR SCROLL-TO-TOP BUTTON
+/* =================================================================== */
+
+#progress {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  height: 70px;
+  width: 70px;
+  display: none; /* Hidden by default, JS will show it */
+  place-items: center;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 1000;
+}
+
+#progress-value {
+  display: grid;
+  place-items: center;
+  height: calc(100% - 10px);
+  width: calc(100% - 10px);
+  background-color: #ffffff;
+  border-radius: 50%;
+  font-size: 28px;
+  color: #0e2369; /* Your primary dark blue */
+}
+
+/* This sets the color of the large number inside a blue-themed card */
+.kpi-card--blue .count-display {
+  color: #0e2369; /* Your Primary Dark Blue */
+}
+
+/* This sets the color of the large number inside a red-themed card */
+.kpi-card--red .count-display {
+  color: #c7000d; /* Your Primary Red */
+}
+
+/* This sets the color of the large number inside a yellow-themed card */
+.kpi-card--yellow .count-display {
+  color: #daa520; /* Your Dark Yellow */
+}
+
+.dashboard-control-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: var(--card-shadow);
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+/* --- Left Side: Title --- */
+.control-bar__title h1 {
+  font-family: "MelodyBold", sans-serif;
+  font-size: 1.75rem;
+  margin: 0;
+  color: var(--primary-color);
+}
+.control-bar__title .lead {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+/* --- Right Side: Actions --- */
+.control-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* --- Themed Year Selector --- */
+.year-selector .btn {
+  font-family: "MelodyBold", sans-serif;
+  border-radius: 50px !important; /* Pill shape */
+  padding: 0.5rem 1.5rem;
+  margin: 0 5px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border-width: 2px;
+  border-style: solid;
+}
+
+.year-selector .btn.active {
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Color styles for each Year Filter Button --- */
+.btn-year-2025 {
+  color: #c7000d;
+  border-color: #c7000d;
+  background-color: #fff;
+}
+.btn-year-2025:hover,
+.btn-year-2025.active {
+  background-color: #c7000d;
+  color: #fff;
+}
+
+.btn-year-2024 {
+  color: #b59400;
+  border-color: #fed300;
+  background-color: #fff;
+}
+.btn-year-2024:hover,
+.btn-year-2024.active {
+  background-color: #fed300;
+  color: #000;
+  border-color: #b59400;
+}
+
+.btn-year-2023 {
+  color: #0e2369;
+  border-color: #0e2369;
+  background-color: #fff;
+}
+.btn-year-2023:hover,
+.btn-year-2023.active {
+  background-color: #0e2369;
+  color: #fff;
+}
+
+/* --- Themed Session Selector --- */
+.session-selector {
+  height: 44px;
+  display: flex;
+  justify-content: center;
+}
+.session-selector .selector-button {
+  min-width: 220px;
+  background-color: var(--primary-color);
+  color: #fff;
+  font-family: "MelodyBold", sans-serif;
+  font-size: 1.25rem;
+  border: none;
+  height: 100%;
+}
+.selector-arrow {
+  background-color: var(--light-gray);
+  color: var(--primary-color);
+  border: none;
+  font-size: 1.2rem;
+  padding: 0 1rem;
+}
+
+.session-selector .dropdown-menu {
+  min-width: 100%;
+  text-align: center;
+  max-height: 400px !important; /* Force the max height */
+  overflow-y: auto !important;
+  background-color: var(--primary-color);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0;
+  /* margin-top: 0.5rem; <-- This line removed for perfect alignment */
+}
+
+.session-selector .dropdown-item {
+  color: #f8f9fa;
+  font-family: "MelodyRegular", sans-serif;
+  padding: 0.5rem 1.5rem;
+  transition: background-color 0.2s ease-in-out;
+  white-space: nowrap;
+}
+.session-selector .dropdown-item:hover,
+.session-selector .dropdown-item:focus {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.control-bar__actions a.btn-download {
+  height: 44px;
+  background-color: #065a33 !important; /* Green, with !important to force override */
+  color: #fff !important;
+  font-family: "MelodyBold", sans-serif;
+  padding: 0.5rem 1.25rem;
+  border: none;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none; /* Ensure no underline */
+}
+.control-bar__actions a.btn-download:hover {
+  background-color: #157347 !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+/* --- Responsive Stacking for Control Bar --- */
+
+@media (max-width: 1200px) {
+  .dashboard-control-bar {
+    flex-direction: column;
+    align-items: center; /* This centers the title and the actions container */
+  }
+  .control-bar__title {
+    text-align: center; /* This ensures the title text itself is centered */
+  }
+  .control-bar__actions {
+    width: 100%;
+    justify-content: center;
+  }
+}
+@media (max-width: 767px) {
+  .control-bar__actions {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .year-selector .btn {
+    flex-grow: 1;
+  }
+  .session-selector {
+    width: 100%;
+  }
+}

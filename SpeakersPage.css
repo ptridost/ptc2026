@@ -1,0 +1,204 @@
+/* =================================================================== */
+/* FINAL, UNIFIED STYLESHEET FOR ALL SPEAKERS PAGES                  */
+/* =================================================================== */
+
+/* --- 1. Font Definitions --- */
+@font-face {
+  font-family: "MelodyBold";
+  src: url(../fonts/BLMelody-Bold.otf);
+}
+@font-face {
+  font-family: "MelodyRegular";
+  src: url(../fonts/BLMelody-Regular.otf);
+}
+@font-face {
+  font-family: "MelodyLight";
+  src: url(../fonts/BLMelody-Light.otf);
+}
+/* ... add other font faces if needed ... */
+
+/* --- 2. Hero Section & 3D Text Animation (Preserved) --- */
+.speakers-hero {
+  background-color: #163180;
+  padding: 3rem 1rem;
+  margin-top: 85px;
+  text-align: center;
+}
+.speakers-hero .heading {
+  font-family: "MelodyBold", sans-serif;
+  font-size: 5rem;
+  height: 1.2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  color: #efc130;
+}
+.speakers-hero .wrapper {
+  backface-visibility: hidden;
+}
+.speakers-hero .wrapper span {
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 550px;
+  z-index: 1;
+}
+.speakers-hero .wrapper span:hover {
+  color: #e7c834;
+}
+.speakers-hero .wrapper span::before,
+.speakers-hero .wrapper span::after {
+  content: attr(data-heading);
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 50%;
+  transition: all 0.3s;
+}
+.speakers-hero .wrapper span::before {
+  transform: scale(1.01, 1) skew(0deg, 1deg);
+  color: transparent;
+  text-shadow: 0px 0px 0px rgba(0, 0, 0, 0.15);
+}
+.speakers-hero .wrapper span::after {
+  transition: all 250ms ease;
+  backface-visibility: hidden;
+  text-shadow: 2px 0px 1px hsla(0, 0%, 0%, 0.05);
+  transform: rotateY(-15deg);
+}
+.speakers-hero .wrapper span:hover::before {
+  transform: scale(0.85, 1) skew(0deg, 10deg);
+}
+.speakers-hero .wrapper span:hover::after {
+  transform: rotateY(-40deg);
+}
+.speakers-hero__title {
+  font-family: "MelodyBold", sans-serif;
+  color: #ffe066;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 1rem;
+}
+
+/* --- 3. Speakers Intro Section (Preserved) --- */
+.speakers-intro {
+  padding: 4rem 1rem 3rem;
+  text-align: center;
+}
+.speakers-intro h1 {
+  font-family: "MelodyBold", sans-serif;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: #000000;
+}
+.speakers-intro h2 {
+  font-family: "MelodyRegular", sans-serif;
+  font-size: 1.25rem;
+  color: #6c757d;
+  max-width: 60ch;
+  margin: 0 auto;
+}
+
+/* --- 4. THE SPEAKER GRID (Using the new .speaker-card style) --- */
+.speaker-grid {
+  padding-bottom: 5rem;
+}
+.speaker-card {
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none; /* In case it's wrapped in a link */
+}
+.speaker-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+.speaker-card__image-container {
+  width: 100%;
+  aspect-ratio: 1 / 1; /* Creates a perfect square for the image area */
+  overflow: hidden;
+  background-color: #f8f9fa;
+}
+.speaker-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image covers the area without being stretched */
+  transition: transform 0.4s ease;
+}
+.speaker-card:hover .speaker-card__image {
+  transform: scale(1.05);
+}
+.speaker-card__content {
+  padding: 1.5rem;
+  text-align: center;
+}
+.speaker-card__name {
+  font-family: "MelodyBold", sans-serif;
+  font-size: 1.25rem;
+  color: #0e2369;
+  margin: 0;
+}
+.speaker-card__title {
+  font-family: "MelodyRegular", sans-serif;
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+  line-height: 1.5;
+}
+
+/* --- 5. "To Be Announced" Card (for the 2025 page) --- */
+.tba-card {
+  border: 2px dashed #dee2e6;
+  background-color: #f8f9fa;
+  padding: 3rem;
+  border-radius: 1rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+.tba-card__icon {
+  font-size: 3rem;
+  color: #0e2369;
+  margin-bottom: 1rem;
+}
+.tba-card__title {
+  font-family: "MelodyBold", sans-serif;
+  font-size: 1.75rem;
+}
+.tba-card__text {
+  color: #6c757d;
+  max-width: 50ch;
+  margin: 0.5rem auto 1.5rem;
+}
+
+#progress {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  height: 70px;
+  width: 70px;
+  display: none; /* JS will make this 'grid' when you scroll */
+  place-items: center;
+  border-radius: 50%;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 1000;
+
+  /* This is the animated gradient background that will act as the border */
+  background: conic-gradient(#0e2369 0%, #d7d7d7 0%);
+}
+
+#progress-value {
+  /* This inner circle sits on top, creating the "border" effect */
+  display: grid;
+  place-items: center;
+  height: calc(100% - 10px); /* 5px border on all sides */
+  width: calc(100% - 10px);
+  background-color: #ffffff;
+  border-radius: 50%;
+  font-size: 28px;
+  color: #0e2369; /* Your primary dark blue */
+}

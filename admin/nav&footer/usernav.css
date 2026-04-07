@@ -1,0 +1,212 @@
+@font-face {
+ 	font-family: Melody;
+	 src:url(BLMelodyMono-Bold.otf);
+}
+@font-face {
+ 	font-family: MelodyBold;
+ 	src:url(BLMelody-Bold.otf);
+}
+@font-face {
+ 	font-family: MelodyRegular;
+	 src:url(BLMelody-Regular.otf);
+}
+@font-face {
+	 font-family: MelodySemibold;
+ 	src:url(BLMelodyMono-SemiBold.otf);
+}
+@font-face {
+ 	font-family: MelodyLight;
+ 	src:url(BLMelody-Light.otf);
+}
+@font-face {
+ 	font-family: MelodyMedium;
+ 	src:url(BLMelody-Medium.otf);
+}
+.navbutton button{
+	font-family: MelodyLight;
+	font-weight: bold;
+	color: #ffffff;
+	background: #0E1736;
+	border: none;
+	border-radius: 20px;
+	padding-left: 20px;
+	padding-right: 20px;
+	transition: 0.5s;
+}
+.navbutton button:hover{
+	background: #FED300;
+	color: #0E1736;
+	}
+.navbutton .ddownadmin{
+	background: none;
+	color: #000000;
+	border: none;
+}
+.navbutton .ddownadmin img{
+	width: 30px;
+	border: solid 2px;
+	border-radius: 50%;
+}
+.navbutton .ddownadmin .useradmin{
+	font-size: 13px;
+}
+#participantbtn{
+	height: 50px;
+}
+#uploadbtn{
+	height: 50px;
+}
+.modal .inputBox{
+	margin-top: 20px;
+    position: relative;
+    width: 100%;
+    gap: 2px;
+    display: flex;
+    align-items: center;
+}
+.modal .inputBox input{
+    width: 100%;
+    padding: 10px;
+    border: 2px solid rgb(60, 60, 60);
+    background: #fff;
+    border-radius: 5px;
+    outline: none;
+    color: #000000;
+    font-size: 1em;
+    font-family: MelodyRegular;
+    transition: 0.5s;
+    border-left: none;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+
+}
+.modal .inputBox span{
+	font-family: MelodyRegular;
+    position: absolute;
+    left: 0;
+    padding: 10px; 
+    pointer-events: none;
+    font-size: 1em;
+    color: rgb(60, 60, 60);
+    transition: 0.5s;
+    padding-left: 60px;
+    font-weight: 5px;
+    align-items: center;
+}
+.modal .inputBox  i{
+	padding-right: 10px;
+	padding-left: 10px;
+	color: rgb(60, 60, 60);
+	font-size: 17px;
+	border: solid 2px;
+	padding-top: 13px;
+	padding-bottom: 13px;
+	border: 2px solid rgb(60, 60, 60);
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+	border-right: solid 3px;
+}
+
+.modal .inputBox input:valid ~ span, 
+.modal .inputBox input:focus ~ span
+{
+    color: #18306E;
+    transform: translateX(45px) translateY(-20px);
+    font-size: 0.65em;
+    padding: 0 10px;
+    background: #fff;
+    border-left: 1px solid #18306E;
+    border-right: 1px solid #18306E;
+    letter-spacing: 0.2em;
+    margin-left: 15px;
+}
+.modal .inputBox:nth-child(2) input:valid ~ span, 
+.modal .inputBox:nth-child(2) input:focus ~ span
+{
+
+}
+.modal .inputBox input:valid, 
+.modal .inputBox input:focus{
+    border: 1px solid #18306E;
+}
+.modal-footer .button_close{
+	font-family: MelodyRegular;
+	font-weight: bold;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	padding-right: 15px;
+	padding-left: 15px;
+	align-items: center;
+	border-radius: 17px;
+	background-color: #ff0011;
+	color: #fff;
+	border: none;
+}
+.modal-footer .button_close:hover{
+	background-color: #ab000c;
+}
+.modal-footer .button_change{
+	font-family: MelodyRegular;
+	font-weight: bold;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	padding-right: 15px;
+	padding-left: 15px;
+	align-items: center;
+	border-radius: 17px;
+	background-color: #234fd9;
+	color: #fff;
+	border: none;
+}
+.modal-footer .button_change:hover{
+	background-color: #0D1E53;
+}
+.modal .change_prof{
+	margin-top: 30px;
+}
+.modal .change_prof h5{
+	font-family: MelodyRegular;
+	font-weight: bold;
+	font-size: 15px;
+
+}
+.modal .filetoupload{
+	font-family: MelodyLight;
+	font-size: 15px;
+	font-weight: bold;
+	padding-top: 10px;
+	margin-top: -10px;
+	margin-left: 20px;
+}
+.modal-header{
+	background-color: #0D1E53;
+	color: #fff;
+	text-transform: uppercase;
+}
+.modal-body{
+	margin-bottom: 10px;
+}
+#change_pass{
+	margin-top: 20px;
+	font-family: MelodyRegular;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	background: #122B7C;
+	color: #fff;
+	border-radius: 10px;
+	border: none;
+	transition: 0.5s;
+	float: right;
+}
+#change_pass:hover{
+	background-color: #CE1A22;
+}
+#change_pass ion-icon{
+	--ionicon-stroke-width: 40px;
+	padding-right: 4px;
+    transform: translate(0%, 18%);
+    font-size: 20px;
+    color: #fff;
+}

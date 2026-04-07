@@ -1,0 +1,65 @@
+*{
+	margin: 0;
+	padding:0;
+	font-family: MelodyMedium,sans-serif;
+}
+
+@font-face {
+ 	font-family: Melody;
+	 src:url(../fonts/BLMelodyMono-Bold.otf);
+}
+@font-face {
+ 	font-family: MelodyBold;
+ 	src:url(../fonts/BLMelody-Bold.otf);
+}
+@font-face {
+ 	font-family: MelodyRegular;
+	 src:url(../fonts/BLMelody-Regular.otf);
+}
+@font-face {
+	 font-family: MelodySemibold;
+ 	src:url(../fonts/BLMelodyMono-SemiBold.otf);
+}
+@font-face {
+ 	font-family: MelodyLight;
+ 	src:url(../fonts/BLMelody-Light.otf);
+}
+@font-face {
+ 	font-family: MelodyMedium;
+ 	src:url(../fonts/BLMelody-Medium.otf);
+}
+
+.form__container{
+	background-color: #d4d4d4;
+	
+	border-radius: 20px;
+}
+.dropdown__speaker select{
+	border-radius: 10px;
+	border:none;
+}
+.grid-container{
+	display: grid;
+	grid-template-areas: "name image" "info image" "imageUrl image" "gender image";
+}
+.speaker__name{
+	grid-area: name;
+}
+
+.speaker__info{
+	grid-area: info;
+}
+
+.speaker__imageUrl{
+	grid-area: imageUrl;
+}
+
+.speaker__gender{
+	grid-area: gender;
+}
+.speaker__image{
+	grid-area: image;
+}
+#speakerImgUrl{
+	height: 50vh;
+}

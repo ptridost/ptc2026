@@ -1,0 +1,222 @@
+@charset "utf-8";
+
+/******* Fonts Import Start **********/
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+/********* Fonts Face CSS End **********/
+
+/***************************************/
+/* STYLES FOR OWL CAROUSEL SLIDER      */
+/* --- THIS SECTION IS UNTOUCHED ---   */
+/***************************************/
+
+.game-section {
+  padding: 60px 50px;
+}
+.game-section .owl-stage {
+  margin: 15px 0;
+  display: flex;
+}
+/* ... all of your other original Owl Carousel styles are preserved here ... */
+@media (max-width: 767px) {
+    .game-section .item-desc {
+        transform: translateY(calc(100% - 42px));
+    }
+}
+
+
+/* =================================================================== */
+/* STYLES FOR 2024 SUMMARY CARDS                                     */
+/* --- THIS SECTION IS UNTOUCHED ---                                 */
+/* =================================================================== */
+
+.summary-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block; /* Makes the whole area clickable */
+    height: 100%;
+}
+.summary-card {
+    background-color: #ffffff;
+    border-radius: 0.5rem; /* A standard Bootstrap-like radius */
+    padding: 1.5rem;
+    height: 100%; /* Makes cards in the same row equal height */
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.summary-card-link:hover .summary-card {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0,0,0,0.175) !important; /* Uses Bootstrap's shadow-lg effect on hover */
+}
+.summary-card__header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.summary-card__logo {
+    width: 60px;
+    height: auto;
+    flex-shrink: 0;
+}
+.summary-card__title {
+    font-family: 'MelodyBold', 'Raleway', sans-serif;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    margin-bottom: 0;
+    color: #212529;
+}
+.summary-card__body p {
+    font-family: 'MelodyRegular', 'Raleway', sans-serif;
+    color: #6c757d; /* A softer gray for the body text */
+    margin-bottom: 0;
+}
+@media (max-width: 767px) {
+    .summary-card__title {
+        font-size: 1.5rem;
+    }
+}
+
+
+/* =================================================================== */
+/* FINAL, CORRECTED STYLES FOR RESPONSIVE FLIP CARDS (RC & ID)         */
+/* --- THIS SECTION HAS BEEN UPDATED AND FIXED ---                     */
+/* =================================================================== */
+
+/* --- 1. The Grid that holds the cards --- */
+.card-grid-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 1400px;
+    margin: 50px auto 3rem;
+    box-sizing: border-box; 
+    padding: 0 1.5rem;
+}
+
+/* --- 2. The Flip Card Mechanics --- */
+.flip-card {
+    background-color: transparent;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Square shape on desktop */
+    perspective: 1000px;
+    border-radius: 20px;
+    transition: transform 0.4s ease;
+}
+.flip-card:hover {
+    transform: translateY(-10px);
+}
+.flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+}
+.flip-card:hover .flip-card-inner,
+.flip-card.is-flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+.flip-card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 20px;
+    overflow: hidden;
+}
+.flip-card-back {
+    transform: rotateY(180deg);
+}
+
+/* --- 3. The Content Card Styling (the visible part) --- */
+.event-card {
+    background-color: #ffffff;
+    color: #212529;
+    border-radius: 0.3rem;
+    padding: 2.5rem;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* FIX: Aligns content to the top to prevent cropping */
+}
+.event-card__header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-shrink: 0;
+}
+.event-card__title {
+    font-family: 'MelodyBold', 'Raleway', sans-serif;
+    font-size: 2.5rem;
+    line-height: 1.1;
+    margin: 0;
+    text-align: center;
+}
+.event-card__logo {
+    width: 100px;
+    height: auto;
+    flex-shrink: 0;
+}
+.event-card__body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+.event-card__body p,
+.event-card__body ul {
+    font-family: 'MelodyRegular', 'Raleway', sans-serif;
+    text-align: left;
+}
+.event-card__body ul {
+    list-style: disc;
+    padding-left: 20px;
+}
+.event-card__body h5 {
+    font-family: 'MelodyBold', 'Raleway', sans-serif;
+    font-size: 1.1rem;
+    margin: 1.5rem 0 0.75rem 0;
+}
+.flip-instruction {
+    text-align: center;
+    margin-top: auto;
+    padding-top: 1rem;
+    font-size: 0.9rem;
+    color: #888;
+    font-style: italic;
+}
+
+/* --- 4. Responsive Overrides for Flip Cards --- */
+@media (max-width: 992px) {
+    .card-grid-container {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 600px) {
+    .card-grid-container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    .flip-card {
+        aspect-ratio: 3 / 4; /* FIX: Taller shape for phones, prevents disappearing */
+    }
+    .event-card {
+        padding: 1.5rem;
+    }
+    .event-card__header {
+        flex-direction: column;
+    }
+    .event-card__title {
+        font-size: 2rem;
+    }
+    .event-card__logo {
+        width: 80px;
+        order: -1;
+    }
+}

@@ -1,0 +1,90 @@
+@font-face {
+	font-family: Melody;
+	src:url(../fonts/BLMelodyMono-Bold.otf);
+}
+@font-face {
+	font-family: MelodyBold;
+	src:url(../fonts/BLMelody-Bold.otf);
+}
+@font-face {
+	font-family: MelodyRegular;
+	src:url(../fonts/BLMelody-Regular.otf);
+}
+@font-face {
+	font-family: MelodySemibold;
+	src:url(../fonts/BLMelodyMono-SemiBold.otf);
+}
+@font-face {
+	font-family: MelodyLight;
+	src:url(../fonts/BLMelody-Light.otf);
+}
+@font-face {
+	font-family: MelodyMedium;
+	src:url(../fonts/BLMelody-Medium.otf);
+}
+
+
+#footer {
+	background-color: #071132;
+	font-family: MelodyLight;
+	/* width: 100%; */
+	z-index: 1;
+	bottom:0;
+
+
+}
+
+#link {
+	font-family:MelodyBold;
+	font-size: 14px;
+	color: #EFC632;
+	letter-spacing: 2px;
+}
+
+.text-white {
+  text-decoration: none;
+	font-family:MelodyLight;
+	font-size: 12px;
+	letter-spacing: 1px;
+  /* display: inline-block; */
+  /* position: relative; */
+  color: #0087ca;
+}
+
+.text-white::after {
+  content: '';
+  /* position: absolute; */
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #0087ca;
+  /* transform-origin: bottom right; */
+  transition: transform 0.25s ease-out;
+}
+
+.text-white:hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+#icon {
+	font-size: 2.7em;
+}
+
+#copyright {
+	cursor: pointer;
+}
+.about{
+	color: #fff;
+	font-family: MelodyLight;
+	font-size: 12px;
+	letter-spacing: 1px;
+}
+
+
+
+
+	
+	

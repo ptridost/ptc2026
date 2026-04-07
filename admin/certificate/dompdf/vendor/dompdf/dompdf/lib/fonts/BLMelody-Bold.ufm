@@ -1,0 +1,98 @@
+StartFontMetrics 4.1
+Notice Converted by PHP-font-lib
+Comment https://github.com/PhenX/php-font-lib
+EncodingScheme FontSpecific
+Copyright Copyright © 2021 by Samuel Glen Hughes. All rights reserved.
+FontName BL Melody Bold
+FontSubfamily Regular
+UniqueID 0.005;UKWN;BLMelody-Bold
+FullName BL Melody Bold
+Version Version 0.005;FEAKit 1.0
+PostScriptName BLMelody-Bold
+Manufacturer Boulevard LAB
+Designer Samuel Glen Hughes
+FontVendorURL https://boulevardlab.com/
+FontDesignerURL https://www.instagram.com/boulevard.lab/
+PreferredFamily BL Melody
+PreferredSubfamily Bold
+Weight Bold
+ItalicAngle 0
+IsFixedPitch false
+UnderlineThickness 50
+UnderlinePosition -150
+FontHeightOffset 0
+Ascender 1010
+Descender -190
+FontBBox -42 -216 984 717
+StartCharMetrics 87
+U 32 ; WX 200 ; N space ; G 3
+U 39 ; WX 280 ; N quotesingle ; G 4
+U 44 ; WX 287 ; N comma ; G 5
+U 45 ; WX 660 ; N hyphen ; G 6
+U 46 ; WX 270 ; N period ; G 7
+U 48 ; WX 717 ; N zero ; G 8
+U 49 ; WX 447 ; N one ; G 9
+U 50 ; WX 626 ; N two ; G 10
+U 51 ; WX 609 ; N three ; G 11
+U 52 ; WX 656 ; N four ; G 12
+U 53 ; WX 609 ; N five ; G 13
+U 54 ; WX 651 ; N six ; G 14
+U 55 ; WX 572 ; N seven ; G 15
+U 56 ; WX 659 ; N eight ; G 16
+U 57 ; WX 651 ; N nine ; G 17
+U 65 ; WX 754 ; N A ; G 18
+U 66 ; WX 692 ; N B ; G 19
+U 67 ; WX 770 ; N C ; G 20
+U 68 ; WX 742 ; N D ; G 21
+U 69 ; WX 649 ; N E ; G 22
+U 70 ; WX 617 ; N F ; G 23
+U 71 ; WX 773 ; N G ; G 24
+U 72 ; WX 748 ; N H ; G 25
+U 73 ; WX 292 ; N I ; G 26
+U 74 ; WX 606 ; N J ; G 27
+U 75 ; WX 712 ; N K ; G 28
+U 76 ; WX 596 ; N L ; G 29
+U 77 ; WX 923 ; N M ; G 30
+U 78 ; WX 749 ; N N ; G 31
+U 79 ; WX 794 ; N O ; G 32
+U 80 ; WX 669 ; N P ; G 33
+U 81 ; WX 832 ; N Q ; G 34
+U 82 ; WX 700 ; N R ; G 35
+U 83 ; WX 645 ; N S ; G 36
+U 84 ; WX 660 ; N T ; G 37
+U 85 ; WX 718 ; N U ; G 38
+U 86 ; WX 763 ; N V ; G 39
+U 87 ; WX 1000 ; N W ; G 40
+U 88 ; WX 735 ; N X ; G 41
+U 89 ; WX 712 ; N Y ; G 42
+U 90 ; WX 633 ; N Z ; G 43
+U 97 ; WX 596 ; N a ; G 44
+U 98 ; WX 629 ; N b ; G 45
+U 99 ; WX 593 ; N c ; G 46
+U 100 ; WX 628 ; N d ; G 47
+U 101 ; WX 594 ; N e ; G 48
+U 102 ; WX 426 ; N f ; G 49
+U 103 ; WX 594 ; N g ; G 50
+U 104 ; WX 592 ; N h ; G 51
+U 105 ; WX 247 ; N i ; G 52
+U 106 ; WX 259 ; N j ; G 53
+U 107 ; WX 601 ; N k ; G 54
+U 108 ; WX 298 ; N l ; G 55
+U 109 ; WX 854 ; N m ; G 56
+U 110 ; WX 586 ; N n ; G 57
+U 111 ; WX 602 ; N o ; G 58
+U 112 ; WX 629 ; N p ; G 59
+U 113 ; WX 631 ; N q ; G 60
+U 114 ; WX 422 ; N r ; G 61
+U 115 ; WX 531 ; N s ; G 62
+U 116 ; WX 434 ; N t ; G 63
+U 117 ; WX 579 ; N u ; G 64
+U 118 ; WX 585 ; N v ; G 65
+U 119 ; WX 808 ; N w ; G 66
+U 120 ; WX 595 ; N x ; G 67
+U 121 ; WX 585 ; N y ; G 68
+U 122 ; WX 519 ; N z ; G 69
+U 160 ; WX 200 ; N space ; G 3
+U 8217 ; WX 297 ; N quoteright ; G 70
+EndCharMetrics
+EndFontMetrics

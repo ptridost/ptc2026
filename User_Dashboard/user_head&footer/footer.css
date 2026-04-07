@@ -1,0 +1,63 @@
+
+@font-face {
+ 	font-family: MelodyBold;
+ 	src:url(../../fonts/BLMelody-Bold.otf);
+}
+@font-face {
+ 	font-family: MelodyRegular;
+	 src:url(../../fonts/BLMelody-Regular.otf);
+}
+@font-face {
+	 font-family: MelodySemibold;
+ 	src:url(../../fonts/BLMelodyMono-SemiBold.otf);
+}
+@font-face {
+ 	font-family: MelodyLight;
+ 	src:url(../../fonts/BLMelody-Light.otf);
+}
+@font-face {
+ 	font-family: MelodyMedium;
+ 	src:url(../../fonts/BLMelody-Medium.otf);
+}
+footer{
+	position:relative;
+	bottom:0;
+}
+.navbar-custom{
+	background-color: #071132;
+	margin:0 !important;
+	padding: 0 !important;
+}
+#footlogo{
+	
+	height: 65px;
+	aspect-ratio: 16/7;
+}
+.fb_email a,.fb_email a:visited{
+	text-decoration: none;
+	color:white;
+	transition: 0.5s;
+	font-size: 15px;
+}
+.fb_email a:hover{
+	text-decoration: none;
+	color:white;
+	transform: translateY(-2px);
+	transition: 0.5s;
+}
+.otheritem p{
+	color: #fff;
+	font-family: MelodyLight;
+	font-size: 12px;
+	height: 5px;
+}
+.otheritem{
+	margin-top: 5px;
+}
+.straightline{
+	background-color: #ffffff2f;
+	width: 3px;
+	height: 61px;
+	margin-top: 5px;
+	border-radius: 20px;
+}

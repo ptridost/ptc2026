@@ -1,0 +1,16 @@
+Options +SymLinksIfOwnerMatch 
+RewriteEngine On
+RewriteRule ^$ https://procmis.dost-ptri.com/pages/index.php [R=301,L,NE]
+Header always set Content-Security-Policy "upgrade-insecure-requests;"
+
+php_value display_errors Off
+php_flag magic_quotes 1
+php_flag magic_quotes_gpc 1
+php_value mbstring.http_input auto
+php_value date.timezone Asia/Singapore
+
+#DirectoryIndex /PTRI_Service_Forms/veer/
+
+#Redirect /PTRI_Service_Forms/veer/ http://192.168.1.19/PTRI_Service_Forms/pages/index.php
+
+#Redirect /PROCMOS/veer/ http://localhost/PROCMOS/posterior/index.php

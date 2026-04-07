@@ -1,0 +1,279 @@
+:root {
+  --shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  --primary-color: #122e7a;
+  --primary-gradient: linear-gradient(135deg, #1f3e8c 0%, #122e7a 100%);
+}
+@font-face {
+  font-family: "MelodyBold";
+  src: url(../fonts/BLMelody-Bold.otf);
+}
+@font-face {
+  font-family: "MelodyRegular";
+  src: url(../fonts/BLMelody-Regular.otf);
+}
+@font-face {
+  font-family: "MelodyLight";
+  src: url(../fonts/BLMelody-Light.otf);
+}
+
+body {
+  background-color: #f0f2f5;
+}
+
+/* --- Modern Two-Column Layout --- */
+.registration-card {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  margin-top: 100px;
+  margin-bottom: 50px;
+  background-color: #fff;
+  border-radius: 1rem;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  padding: 0;
+}
+
+.registration-info-panel {
+  background: var(--primary-gradient);
+  color: #fff;
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+
+  text-align: center;
+}
+.registration-info-panel h1 {
+  font-family: "MelodyBold";
+  font-size: 2.5rem;
+}
+.registration-info-panel p {
+  font-family: "MelodyLight";
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.registration-form-panel {
+  padding: 2rem 3rem;
+}
+
+.header {
+  font-family: "MelodyBold";
+  font-size: 40px;
+  letter-spacing: 1px;
+  color: var(--primary-color);
+}
+.profession-header {
+  font-family: "MelodyBold";
+  font-size: 1.8rem;
+  margin-top: 1rem;
+  color: #333;
+}
+.profession-subheader {
+  display: block;
+  margin-top: -0.5rem;
+  margin-bottom: 1.5rem;
+  color: darkred;
+  font-style: italic;
+}
+
+/* --- Corrected Input Field Styles --- */
+.input-container {
+  position: relative;
+}
+.input-field {
+  width: 100%;
+  padding: 12px 10px;
+  font-family: "MelodyRegular";
+  font-size: 16px;
+  border: 1px solid #ced4da;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  transition: all 0.2s ease-in-out;
+}
+/* Replace the old .input-label rule with this */
+.input-label {
+  position: absolute;
+  top: 12px; /* This aligns it with the input field's top padding */
+  left: 15px;
+  font-family: "MelodyRegular";
+  font-size: 16px;
+  color: #6c757d;
+  pointer-events: none;
+  transition: all 0.2s ease-in-out;
+  background-color: #fff; /* Match the card background */
+  padding: 0 5px;
+}
+.input-field:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(18, 46, 122, 0.1);
+}
+/* Corrected Floating Logic */
+.input-field:focus ~ .input-label,
+.input-field:not(:placeholder-shown) ~ .input-label,
+.input-container.has-value .input-label {
+  top: -0.8rem; /* This moves the label above the border */
+  left: 10px;
+  font-size: 12px;
+  color: var(--primary-color);
+}
+
+/* --- Custom Arrow for Select Dropdowns --- */
+select.input-field {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem;
+}
+
+.field-instruction {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+.validation-message,
+.validation-alert {
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+  min-height: 1.2em;
+  color: red;
+}
+#uname_response {
+  padding-top: 5px;
+}
+.terms-label a {
+  text-decoration: none;
+}
+
+/* Profession group styles */
+.profession-group,
+.profession-group-other {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0;
+}
+.profession-group .form-check,
+.profession-group-other .form-check {
+  flex: 1 1 300px;
+  font-family: "MelodyRegular";
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.profession-group .prc-field,
+.profession-group-other .other-fields {
+  flex: 1 1 300px;
+}
+.form-check-input {
+  width: 1.25em;
+  height: 1.25em;
+}
+
+/* --- UPDATED: Modern Submit Button --- */
+.btn-submit {
+  font-family: "MelodyBold";
+  font-size: 20px;
+  border: none;
+  border-radius: 50px;
+  padding: 15px 35px;
+  background: var(--primary-gradient);
+  color: #fff;
+  cursor: pointer;
+  letter-spacing: 1px;
+  width: 100%;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+.btn-submit:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+}
+
+.registration-info-panel {
+  background: var(--primary-gradient);
+  color: #fff;
+  padding: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 2rem;
+  align-items: center;
+  text-align: center;
+  border: #7a1257;
+  border-width: 1Opx;
+}
+
+.info-panel__logo img {
+  max-width: 100%; /* Control the size of the top logo */
+  height: auto;
+  background: #ffffff;
+}
+
+.info-panel__image img {
+  max-width: 100%; /* Control the size of the top logo */
+  height: auto;
+}
+
+.info-panel__text h1 {
+  font-family: "MelodyBold";
+  font-size: 2.5rem;
+}
+
+.info-panel__text p {
+  font-family: "MelodyLight";
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+@media (max-width: 991px) {
+  .registration-card {
+    grid-template-columns: 1fr;
+    padding: 0;
+    margin-top: 80px;
+  }
+  .registration-info-panel {
+    display: none;
+  }
+  .registration-form-panel {
+    padding: 1.5rem;
+  }
+  .header {
+    font-size: 36px;
+  }
+}
+.input-container.has-value .input-label {
+  top: -0.8rem;
+  left: 10px;
+  font-size: 12px;
+  color: var(--primary-color);
+}
+
+/* This styles the dropdown arrow to match your theme */
+select.input-field {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 16px 12px;
+  padding-right: 2.5rem; /* Make space for the arrow */
+}
+
+/* This sets the color of the placeholder text (e.g., "Sex", "Nationality") to a muted grey */
+select.input-field:required:invalid {
+  color: #6c757d; /* A standard Bootstrap grey color */
+}
+
+/* This ensures that once an option is selected, the text becomes black */
+select.input-field {
+  color: #212529; /* Standard Bootstrap black text color */
+}

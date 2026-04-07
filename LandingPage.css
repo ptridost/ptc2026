@@ -1,0 +1,321 @@
+@font-face {
+  font-family: Melody;
+  src: url(fonts/.otf);
+}
+@font-face {
+  font-family: MelodyBold;
+  src: url(fonts/BLMelody-Bold.otf);
+}
+@font-face {
+  font-family: MelodyRegular;
+  src: url(fonts/BLMelody-Regular.otf);
+}
+@font-face {
+  font-family: MelodyLight;
+  src: url(fonts/BLMelody-Light.otf);
+}
+@font-face {
+  font-family: MelodyMedium;
+  src: url(fonts/BLMelody-Medium.otf);
+}
+
+.banner {
+  margin-top: 100px;
+}
+body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400; /* Regular weight for body text */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.accordion-button {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600; /* Semi-bold weight for headings */
+}
+video {
+  border: none;
+  overflow: hidden;
+  position: relative;
+}
+.page-content-wrapper {
+  /* Adjust this value to perfectly match your navbar's height */
+  padding-top: 120px;
+}
+.bannerp1 {
+  margin-top: 15px;
+}
+.bannerp1 .info {
+  font-family: MelodyRegular;
+  margin-left: 0%;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 22px;
+  letter-spacing: 0.1em;
+}
+.bannerp1 .info h1 {
+  letter-spacing: 0.08em;
+  font-family: MelodyBold;
+  font-size: 36px;
+  font-weight: 700;
+}
+.bannerp1 .info p {
+  font-family: MelodyRegular;
+  font-size: 17px;
+  color: #000000;
+}
+#btn1 {
+  margin-top: 20px;
+  padding: 15px 25px 15px 25px;
+  font-size: 20px;
+  font-family: MelodyBold;
+  font-weight: bold;
+  color: #fff;
+  background: #bb121b;
+  border-radius: 30px;
+  cursor: pointer;
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+  text-decoration: none;
+  border: none;
+}
+#btn1 span {
+  position: relative;
+  z-index: 1;
+}
+#btn1::before {
+  content: "";
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  width: 0;
+  height: 0;
+  border-radius: 20px;
+  background: #1f3e8c;
+  transition: width 0.5s, height 0.5s;
+  transform: translate(-50%, -50%);
+}
+#btn1:hover::before {
+  width: 300px;
+  height: 300px;
+}
+html {
+  scroll-behavior: smooth;
+}
+.hidden {
+  opacity: 0;
+  filter: blur(5px);
+  transform: translateY(100px);
+  transition: all 1s;
+}
+.show {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(0);
+}
+.col:nth-child(1) .hidden {
+  transition-delay: 200ms;
+}
+.col:nth-child(2) .hidden {
+  transition-delay: 400ms;
+}
+.col:nth-child(3) .hidden {
+  transition-delay: 600ms;
+}
+
+#rclogo,
+#idlogo,
+#fdelogo {
+  border-radius: 10px;
+  width: 60px;
+  height: 60px;
+}
+.conrc,
+.conid,
+.confde {
+  padding: 50px 15px;
+  border-radius: 20px;
+  text-align: center;
+}
+.conrc {
+  background-color: #0d1e53;
+}
+.conid {
+  background-color: #a01215;
+}
+.confde {
+  background-color: #fecb00;
+}
+
+.conrc__title,
+.conid__title,
+.confde__title {
+  margin-top: 10px;
+  font-family: MelodyBold;
+  font-size: 36px;
+}
+.conrc__title {
+  color: #ffbf16;
+}
+.conid__title {
+  color: #ffbf16;
+}
+.confde__title {
+  color: #000000;
+}
+
+.conrc__subtitle,
+.conid__subtitle,
+.confde__subtitle {
+  font-family: "MelodyRegular", "Raleway", sans-serif;
+  font-size: 18px;
+  line-height: 1.7;
+  max-width: 80ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+.conrc__subtitle,
+.conid__subtitle {
+  color: #fff;
+}
+.confde__subtitle {
+  color: #000000;
+}
+
+.gallery-link {
+  display: block;
+  text-decoration: none;
+}
+.rcpic2024 {
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+.rcpic2024:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+#progress {
+  position: fixed;
+  bottom: 20px;
+  right: 1rem;
+  height: 70px;
+  width: 70px;
+  display: none;
+  place-items: center;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 10;
+}
+#progress-value {
+  display: block;
+  height: calc(100% - 15px);
+  width: calc(100% - 15px);
+  background-color: #fff;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 35px;
+  color: #163180;
+}
+:root {
+  --shadow: rgba(255, 255, 255, 0.3) 0px 7px 29px 0px;
+}
+.square-image-container {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+.square-image-container:hover {
+  transform: scale(1.03);
+}
+.square-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.call-to-action-image {
+  transition: all 0.3s ease-in-out;
+}
+.call-to-action-image:hover {
+  transform: scale(1.02);
+  box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.25) !important;
+}
+.rcpic2024--portrait {
+  aspect-ratio: 3 / 4; /* This creates a taller, portrait shape */
+}
+
+/* Add this to LandingPage.css */
+
+/* Placeholder style for lazy-loading background images */
+.rcpic2024.lazy-bg {
+  background-image: none; /* Make sure no image is loaded initially */
+  background-color: #e9ecef; /* A light grey placeholder */
+}
+
+/*-- Final Accordion Styles (Force Override) --*/
+.accordion-button {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #163180;
+  background-color: #f8f9fa;
+  justify-content: center;
+}
+
+.accordion-button:not(.collapsed) {
+  color: #163180;
+  background-color: #ffffff !important; /* Force the background to be white */
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.125);
+}
+
+.accordion-button:focus {
+  box-shadow: none !important; /* Force the removal of the blue focus ring */
+  border-color: rgba(0, 0, 0, 0.125);
+}
+
+.accordion-logo {
+  height: 40px;
+  width: 40px;
+  object-fit: contain;
+}
+
+.accordion-item {
+  border: none;
+}
+
+.accordion-button::after {
+  filter: invert(15%) sepia(45%) saturate(2878%) hue-rotate(215deg)
+    brightness(95%) contrast(95%);
+}
+
+.accordion-button:not(.collapsed)::after {
+  filter: invert(15%) sepia(45%) saturate(2878%) hue-rotate(215deg)
+    brightness(95%) contrast(95%);
+}
+
+@media (max-width: 768px) {
+  .conrc__subtitle {
+    font-size: 0.9rem; /* Adjust this value if you want it smaller or larger */
+  }
+  .conrc__title {
+    font-size: 1.5rem; /* Adjust this value if you want it smaller or larger */
+  }
+}
+.conrc {
+  border-radius: 0;
+}
