@@ -264,7 +264,7 @@ $cert_check_stmt->close();
                         // --- ALWAYS SHOW BUTTONS FOR ALL YEARS ---
                         // If you want fixed years (e.g., 2023–2025), define the range explicitly:
                         //$years = [2023, 2024, 2025];
-                        $years = [2023, 2024];
+                        $years = [2023, 2024, 2025];
 
                         // Or if you want dynamic based on attended sessions, uncomment this line:
                         // $years = array_keys($attended_sessions_by_year);

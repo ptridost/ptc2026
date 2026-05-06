@@ -7,10 +7,12 @@ use Dompdf\Dompdf;
 // Use our central, secure database connection
 require('../../dbcon.php');
 
+
 // Get the participant ID and the YEAR from the URL
 $participant_id = $_GET['id'] ?? null;
 $year = $_GET['year'] ?? date('Y');
 $dateNow = date('Y-m-d');
+
 
 //$TEST_MODE = true;
 $TEST_MODE = isset($_GET['TEST_MODE']) && $_GET['TEST_MODE'] === 'true';
@@ -30,7 +32,7 @@ $stmt_date->close();
 // --- END of new code ---
 
 // Validate input using the dynamically fetched date
-if ((empty($participant_id) || !is_numeric($participant_id) || !is_numeric($year)  && !$TEST_MODE)) {
+if ((empty($participant_id) || !is_numeric($participant_id) || !is_numeric($year) && !$TEST_MODE)) {
     header("Location: " . BASE_URL . "/User_dashboard/dashboard.php");
     exit;
 }
@@ -49,7 +51,7 @@ $stmt_attendance_count->close();
 
 // If they haven't attended at least 6 sessions for that year, redirect them.
 if ($attendance_count < 6 && !$TEST_MODE) {
-    header("Location: " . BASE_URL . "/User_dashboard/dashboard.php"); 
+    header("Location: " . BASE_URL . "/User_dashboard/dashboard.php");
     exit;
 }
 
@@ -74,9 +76,10 @@ $stmt->close();
 // --- HELPER FUNCTIONS ---
 
 // This function now uses absolute paths for reliability
-function convertImage($path) {
+function convertImage($path)
+{
     // __DIR__ is the absolute path to the current folder (e.g., C:\...\admin\certificate)
-    $full_path = __DIR__ . '/' . $path; 
+    $full_path = __DIR__ . '/' . $path;
     if (!file_exists($full_path)) {
         return ''; // Return empty string if image is not found
     }
@@ -85,11 +88,13 @@ function convertImage($path) {
     return 'data:image/' . $type . ';base64,' . base64_encode($data);
 }
 
-function makeDot($middlename) {
+function makeDot($middlename)
+{
     return empty(trim($middlename)) ? " " : rtrim(ucfirst($middlename), '.') . ". ";
 }
 
-function makeGen($genderName) {
+function makeGen($genderName)
+{
     if ($genderName == "Male") {
         return "his attendance";
     } elseif ($genderName == "Female") {
@@ -118,6 +123,9 @@ $background_path = convertImage("./assets/{$year}/certificate{$year}bg.jpg");
 $logo2_path = convertImage('logo2.png');
 $logo1_path = convertImage('logo1.png');
 
+// Check if using single template for 2025
+$use_single_template = ($year == 2025);
+
 // DYNAMIC Text for the certificate date
 $distribution_date_from_db = ''; // Default to empty
 $variable_name_dist = 'certificate_distribution_date_' . $year;
@@ -135,23 +143,188 @@ $stmt_dist_date->close();
 $certificate_date_text = "Given this via Zoom Conference"; // Fallback text
 if (!empty($distribution_date_from_db)) {
     $timestamp = strtotime($distribution_date_from_db);
-    $day = date('jS', $timestamp);     
-    $month = date('F', $timestamp);    
+    $day = date('j', $timestamp);
+    $suffix = date('S', $timestamp);
+    $month = date('F', $timestamp);
     $cert_year = date('Y', $timestamp);
 
     // --- YEAR-SPECIFIC TEXT ---
+    $paper_size = "A4"; // Default paper size
     if ($year == 2023) {
         $certificate_date_text = "Given this {$day} Day of {$month} {$cert_year} at the National Museum Western Visayas, Iloilo City, Philippines";
+    } else if ($year == 2025) {
+        $paper_size = "Legal";
+        $certificate_date_text = "Given this " . $day . "<sup>" . $suffix . "</sup> Day of {$month}, {$cert_year}.";
     } else {
         $certificate_date_text = "Given this {$day} Day of {$month} {$cert_year} via Zoom Conference";
+
     }
+}
+
+// --- CPD CALCULATION ---
+// Check if feedback submitted for the year
+$stmt_feedback = $dbcon->prepare("SELECT COUNT(*) as feedback_count FROM tblfeedback WHERE participant_id = ? AND YEAR(fDate) = ?");
+$stmt_feedback->bind_param("is", $participant_id, $year);
+$stmt_feedback->execute();
+$feedback_count = $stmt_feedback->get_result()->fetch_assoc()['feedback_count'];
+$feedback_submitted = $feedback_count > 0;
+$stmt_feedback->close();
+
+// Calculate CPD points based on profession, session count, and feedback
+$profession = $row['profession'] ?? '';
+
+if ($feedback_submitted) {
+    if ($attendance_count >= 9) {
+        if (in_array($profession, ['Chemist', 'Chemical Technician'])) {
+            $cpd_points = 22;
+        } elseif ($profession == 'Chemical Engineer') {
+            $cpd_points = 25;
+        } else {
+            $cpd_points = 22; // Default for other professions
+        }
+    } else {
+        $cpd_points = $attendance_count;
+    }
+} else {
+    $cpd_points = 0; // No feedback, no CPD points granted
+}
+
+// --- SESSION TEXT ---
+// Get session names from attended sessions
+$stmt_sessions = $dbcon->prepare("
+    SELECT DISTINCT s.session_head
+    FROM tblptcsession s 
+    JOIN tblattendance a ON s.session_number = a.session_id 
+    WHERE a.participant_id = ? AND YEAR(a.date_submitted) = ?
+    ORDER BY s.session_number ASC
+");
+$stmt_sessions->bind_param("is", $participant_id, $year);
+$stmt_sessions->execute();
+$sessions_result = $stmt_sessions->get_result();
+$session_names = [];
+while ($session_row = $sessions_result->fetch_assoc()) {
+    $session_names[] = htmlspecialchars($session_row['session_head']);
+}
+$stmt_sessions->close();
+if (count($session_names) > 1) {
+    $last = array_pop($session_names);
+    $sessions_attended = implode(', ', $session_names) . ' and ' . $last;
+} else {
+    $sessions_attended = implode(', ', $session_names);     // Session text combiner
 }
 
 // --- END of new code ---
 
 
 // The main certificate HTML. Notice how clean and easy to read this is.
-$html = <<<HTML
+if ($use_single_template) {
+    // 2025: Single template with overlaid text
+    $html = <<<HTML
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<style>
+    @page { margin: 0; }
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
+    @font-face {
+        font-family: "Poppins-Regular";
+        src: url("../../fonts/Poppins-Regular.ttf") format("truetype");
+    }
+    @font-face {
+        font-family: "Poppins-Bold";
+        src: url("../../fonts/Poppins-Bold.ttf") format("truetype");
+    }
+    body {
+        font-family: "Poppins-Regular", sans-serif;
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+    .background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+    }
+    .certificate-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+    .certificate-name {
+        font-family: "Poppins-Bold", sans-serif;
+        font-size: 39px;
+        margin: 0;
+        line-height: 1.0;
+        position: absolute;
+        top: 25%;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #000;
+        width: 80%;
+        text-align: center;
+    }
+    .certificate-subtitle {
+        font-family: "Poppins-Bold", sans-serif;
+        font-size: 18px;
+        margin: 0;
+        position: absolute;
+        top: 41%;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #000;
+        width: 80%;
+        text-align: center;
+    }
+    .certificate-cpd {
+        font-family: "Poppins-Bold", sans-serif;
+        font-size: 18px;
+        margin: 0;
+        position: absolute;
+        top: 70%;
+        left: 51.35%;
+        transform: translateX(-50%);
+        color: #000;
+    }
+    .certificate-date {
+        font-size: 18px;
+        margin: 0;
+        position: absolute;
+        top: 78%;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #000;
+        width: 80%;
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+    <img class="background-image" src="{$background_path}" alt="Certificate background">
+    <div class="certificate-content">
+        <h1 class="certificate-name">{$firstName} {$middleInitial} {$lastName}</h1>
+        <h3 class="certificate-subtitle">{$sessions_attended}</h3>
+        <h3 class="certificate-cpd">{$cpd_points}</h3>
+        <p class="certificate-date">{$certificate_date_text}</p>
+    </div>
+</body>
+</html>
+HTML;
+} else {
+    // Original multi-image layout for other years
+    // The main certificate HTML. Notice how clean and easy to read this is.
+    $html = <<<HTML
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -206,7 +379,8 @@ $html = <<<HTML
 </body>
 </html>
 HTML;
-
+}
+;
 
 // ===================================================================
 // START: RESTORED SECOND PAGE LOGIC
@@ -215,33 +389,46 @@ $arrID = [5340, 6588]; // Array of special participant IDs
 
 if (in_array($participant_id, $arrID)) {
     // This is the HTML for the second page, "Certificate of Participation"
-    $secondPage = <<<HTML
-    <div style="page-break-before: always;">
-        <div style="margin-top: 80px; text-align: center;">
-            <img src="{$logo2_path}" style="height:75px; margin-top:-20px; float: left; margin-left: 230px;">
-            <img src="{$logo1_path}" style="height:75px; margin-top:-20px; margin-right: 230px; float: right;">
-            <p style="font-size: 15px; margin-top:-20px; margin-bottom:0;">Republic of the Philippines</p>
-            <p style="font-size: 15px; margin-top: -15px;">Department of Science and Technology</p>
-            <h3 style="font-size: 19px; margin-top: -20px;">PHILIPPINE TEXTILE RESEARCH INSTITUTE</h3>
-            <p style="font-size: 12px; margin-bottom:-15px;">awards this</p>
-            <h1 style="font-size: 30px;">CERTIFICATE OF PARTICIPATION</h1>
-            <p style="font-size: 12px; margin-top: -10px; margin-bottom: -10px;">to</p>
-            <h1 style="font-size:52px; padding: 0 50px; margin-top: 25px; line-height:30px;">{$firstName} {$middleInitial} {$lastName}</h1>
-            <p style="font-size: 13px; margin-top: -35px;">in acknowledgement of {$genderText} in the</p>
-            
-            <div><img src="{$ptcbanner_path}" style="height:110px; margin:0;"></div>
-            <p style="font-size: 13px; margin-top:-10px; margin-bottom:-5px">during the</p>
-            <div><img src="{$ptclogowithrc_path}" style="height:100px; margin:0;"></div>
-            
-            <p style="font-size: 12px; margin-top:20px; margin-bottom:-10px">{$certificate_date_text}</p>
-            <div>
-                <img src="{$esigdirector_path}" style="height:90px; margin-bottom: -50px;">
-                <h4 style="font-size: 14px; margin-top: 30px;">JULIUS L. LEAÑO JR., Ph.D.</h4>
+    if ($use_single_template) {
+        $secondPage = <<<HTML
+        <div style="page-break-before: always;">
+            <img class="background-image" src="{$background_path}" alt="Certificate background">
+            <div class="certificate-content">
+                <h1 class="certificate-name">{$firstName} {$middleInitial} {$lastName}</h1>
+                <p class="certificate-subtitle">in acknowledgement of {$genderText} in the</p>
+                <p class="certificate-date">{$certificate_date_text}</p>
             </div>
-            <p style="font-size: 12px; margin-top: -15px; margin-bottom:0;">Director</p>
-        </div> 
-    </div>
+        </div>
 HTML;
+    } else {
+        $secondPage = <<<HTML
+        <div style="page-break-before: always;">
+            <div style="margin-top: 80px; text-align: center;">
+                <img src="{$logo2_path}" style="height:75px; margin-top:-20px; float: left; margin-left: 230px;">
+                <img src="{$logo1_path}" style="height:75px; margin-top:-20px; margin-right: 230px; float: right;">
+                <p style="font-size: 15px; margin-top:-20px; margin-bottom:0;">Republic of the Philippines</p>
+                <p style="font-size: 15px; margin-top: -15px;">Department of Science and Technology</p>
+                <h3 style="font-size: 19px; margin-top: -20px;">PHILIPPINE TEXTILE RESEARCH INSTITUTE</h3>
+                <p style="font-size: 12px; margin-bottom:-15px;">awards this</p>
+                <h1 style="font-size: 30px;">CERTIFICATE OF PARTICIPATION</h1>
+                <p style="font-size: 12px; margin-top: -10px; margin-bottom: -10px;">to</p>
+                <h1 style="font-size:52px; padding: 0 50px; margin-top: 25px; line-height:30px;">{$firstName} {$middleInitial} {$lastName}</h1>
+                <p style="font-size: 13px; margin-top: -35px;">in acknowledgement of {$genderText} in the</p>
+                
+                <div><img src="{$ptcbanner_path}" style="height:110px; margin:0;"></div>
+                <p style="font-size: 13px; margin-top:-10px; margin-bottom:-5px">during the</p>
+                <div><img src="{$ptclogowithrc_path}" style="height:100px; margin:0;"></div>
+                
+                <p style="font-size: 12px; margin-top:20px; margin-bottom:-10px">{$certificate_date_text}</p>
+                <div>
+                    <img src="{$esigdirector_path}" style="height:90px; margin-bottom: -50px;">
+                    <h4 style="font-size: 14px; margin-top: 30px;">JULIUS L. LEAÑO JR., Ph.D.</h4>
+                </div>
+                <p style="font-size: 12px; margin-top: -15px; margin-bottom:0;">Director</p>
+            </div> 
+        </div>
+HTML;
+    }
 
     // Append the second page to the first one
     $html .= $secondPage;
@@ -253,10 +440,18 @@ HTML;
 
 
 
+/*
+// --- PREVIEW MODE ---
+if (isset($_GET['preview']) && $_GET['preview'] === '1') {
+    header('Content-Type: text/html; charset=UTF-8');
+    echo $html;
+    exit;
+}
+*/
 
 // --- GENERATE THE PDF ---
 $dompdf = new Dompdf();
-$dompdf->setPaper('A4', 'Landscape');
+$dompdf->setPaper($paper_size, 'Landscape');
 $dompdf->loadHtml($html);
 $dompdf->render();
 $dompdf->stream('CERTIFICATE.pdf', ["Attachment" => false]);
