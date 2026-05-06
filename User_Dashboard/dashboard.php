@@ -265,7 +265,7 @@ $cert_check_stmt->close();
                         // If you want fixed years (e.g., 2023–2025), define the range explicitly:
                         //$years = [2023, 2024, 2025];
                         $years = [2023, 2024, 2025];
-
+                        
                         // Or if you want dynamic based on attended sessions, uncomment this line:
                         // $years = array_keys($attended_sessions_by_year);
 
@@ -275,7 +275,16 @@ $cert_check_stmt->close();
                             $dist_date = $settings[$dist_date_name] ?? '2030-12-31';
 
                             // Check eligibility
-                            $eligible = ($count >= 6 && $hasPRC && $dist_date <= date('Y-m-d'));
+                            // --- FEEDBACK ELIGIBILITY CHECK (NEW) ---
+                            $stmt = $dbcon->prepare("SELECT feedback_id FROM tblfeedback WHERE participant_id = ? AND YEAR(fDate) = ?");
+                            $stmt->bind_param("ii", $_SESSION['participant_id'], $year);
+                            $stmt->execute();
+                            $feedback_result = $stmt->get_result();
+                            $hasFeedback = ($feedback_result->num_rows > 0);
+                            $stmt->close();
+                            // --- END: FEEDBACK ELIGIBILITY CHECK ---
+
+                            $eligible = ($count >= 6 && $hasPRC && $dist_date <= date('Y-m-d') && $hasFeedback);
                             //$eligible = true; // TEMPORARY: force eligibility for testing
                             //$TEST_MODE = true; // For testing only
                             //if ($eligible|| $TEST_MODE) {
@@ -301,6 +310,9 @@ $cert_check_stmt->close();
                                 if ($dist_date > date('Y-m-d')) {
                                     $reasons[] = "This certificate for the year $year can be downloaded starting " .
                                                 date('F j, Y', strtotime($dist_date)) . ".";
+                                }
+                                if (!$hasFeedback) {
+                                    $reasons[] = "No submitted session feedbacks found for $year.";
                                 }
 
                                 $reason_html = "<ul><li>" . implode("</li><li>", $reasons) . "</li></ul>";
