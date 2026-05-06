@@ -58,7 +58,7 @@ if ($attendance_count < 6 && !$TEST_MODE) {
 // --- END of new check ---
 
 // Securely fetch participant data
-$stmt = $dbcon->prepare("SELECT Gender, firstName, middleName, lastName FROM participant WHERE id = ?");
+$stmt = $dbcon->prepare("SELECT Gender, firstName, middleName, lastName, profession FROM participant WHERE id = ?");
 $stmt->bind_param("i", $participant_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -154,7 +154,7 @@ if (!empty($distribution_date_from_db)) {
         $certificate_date_text = "Given this {$day} Day of {$month} {$cert_year} at the National Museum Western Visayas, Iloilo City, Philippines";
     } else if ($year == 2025) {
         $paper_size = "Legal";
-        $certificate_date_text = "Given this " . $day . "<sup>" . $suffix . "</sup> Day of {$month}, {$cert_year}.";
+        $certificate_date_text = "Given this {$day}<sup>{$suffix}</sup> Day of {$month}, {$cert_year}.";
     } else {
         $certificate_date_text = "Given this {$day} Day of {$month} {$cert_year} via Zoom Conference";
 
@@ -171,22 +171,28 @@ $feedback_submitted = $feedback_count > 0;
 $stmt_feedback->close();
 
 // Calculate CPD points based on profession, session count, and feedback
-$profession = $row['profession'] ?? '';
+$profession_raw = $row['profession'] ?? '';
+$profession_list = array_filter(array_map('trim', explode(',', $profession_raw)));
+$cpd_text = "";
+$cpd_points = 0;
+$profession = '';
+
+$cpd_map = [
+    'Chemical Engineer' => 25,
+    'Chemical Technician' => 22,
+    'Chemist' => 22,
+];
 
 if ($feedback_submitted) {
-    if ($attendance_count >= 9) {
-        if (in_array($profession, ['Chemist', 'Chemical Technician'])) {
-            $cpd_points = 22;
-        } elseif ($profession == 'Chemical Engineer') {
-            $cpd_points = 25;
-        } else {
-            $cpd_points = 22; // Default for other professions
+    foreach ($profession_list as $prof) {
+        $prof_normalized = ucwords(strtolower($prof));
+        if (isset($cpd_map[$prof_normalized])) {
+            $profession = $prof_normalized;
+            $cpd_points = $attendance_count >= 9 ? $cpd_map[$profession] : $attendance_count;
+            $cpd_text = "and has earned a total of <b>[ {$cpd_points} ] CPD units</b> applicable for {$profession}s";
+            break;
         }
-    } else {
-        $cpd_points = $attendance_count;
     }
-} else {
-    $cpd_points = 0; // No feedback, no CPD points granted
 }
 
 // --- SESSION TEXT ---
@@ -288,12 +294,12 @@ if ($use_single_template) {
         text-align: center;
     }
     .certificate-cpd {
-        font-family: "Poppins-Bold", sans-serif;
+        font-family: "Poppins-Regular", sans-serif;
         font-size: 18px;
         margin: 0;
         position: absolute;
         top: 70%;
-        left: 51.35%;
+        left: 50%;
         transform: translateX(-50%);
         color: #000;
     }
@@ -315,7 +321,7 @@ if ($use_single_template) {
     <div class="certificate-content">
         <h1 class="certificate-name">{$firstName} {$middleInitial} {$lastName}</h1>
         <h3 class="certificate-subtitle">{$sessions_attended}</h3>
-        <h3 class="certificate-cpd">{$cpd_points}</h3>
+        <p class="certificate-cpd">{$cpd_text}</p>
         <p class="certificate-date">{$certificate_date_text}</p>
     </div>
 </body>
