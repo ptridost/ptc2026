@@ -161,6 +161,35 @@ if (!empty($distribution_date_from_db)) {
     }
 }
 
+// --- SESSION TEXT ---
+// Get session names from attended sessions
+$stmt_sessions = $dbcon->prepare("
+    SELECT DISTINCT s.session_head
+    FROM tblptcsession s 
+    JOIN tblattendance a ON s.session_number = a.session_id 
+    WHERE a.participant_id = ?
+        AND YEAR(a.date_submitted) = ?
+        AND lower(s.session_head) like 'session%'
+    ORDER BY s.session_number ASC
+");
+$stmt_sessions->bind_param("is", $participant_id, $year);
+$stmt_sessions->execute();
+$sessions_result = $stmt_sessions->get_result();
+$session_names = [];
+while ($session_row = $sessions_result->fetch_assoc()) {
+    $session_names[] = htmlspecialchars($session_row['session_head']);
+}
+$stmt_sessions->close();
+
+// Session Names Formatting Handler
+$sessions_count = count($session_names);
+if ($sessions_count > 1) {
+    $last = array_pop($session_names);
+    $sessions_attended = implode(', ', $session_names) . ' and ' . $last;
+} else {
+    $sessions_attended = implode(', ', $session_names); 
+}
+
 // --- CPD CALCULATION ---
 // Check if feedback submitted for the year
 $stmt_feedback = $dbcon->prepare("SELECT COUNT(*) as feedback_count FROM tblfeedback WHERE participant_id = ? AND YEAR(fDate) = ?");
@@ -188,35 +217,11 @@ if ($feedback_submitted) {
         $prof_normalized = ucwords(strtolower($prof));
         if (isset($cpd_map[$prof_normalized])) {
             $profession = $prof_normalized;
-            $cpd_points = $attendance_count >= 9 ? $cpd_map[$profession] : $attendance_count;
+            $cpd_points = $sessions_count >= 9 ? $cpd_map[$profession] : $sessions_count;
             $cpd_text = "and has earned a total of <b>[ {$cpd_points} ] CPD units</b> applicable for {$profession}s";
             break;
         }
     }
-}
-
-// --- SESSION TEXT ---
-// Get session names from attended sessions
-$stmt_sessions = $dbcon->prepare("
-    SELECT DISTINCT s.session_head
-    FROM tblptcsession s 
-    JOIN tblattendance a ON s.session_number = a.session_id 
-    WHERE a.participant_id = ? AND YEAR(a.date_submitted) = ?
-    ORDER BY s.session_number ASC
-");
-$stmt_sessions->bind_param("is", $participant_id, $year);
-$stmt_sessions->execute();
-$sessions_result = $stmt_sessions->get_result();
-$session_names = [];
-while ($session_row = $sessions_result->fetch_assoc()) {
-    $session_names[] = htmlspecialchars($session_row['session_head']);
-}
-$stmt_sessions->close();
-if (count($session_names) > 1) {
-    $last = array_pop($session_names);
-    $sessions_attended = implode(', ', $session_names) . ' and ' . $last;
-} else {
-    $sessions_attended = implode(', ', $session_names);     // Session text combiner
 }
 
 // --- END of new code ---
