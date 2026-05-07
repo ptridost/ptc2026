@@ -284,7 +284,9 @@ $cert_check_stmt->close();
                             $stmt->close();
                             // --- END: FEEDBACK ELIGIBILITY CHECK ---
 
-                            $eligible = ($count >= 6 && $hasPRC && $dist_date <= date('Y-m-d') && $hasFeedback);
+                            // Make feedback requirement apply only for 2025
+                            $hasFeedbackForYear = ($year == 2025) ? $hasFeedback : true;
+                            $eligible = ($count >= 6 && $hasPRC && $dist_date <= date('Y-m-d') && $hasFeedbackForYear);
                             //$eligible = true; // TEMPORARY: force eligibility for testing
                             //$TEST_MODE = true; // For testing only
                             //if ($eligible|| $TEST_MODE) {
@@ -301,8 +303,22 @@ $cert_check_stmt->close();
                             } else {
                                 //  Not eligible → show modal with reasons
                                 $reasons = [];
-                                if ($count < 6) {
-                                    $reasons[] = "You attended $count of the required 6 sessions for $year.";
+
+                                // 2025 feedback requirement addition
+                                if ($year == 2025){
+                                    if ($count == 0 || !$hasFeedback){
+                                        $reasons[] = "No attendance/feedback submitted at the end of each session.";
+                                    }
+                                }
+                                else {
+                                    if ($count < 6) {
+                                        if ($count === 0){
+                                            $reasons[] = "No session attendance record found for $year.";
+                                        }
+                                        else{
+                                            $reasons[] = "You attended $count of the required 6 sessions for $year.";
+                                        }
+                                    }
                                 }
                                 if (!$hasPRC) {
                                     $reasons[] = "A PRC License number is required. Please use the 'Edit Profile' button to add it.";
@@ -310,9 +326,6 @@ $cert_check_stmt->close();
                                 if ($dist_date > date('Y-m-d')) {
                                     $reasons[] = "This certificate for the year $year can be downloaded starting " .
                                                 date('F j, Y', strtotime($dist_date)) . ".";
-                                }
-                                if (!$hasFeedback) {
-                                    $reasons[] = "No submitted session feedbacks found for $year.";
                                 }
 
                                 $reason_html = "<ul><li>" . implode("</li><li>", $reasons) . "</li></ul>";
@@ -521,7 +534,7 @@ $cert_check_stmt->close();
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Preparing Certificate</h5>
+                    <h5 class="modal-title">No Certificate Issued</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -624,7 +637,7 @@ $cert_check_stmt->close();
             // The default message, plus the specific reason
             if (reasonParagraph) {
                 reasonParagraph.innerHTML =
-                    "Please wait, we are still preparing your certificate. Availability is subject to the following: <br><br><strong class='text-danger'>" +
+                    "<br><strong class='text-danger'>" +
                     (reason || 'An unknown issue occurred.') + "</strong>";
             }
         });
