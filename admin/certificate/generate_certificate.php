@@ -164,7 +164,7 @@ if (!empty($distribution_date_from_db)) {
 // --- SESSION TEXT ---
 // Get session names from attended sessions
 $stmt_sessions = $dbcon->prepare("
-    SELECT DISTINCT s.session_head
+    SELECT DISTINCT s.session_head, s.session_title
     FROM tblptcsession s 
     JOIN tblattendance a ON s.session_number = a.session_id 
     WHERE a.participant_id = ?
@@ -175,19 +175,23 @@ $stmt_sessions = $dbcon->prepare("
 $stmt_sessions->bind_param("is", $participant_id, $year);
 $stmt_sessions->execute();
 $sessions_result = $stmt_sessions->get_result();
-$session_names = [];
+$sessions = [];
 while ($session_row = $sessions_result->fetch_assoc()) {
-    $session_names[] = htmlspecialchars($session_row['session_head']);
+    $sessions[] = [
+        'head' => ucwords(strtolower(htmlspecialchars($session_row['session_head']))),
+        'title' => htmlspecialchars($session_row['session_title'])
+    ];
 }
 $stmt_sessions->close();
 
 // Session Names Formatting Handler
-$sessions_count = count($session_names);
+$sessions_count = count($sessions);
 if ($sessions_count > 1) {
-    $last = array_pop($session_names);
-    $sessions_attended = implode(', ', $session_names) . ' and ' . $last;
+    $formatted = array_map(fn($s) => "<span style = 'white-space:nowrap'>{$s['head']}: {$s['title']}</span>", $sessions);
+    $last = array_pop($formatted);
+    $sessions_attended = implode(', ', $formatted) . ' and ' . $last;
 } else {
-    $sessions_attended = implode(', ', $session_names); 
+    $sessions_attended = "{$sessions[0]['head']}: {$sessions[0]['title']}" ?? ""; 
 }
 
 // --- CPD CALCULATION ---
@@ -295,7 +299,29 @@ if ($use_single_template) {
         left: 50%;
         transform: translateX(-50%);
         color: #000;
-        width: 80%;
+        width: 85%;
+        text-align: center;
+    }
+    .certificate-text {
+        font-family: "Poppins-Regular", sans-serif;
+        font-size: 18px;
+        margin: 0;
+        position: absolute;
+        top: 56%;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #000;
+    }
+     .certificate-banner {
+        font-size: 18px;
+        margin: 0;
+        position: absolute;
+        top: 57%;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #000;
+        width: 100%;
+        length: 100%;
         text-align: center;
     }
     .certificate-cpd {
@@ -303,7 +329,7 @@ if ($use_single_template) {
         font-size: 18px;
         margin: 0;
         position: absolute;
-        top: 70%;
+        top: 73%;
         left: 50%;
         transform: translateX(-50%);
         color: #000;
@@ -326,6 +352,8 @@ if ($use_single_template) {
     <div class="certificate-content">
         <h1 class="certificate-name">{$firstName} {$middleInitial} {$lastName}</h1>
         <h3 class="certificate-subtitle">{$sessions_attended}</h3>
+        <p class="certificate-text">during the</p>
+        <div class = "certificate-banner"><img src="{$ptcbanner_path}" style="height:130px; margin:0;"></div>
         <p class="certificate-cpd">{$cpd_text}</p>
         <p class="certificate-date">{$certificate_date_text}</p>
     </div>
