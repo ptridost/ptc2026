@@ -264,8 +264,8 @@ $cert_check_stmt->close();
                         // --- ALWAYS SHOW BUTTONS FOR ALL YEARS ---
                         // If you want fixed years (e.g., 2023–2025), define the range explicitly:
                         //$years = [2023, 2024, 2025];
-                        $years = [2023, 2024];
-
+                        $years = [2023, 2024, 2025];
+                        
                         // Or if you want dynamic based on attended sessions, uncomment this line:
                         // $years = array_keys($attended_sessions_by_year);
 
@@ -275,7 +275,18 @@ $cert_check_stmt->close();
                             $dist_date = $settings[$dist_date_name] ?? '2030-12-31';
 
                             // Check eligibility
-                            $eligible = ($count >= 6 && $hasPRC && $dist_date <= date('Y-m-d'));
+                            // --- FEEDBACK ELIGIBILITY CHECK (NEW) ---
+                            $stmt = $dbcon->prepare("SELECT feedback_id FROM tblfeedback WHERE participant_id = ? AND YEAR(fDate) = ?");
+                            $stmt->bind_param("ii", $_SESSION['participant_id'], $year);
+                            $stmt->execute();
+                            $feedback_result = $stmt->get_result();
+                            $hasFeedback = ($feedback_result->num_rows > 0);
+                            $stmt->close();
+                            // --- END: FEEDBACK ELIGIBILITY CHECK ---
+
+                            // Make feedback requirement apply only for 2025
+                            $hasFeedbackForYear = ($year == 2025) ? $hasFeedback : true;
+                            $eligible = ($count >= 6 && $hasPRC && $dist_date <= date('Y-m-d') && $hasFeedbackForYear);
                             //$eligible = true; // TEMPORARY: force eligibility for testing
                             //$TEST_MODE = true; // For testing only
                             //if ($eligible|| $TEST_MODE) {
@@ -292,8 +303,22 @@ $cert_check_stmt->close();
                             } else {
                                 //  Not eligible → show modal with reasons
                                 $reasons = [];
-                                if ($count < 6) {
-                                    $reasons[] = "You attended $count of the required 6 sessions for $year.";
+
+                                // 2025 feedback requirement addition
+                                if ($year == 2025){
+                                    if ($count == 0 || !$hasFeedback){
+                                        $reasons[] = "No attendance/feedback submitted at the end of each session.";
+                                    }
+                                }
+                                else {
+                                    if ($count < 6) {
+                                        if ($count === 0){
+                                            $reasons[] = "No session attendance record found for $year.";
+                                        }
+                                        else{
+                                            $reasons[] = "You attended $count of the required 6 sessions for $year.";
+                                        }
+                                    }
                                 }
                                 if (!$hasPRC) {
                                     $reasons[] = "A PRC License number is required. Please use the 'Edit Profile' button to add it.";
@@ -509,7 +534,7 @@ $cert_check_stmt->close();
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Preparing Certificate</h5>
+                    <h5 class="modal-title">No Certificate Issued</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
@@ -612,7 +637,7 @@ $cert_check_stmt->close();
             // The default message, plus the specific reason
             if (reasonParagraph) {
                 reasonParagraph.innerHTML =
-                    "Please wait, we are still preparing your certificate. Availability is subject to the following: <br><br><strong class='text-danger'>" +
+                    "<br><strong class='text-danger'>" +
                     (reason || 'An unknown issue occurred.') + "</strong>";
             }
         });
