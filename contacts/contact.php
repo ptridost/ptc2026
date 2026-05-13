@@ -1,6 +1,7 @@
 <?php
+// Keep navbar context consistent with the year being viewed.
 
-$page_event_year = 2025;
+$page_event_year = isset($_GET['year']) ? (int)$_GET['year'] : null;
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -8,6 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Use a centralized database connection file
 require('../dbcon.php');
+
 
 $showAlert = false;
 
