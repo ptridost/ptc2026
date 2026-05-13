@@ -5,8 +5,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // Use a root-relative path for localhost and live server flexibility
-$base_url = '/ptc';      //localhost
-//$base_url = '';          //live server
+//$base_url = '/ptc';      //localhost
+$base_url = '';          //live server
 
 
 $year_suffix = isset($page_event_year) && $page_event_year !== null ? (string)$page_event_year : '2026';
