@@ -13,6 +13,11 @@ $alertType = '';
 $alertMessage = '';
 $redirectUrl = '';
 
+$allowed = ['PTC', 'GTC'];
+$congress_type = isset($_GET['congress_type']) && in_array($_GET['congress_type'], $allowed)
+        ? $_GET['congress_type']
+        : 'PTC'; // Default to PTC if no valid type is provided
+
 if (isset($_GET['status'])) {
     if ($_GET['status'] == 'success') {
         $showAlert = true;
@@ -62,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     $username     = $_POST['username'];
     $birthdate    = $_POST['birthdate'];
     $password     = $_POST['password'];
+    $congress_type = $_POST['congress_type'];
     $confirm_password = $_POST['confirm_password'];
     if ($password !== $confirm_password) {
         header('Location: registration.php?error=password_mismatch');
@@ -116,13 +122,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     $stmt_insert = $dbcon->prepare('INSERT INTO participant (
         firstName, middleName, lastName, Gender, birthdate, Citizenship, Country, Region, CityProvince,
         organization, position, Age, username, password, profession,
-        Chem_prc, ChemEn_prc, ChemTech_prc, MechEn_prc, AgriEn_prc, other_profession
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        Chem_prc, ChemEn_prc, ChemTech_prc, MechEn_prc, AgriEn_prc, other_profession, congress_type
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
     
-    $stmt_insert->bind_param("sssssssssssssssssssss",
+    $stmt_insert->bind_param("ssssssssssssssssssssss",
         $firstname, $middlename, $lastname, $gender, $birthdate, $citizenship, $country, $region, $cityprov,
         $organization, $position, $age, $username, $hashed_password, $profession,
-        $chem_prc, $chemen_prc, $chemtech_prc, $mech_prc, $agri_prc, $other_prof
+        $chem_prc, $chemen_prc, $chemtech_prc, $mech_prc, $agri_prc, $other_prof, $congress_type
     );
 
     if ($stmt_insert->execute()) {
@@ -164,9 +170,13 @@ $csrf_token = generate_csrf_token();
 
 
 
-        <div class="registration-info-panel">
+        <div class="registration-info-panel"> 
             <div class="info-panel__logo">
+                <?php if ($congress_type === 'GTC'): ?>
+                <img src="./GDC/assets/img/GTC_LOGO_2026_RESIZED.png" alt="GTC Logo">
+                <?php else: ?>
                 <img src="./img_outside/logo.png" alt="PTC Logo">
+                <?php endif; ?>
             </div>
             <div class="info-panel__text">
                 <h1>Join the Congress</h1>
@@ -184,6 +194,7 @@ $csrf_token = generate_csrf_token();
         <div class="registration-form-panel">
             <form action="registration.php" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                <input type="hidden" name="congress_type" value="<?= htmlspecialchars($congress_type) ?>">
                 <div class="container-fluid">
                     <div class="row gy-4">
                         <h1 class="header mb-4">Registration Form</h1>
