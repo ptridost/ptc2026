@@ -13,6 +13,7 @@ landingpageimg/*.mp4
 /node_modules
 test.bat
 /GDC/assets/videos/
+landingpageimg/2026/videos/*.mp4
 
 .env
 .env.backup
