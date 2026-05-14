@@ -25,6 +25,11 @@ if (isset($_SESSION['login_error'])) {
     $error_message = $_SESSION['login_error'];
     unset($_SESSION['login_error']); // Clear the error so it doesn't show again
 }
+
+$allowed = ['PTC', 'GTC'];
+$congress_type = isset($_GET['congress_type']) && in_array($_GET['congress_type'], $allowed)
+        ? $_GET['congress_type']
+        : 'PTC'; // Default to PTC if no valid type is provided
 ?>
 <!doctype html>
 <html lang="en">
@@ -35,7 +40,7 @@ if (isset($_SESSION['login_error'])) {
     <link rel="shortcut icon" type="image/x-icon"
         href="https://th.bing.com/th/id/OIP.gFmJnHNp6W9CRH9d587CJgHaHa?pid=ImgDet&rs=1" />
 
-    <title>Login | Philippine Textile Congress</title>
+    <title>Login | <?= $congress_type === 'GTC' ? 'Global' : 'Philippine' ?> Textile Congress</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet"
         xintegrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -54,9 +59,15 @@ if (isset($_SESSION['login_error'])) {
     <main class="container login-container">
         <div class="login-card">
             <div class="row g-0">
+                <?php if ($congress_type === 'GTC'): ?>
+                <div class="col-lg-7 justify-content-center d-flex">
+                    <img src="./GDC/assets/img/GTC_LOGO_2026_RESIZED.png" class="login-card__image" alt="Global Textile Congress Logo">
+                </div>
+                <?php else: ?>
                 <div class="col-lg-7 justify-content-center d-flex">
                     <img src="./img_outside/logo.png" class="login-card__image" alt="Philippine Textile Congress Logo">
                 </div>
+                <?php endif; ?>
                 <div class="col-lg-5">
                     <div class="login-card__form">
                         <h1 class="text-center">Login Form</h1>
