@@ -33,7 +33,7 @@ require('./dbcon.php');
 </head>
 
 
-<body>
+<body class = "ptc-2026">
 
     <?php include("header&footer/navbar.php"); // Includes the "smart" navbar ?>
     <main>
@@ -41,11 +41,14 @@ require('./dbcon.php');
         <div class="page-content-wrapper">
             <div class="container-fluid">
                 <div class="row justify-content-center">
-                    <div class="col-12">
-                        <video class="shadow-lg w-100" loop muted autoplay playsinline>
+                    <div class="col-12 position-relative">
+                        <video id = "ptc_teaser" class="shadow-lg w-100" loop muted autoplay playsinline>
                             <source src="landingpageimg/2026/videos/PTC_2026_TEASER.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
+                        <button id="muteBtn" onclick="toggleMute()" class="btn btn-dark btn-sm rounded-circle position-absolute bottom-0 end-0 m-3">
+                            <i class="fa-solid fa-volume-xmark" id="volumeIcon"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -344,6 +347,17 @@ require('./dbcon.php');
                 $(this).toggleClass('is-flipped');
             });
         });
+
+        function toggleMute() {
+            const video = document.getElementById('ptc_teaser');
+            const icon = document.getElementById('volumeIcon');
+    
+            video.muted = !video.muted;
+    
+            icon.className = video.muted 
+            ? 'fa-solid fa-volume-xmark' 
+            : 'fa-solid fa-volume-high';
+        }
     </script>
 
 
