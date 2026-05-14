@@ -8,8 +8,9 @@ if(empty($_SESSION['participant_id'])){
     exit();
 }
 
-require('../dbcon.php');
+$congress_type = $_SESSION["congress_type"];
 
+require('../dbcon.php');
 
 function getImagePath($filename, $type = 'logo') {
     if (empty($filename)) {
@@ -143,7 +144,7 @@ $cert_check_stmt->close();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon"
         href="https://th.bing.com/th/id/OIP.gFmJnHNp6W9CRH9d587CJgHaHa?pid=ImgDet&rs=1" />
-    <title>Participant Dashboard | Philippine Textile Congress</title>
+    <title>Participant Dashboard | <?= $congress_type === 'GTC' ? 'Global' : 'Philippine' ?> Textile Congress</title>
 
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" 
@@ -175,7 +176,11 @@ $cert_check_stmt->close();
         <div class="user-card-wrapper">
             <div class="user-card">
                 <div class="user-card__image-wrapper d-none d-md-block">
+                    <?php if ($congress_type === 'GTC'): ?>
+                    <img src="../GDC/assets/img/GTC_LOGO_2026_RESIZED.png" class="user-card__image" alt="Profile background image" style = "border-radius: 50%;">
+                    <?php else: ?>
                     <img src="../img_outside/ptc.png" class="user-card__image" alt="Profile background image">
+                    <?php endif; ?>
                 </div>
                 <div class="user-card__content">
                     <h2 class="user-card__name">
@@ -205,10 +210,12 @@ $cert_check_stmt->close();
                             data-bs-toggle="modal" data-bs-target="#editProfileModal">
                             <ion-icon name="person-circle-outline"></ion-icon>Edit Profile
                         </button>
+                        <?php if ($congress_type !== 'GTC'): ?>
                         <a href="viewperformance.php"
                             class="btn-ptc btn-ptc--profile btn-ptc--font-regular btn-ptc--warning">
                             <ion-icon name="document-text-outline"></ion-icon>View my Attendance
                         </a>
+                        <?php endif; ?>
                     </div>
                     <hr>
                     <div class="prc-section">
@@ -261,82 +268,87 @@ $cert_check_stmt->close();
                     ?>
                     <div class="certificate-section mt-3">
                         <?php
-                        // --- ALWAYS SHOW BUTTONS FOR ALL YEARS ---
-                        // If you want fixed years (e.g., 2023–2025), define the range explicitly:
-                        //$years = [2023, 2024, 2025];
-                        $years = [2023, 2024, 2025];
-                        
-                        // Or if you want dynamic based on attended sessions, uncomment this line:
-                        // $years = array_keys($attended_sessions_by_year);
+                        if ($congress_type == 'GTC') {
+                            echo '<h3> No Certificates Released Yet</h3>';
+                        }
+                        else {
+                            // --- ALWAYS SHOW BUTTONS FOR ALL YEARS ---
+                            // If you want fixed years (e.g., 2023–2025), define the range explicitly:
+                            //$years = [2023, 2024, 2025];
+                            $years = [2023, 2024, 2025];
+                            
+                            // Or if you want dynamic based on attended sessions, uncomment this line:
+                            // $years = array_keys($attended_sessions_by_year);
 
-                        foreach ($years as $year) {
-                            $count = $attended_sessions_by_year[$year] ?? 0;
-                            $dist_date_name = 'certificate_distribution_date_' . $year;
-                            $dist_date = $settings[$dist_date_name] ?? '2030-12-31';
+                            foreach ($years as $year) {
+                                $count = $attended_sessions_by_year[$year] ?? 0;
+                                $dist_date_name = 'certificate_distribution_date_' . $year;
+                                $dist_date = $settings[$dist_date_name] ?? '2030-12-31';
 
-                            // Check eligibility
-                            // --- FEEDBACK ELIGIBILITY CHECK (NEW) ---
-                            $stmt = $dbcon->prepare("SELECT feedback_id FROM tblfeedback WHERE participant_id = ? AND YEAR(fDate) = ?");
-                            $stmt->bind_param("ii", $_SESSION['participant_id'], $year);
-                            $stmt->execute();
-                            $feedback_result = $stmt->get_result();
-                            $hasFeedback = ($feedback_result->num_rows > 0);
-                            $stmt->close();
-                            // --- END: FEEDBACK ELIGIBILITY CHECK ---
+                                // Check eligibility
+                                // --- FEEDBACK ELIGIBILITY CHECK (NEW) ---
+                                $stmt = $dbcon->prepare("SELECT feedback_id FROM tblfeedback WHERE participant_id = ? AND YEAR(fDate) = ?");
+                                $stmt->bind_param("ii", $_SESSION['participant_id'], $year);
+                                $stmt->execute();
+                                $feedback_result = $stmt->get_result();
+                                $hasFeedback = ($feedback_result->num_rows > 0);
+                                $stmt->close();
+                                // --- END: FEEDBACK ELIGIBILITY CHECK ---
 
-                            // Make feedback requirement apply only for 2025
-                            $hasFeedbackForYear = ($year == 2025) ? $hasFeedback : true;
-                            $eligible = ($count >= 6 && $hasPRC && $dist_date <= date('Y-m-d') && $hasFeedbackForYear);
-                            //$eligible = true; // TEMPORARY: force eligibility for testing
-                            //$TEST_MODE = true; // For testing only
-                            //if ($eligible|| $TEST_MODE) {
-                            if ($eligible) {
-                                //  Eligible → direct generate button
-                                $cert_url = (defined('BASE_URL') ? BASE_URL : '') .
-                                    '/admin/certificate/generate_certificate.php?id=' . $_SESSION['participant_id'] . '&year=' . $year;
+                                // Make feedback requirement apply only for 2025
+                                $hasFeedbackForYear = ($year == 2025) ? $hasFeedback : true;
+                                $eligible = ($count >= 6 && $hasPRC && $dist_date <= date('Y-m-d') && $hasFeedbackForYear);
+                                //$eligible = true; // TEMPORARY: force eligibility for testing
+                                //$TEST_MODE = true; // For testing only
+                                //if ($eligible|| $TEST_MODE) {
+                                if ($eligible) {
+                                    //  Eligible → direct generate button
+                                    $cert_url = (defined('BASE_URL') ? BASE_URL : '') .
+                                        '/admin/certificate/generate_certificate.php?id=' . $_SESSION['participant_id'] . '&year=' . $year;
 
-                                echo '<button type="button" 
-                                        class="btn-ptc btn-ptc--profile btn-ptc--font-regular btn-ptc--primary mt-2"
-                                        onclick="window.open(\'' . $cert_url . '\')">
-                                        Generate Certificate for ' . $year . '
-                                    </button>';
-                            } else {
-                                //  Not eligible → show modal with reasons
-                                $reasons = [];
+                                    echo '<button type="button" 
+                                            class="btn-ptc btn-ptc--profile btn-ptc--font-regular btn-ptc--primary mt-2"
+                                            onclick="window.open(\'' . $cert_url . '\')">
+                                            Generate Certificate for ' . $year . '
+                                        </button>';
+                                } else {
+                                    //  Not eligible → show modal with reasons
+                                    $reasons = [];
 
-                                // 2025 feedback requirement addition
-                                if ($year == 2025){
-                                    if ($count == 0 || !$hasFeedback){
-                                        $reasons[] = "No attendance/feedback submitted at the end of each session.";
-                                    }
-                                }
-                                else {
-                                    if ($count < 6) {
-                                        if ($count === 0){
-                                            $reasons[] = "No session attendance record found for $year.";
-                                        }
-                                        else{
-                                            $reasons[] = "You attended $count of the required 6 sessions for $year.";
+                                    // 2025 feedback requirement addition
+                                    if ($year == 2025){
+                                        if ($count == 0 || !$hasFeedback){
+                                            $reasons[] = "No attendance/feedback submitted at the end of each session.";
                                         }
                                     }
-                                }
-                                if (!$hasPRC) {
-                                    $reasons[] = "A PRC License number is required. Please use the 'Edit Profile' button to add it.";
-                                }
-                                if ($dist_date > date('Y-m-d')) {
-                                    $reasons[] = "This certificate for the year $year can be downloaded starting " .
-                                                date('F j, Y', strtotime($dist_date)) . ".";
-                                }
+                                    else {
+                                        if ($count < 6) {
+                                            if ($count === 0){
+                                                $reasons[] = "No session attendance record found for $year.";
+                                            }
+                                            else{
+                                                $reasons[] = "You attended $count of the required 6 sessions for $year.";
+                                            }
+                                        }
+                                    }
+                                    if (!$hasPRC) {
+                                        $reasons[] = "A PRC License number is required. Please use the 'Edit Profile' button to add it.";
+                                    }
+                                    if ($dist_date > date('Y-m-d')) {
+                                        $reasons[] = "This certificate for the year $year can be downloaded starting " .
+                                                    date('F j, Y', strtotime($dist_date)) . ".";
+                                    }
 
-                                $reason_html = "<ul><li>" . implode("</li><li>", $reasons) . "</li></ul>";
+                                    $reason_html = "<ul><li>" . implode("</li><li>", $reasons) . "</li></ul>";
 
-                                echo '<button type="button" 
-                                        class="btn-ptc btn-ptc--profile btn-ptc--font-regular btn-ptc--secondary mt-2 mx-2"
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#exampleModal2" 
-                                        data-reason="' . htmlspecialchars($reason_html) . '">
-                                        Generate Certificate for ' . $year . '
-                                    </button>';
+                                    echo '<button type="button" 
+                                            class="btn-ptc btn-ptc--profile btn-ptc--font-regular btn-ptc--secondary mt-2 mx-2"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#exampleModal2" 
+                                            data-reason="' . htmlspecialchars($reason_html) . '">
+                                            Generate Certificate for ' . $year . '
+                                        </button>';
+                                }
                             }
                         }
                         ?>
@@ -382,6 +394,8 @@ $cert_check_stmt->close();
             </div>
             <div class="row g-4 mt-2">
                 <?php
+
+                if ($congress_type !== 'GTC') {
                 // This query finds sessions scheduled for today or any future date
                 $today_date = date('Y-m-d');
                 $stmt_upcoming = $dbcon->prepare("SELECT * FROM tblptcsession WHERE session_date >= ? ORDER BY session_date ASC, session_time ASC");
@@ -404,6 +418,9 @@ $cert_check_stmt->close();
                     echo '<div class="col-12"><p class="h4 text-center text-muted my-4">There are no upcoming sessions currently scheduled. Please check back later!</p></div>';
                 }
                 $stmt_upcoming->close();
+                } else {
+                    echo '<div class="col-12"><p class="no-session-title h4 text-center my-4">Please check back later!</p></div>';
+                }
             ?>
             </div>
         </div>
@@ -411,6 +428,21 @@ $cert_check_stmt->close();
         
 
         <div class="sessions-section">
+            <?php if ($congress_type === 'GTC'): ?>
+            <div class="sessions-header all-sessions-header">
+                <div class="d-flex align-items-center">
+                    <img src="./user_dash_img/PTClogo.jpg" alt="PTC Logo">
+                    <h1>All Sessions</h1>
+                </div>
+                <div class="btn-group btn-group-lg year-filter-group" role="group">
+                    <button id="showAll" class="btn btn-dashboard selected">All</button>
+                    <button id="show2025" class="btn btn-dashboard border-0" disabled>2026</button>
+                </div>
+                <div class="col-12 pb-3">
+                    <p class="no-session-title h4 text-center my-4">Coming soon..</p>
+                </div>
+            </div>     
+            <?php else: ?>
             <div class="sessions-header all-sessions-header">
                 <div class="d-flex align-items-center">
                     <img src="./user_dash_img/PTClogo.jpg" alt="PTC Logo">
@@ -435,6 +467,7 @@ $cert_check_stmt->close();
                     }
                 ?>
             </div>
+            <?php endif; ?>
         </div>
         <?php endif; ?>
     </main>

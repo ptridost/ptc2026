@@ -11,6 +11,8 @@
 /User_Dashboard/certificate/dompdf
 landingpageimg/*.mp4
 /node_modules
+test.bat
+/GDC/assets/videos/
 
 .env
 .env.backup

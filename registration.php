@@ -13,6 +13,11 @@ $alertType = '';
 $alertMessage = '';
 $redirectUrl = '';
 
+$allowed = ['PTC', 'GTC'];
+$congress_type = isset($_GET['congress_type']) && in_array($_GET['congress_type'], $allowed)
+        ? $_GET['congress_type']
+        : 'PTC'; // Default to PTC if no valid type is provided
+
 if (isset($_GET['status'])) {
     if ($_GET['status'] == 'success') {
         $showAlert = true;
@@ -34,7 +39,7 @@ if (isset($_GET['status'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     if (!isset($_POST['csrf_token']) || !validate_csrf_token($_POST['csrf_token'])) {
-        header('Location: registration.php?error=csrf');
+        header('Location: registration.php?error=csrf&congress_type=' . $congress_type);
         exit;
     }
 
@@ -44,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     $responseData = json_decode($verifyResponse);
 
     if (!$responseData->success) {
-        header('Location: registration.php?error=recaptcha');
+        header('Location: registration.php?error=recaptcha&congress_type=' . $congress_type);
         exit;
     }
 
@@ -62,9 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     $username     = $_POST['username'];
     $birthdate    = $_POST['birthdate'];
     $password     = $_POST['password'];
+    $congress = $_POST['congress_type'];
     $confirm_password = $_POST['confirm_password'];
     if ($password !== $confirm_password) {
-        header('Location: registration.php?error=password_mismatch');
+        header('Location: registration.php?error=password_mismatch&congress_type=' . $congress_type);
         exit;
     }
    
@@ -86,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     }
 
     if (!isAgeInRange($calculated_age, $age_range_from_form)) {
-        header('Location: registration.php?error=age_mismatch');
+        header('Location: registration.php?error=age_mismatch&congress_type=' . $congress_type);
         exit;
     }
     $organization = $_POST['organization'];
@@ -106,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
 
     if ($stmt_check->num_rows > 0) {
         $stmt_check->close();
-        header('Location: registration.php?error=username_taken');
+        header('Location: registration.php?error=username_taken&congress_type=' . $congress_type);
         exit;
     }
     $stmt_check->close();
@@ -116,21 +122,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     $stmt_insert = $dbcon->prepare('INSERT INTO participant (
         firstName, middleName, lastName, Gender, birthdate, Citizenship, Country, Region, CityProvince,
         organization, position, Age, username, password, profession,
-        Chem_prc, ChemEn_prc, ChemTech_prc, MechEn_prc, AgriEn_prc, other_profession
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+        Chem_prc, ChemEn_prc, ChemTech_prc, MechEn_prc, AgriEn_prc, other_profession, congress_type
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
     
-    $stmt_insert->bind_param("sssssssssssssssssssss",
+    $stmt_insert->bind_param("ssssssssssssssssssssss",
         $firstname, $middlename, $lastname, $gender, $birthdate, $citizenship, $country, $region, $cityprov,
         $organization, $position, $age, $username, $hashed_password, $profession,
-        $chem_prc, $chemen_prc, $chemtech_prc, $mech_prc, $agri_prc, $other_prof
+        $chem_prc, $chemen_prc, $chemtech_prc, $mech_prc, $agri_prc, $other_prof, $congress
     );
 
     if ($stmt_insert->execute()) {
         $stmt_insert->close();
-        header("Location: registration.php?status=success");
+        header("Location: registration.php?status=success&congress_type=" . $congress_type);
         exit();
     } else {
-        header('Location: registration.php?error=' . urlencode($stmt_insert->error));
+        header('Location: registration.php?error=' . urlencode($stmt_insert->error) . '&congress_type=' . $congress_type);
         exit;
     }
   
@@ -146,7 +152,7 @@ $csrf_token = generate_csrf_token();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon"
         href="https://th.bing.com/th/id/OIP.gFmJnHNp6W9CRH9d587CJgHaHa?pid=ImgDet&rs=1" />
-    <title>Philippine Textile Congress - Registration</title>
+    <title><?= $congress_type === 'GTC' ? 'Global' : 'Philippine' ?> Textile Congress - Registration</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -157,16 +163,20 @@ $csrf_token = generate_csrf_token();
     <link rel="stylesheet" type="text/css" href="./header&footer/footers.css">
 </head>
 
-<body>
+<body <?= $congress_type === 'GTC' ? 'class="gtc-2026"' : '' ?>>
     <?php include("header&footer/navbar.php"); ?>
     <div class="container registration-card">
         <!-- NEW: Left-side branding panel -->
 
 
 
-        <div class="registration-info-panel">
+        <div class="registration-info-panel"> 
             <div class="info-panel__logo">
-                <img src="./img_outside/logo.png" alt="PTC Logo">
+                <?php if ($congress_type === 'GTC'): ?>
+                <img src="./GDC/assets/img/GTC_LOGO_2026_RESIZED.png" alt="GTC Logo" style = "border-radius: 50%;">
+                <?php else: ?>
+                <img src="./img_outside/logo.png" alt="PTC Logo" style = "border-radius: 50%; max-height: 90%;">
+                <?php endif; ?>
             </div>
             <div class="info-panel__text">
                 <h1>Join the Congress</h1>
@@ -184,6 +194,7 @@ $csrf_token = generate_csrf_token();
         <div class="registration-form-panel">
             <form action="registration.php" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="<?php echo $csrf_token; ?>">
+                <input type="hidden" name="congress_type" value="<?= htmlspecialchars($congress_type) ?>">
                 <div class="container-fluid">
                     <div class="row gy-4">
                         <h1 class="header mb-4">Registration Form</h1>

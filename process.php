@@ -35,7 +35,7 @@ if (isset($_POST['submit'])) {
     // ===================================================================
 
     // A single, secure query to find a user by username
-    $stmt = $dbcon->prepare("SELECT id, password, type FROM participant WHERE username = ?");
+    $stmt = $dbcon->prepare("SELECT id, password, type, congress_type FROM participant WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -67,6 +67,7 @@ if (isset($_POST['submit'])) {
             } 
             elseif ($user['type'] === 'Participant') {
                 $_SESSION['participant_id'] = $user['id'];
+                $_SESSION['congress_type'] = $user['congress_type'];
                 header("Location: User_Dashboard/dashboard.php");
                 exit();
             }

@@ -18,6 +18,30 @@
   font-family: MelodyMedium;
   src: url(fonts/BLMelody-Medium.otf);
 }
+@font-face {
+  font-family: Newake;
+  src: url(fonts/NewakeFont-Demo.otf);
+}
+@font-face {
+  font-family: TTHovesExtrabold;
+  src: url(fonts/TTHoves-ExtraBold.ttf) format('truetype');
+}
+@font-face {
+  font-family: TTHovesBold;
+  src: url(fonts/TTHoves-Bold.ttf) format('truetype');
+}
+@font-face {
+  font-family: TTHovesSemibold;
+  src: url(fonts/TTHoves-SemiBold.ttf) format('truetype');
+}
+@font-face {
+  font-family: TTHovesRegular;
+  src: url(fonts/TTHoves-Regular.ttf) format('truetype');
+}
+@font-face {
+  font-family: TTHovesLight;
+  src: url(fonts/TTHoves-Light.ttf) format('truetype');
+}
 
 .banner {
   margin-top: 100px;
@@ -71,6 +95,50 @@ video {
   font-size: 17px;
   color: #000000;
 }
+
+/* 2026 edition */
+
+.gtc-2026 .bannerp1 .info {
+  font-family: Newake;
+  margin-left: 0%;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 22px;
+  letter-spacing: 0.1em;
+}
+.gtc-2026 .bannerp1 .info h1 {
+  letter-spacing: 0.1em;
+  font-family: Newake;
+  font-size: 40px;
+  font-weight: 700;
+}
+.gtc-2026 .bannerp1 .info p {
+  font-family: TThovesBold;
+  font-size: 17px;
+  color: #000000;
+  letter-spacing: 0.05em;
+}
+
+.ptc-2026 .bannerp1 .info {
+  font-family: TTHovesRegular;
+  margin-left: 0%;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 22px;
+  letter-spacing: 0.1em;
+}
+.ptc-2026 .bannerp1 .info h1 {
+  letter-spacing: 0.05em;
+  font-family: TThovesExtrabold;
+  font-size: 40px;
+}
+.ptc-2026 .bannerp1 .info p {
+  font-family: TTHovesRegular;
+  font-size: 17px;
+  color: #000000;
+}
+/* End 2026 edition*/
+
 #btn1 {
   margin-top: 20px;
   padding: 15px 25px 15px 25px;

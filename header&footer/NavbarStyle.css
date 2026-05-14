@@ -30,6 +30,23 @@
   width: auto;
 }
 
+#gtc-logo {
+    max-height: 70px;
+    width: auto;
+}
+
+.main-navbar .navbar-brand { 
+  display:flex; 
+  align-items:center; 
+  justify-content:center; 
+}
+
+.main-navbar > .container { 
+  display:flex; 
+  align-items:center; 
+  justify-content:center; 
+}
+
 /* --- 3. Navigation Links --- */
 .main-navbar .nav-link {
   font-family: "MelodyBold", sans-serif;
@@ -151,7 +168,38 @@
   box-shadow: none !important;
 }
 
+/* Brand logos layout (side-by-side + centered) */
+.main-navbar .nav-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.main-navbar .nav-brand .navbar-brand {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure divider spans vertically */
+.main-navbar .nav-brand .vr {
+  height: 60px;
+  width: 1px;
+  background-color: currentColor;
+  opacity: 0.8;
+}
+
+.navbar-brand:hover {
+  background-color: rgba(0, 0, 0, 0.05); /* darkens whatever is behind it */
+  border-radius: 4px; /* optional, rounds the corners */
+  transition: background-color 0.2s ease;
+}
+
 @media (max-width: 991px) {
+
   /* This centers the main links like HOME, PROGRAMME, etc. */
   .main-navbar .navbar-nav {
     align-items: center;
@@ -170,5 +218,17 @@
   .main-navbar .navbar-nav.ms-auto .nav-item {
     display: flex;
     justify-content: center;
+  }
+
+  #gtc-logo {
+    max-height: 40px;
+  }
+
+  #logog {
+    max-height: 40px;
+  }
+
+  .vr {
+    height: 40px !important;
   }
 }

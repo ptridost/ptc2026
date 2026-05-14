@@ -42,6 +42,17 @@ body {
 
   text-align: center;
 }
+
+.gtc-2026 .registration-info-panel {
+  background: #071132;
+  color: #fff;
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+
+  text-align: center;
+}
+
 .registration-info-panel h1 {
   font-family: "MelodyBold";
   font-size: 2.5rem;
