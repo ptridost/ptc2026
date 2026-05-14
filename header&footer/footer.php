@@ -74,7 +74,7 @@
 
         
         <div class=" d-flex justify-content-center" id="copyright">
-          <p class="text-white"> ©2025 Philippine Textile Congress. All Rights Reserved.</p>
+          <p class="text-white"> ©2026 Philippine Textile Congress. All Rights Reserved.</p>
           <a href="#" style="text-decoration: none;"></a>
         </div>
 
