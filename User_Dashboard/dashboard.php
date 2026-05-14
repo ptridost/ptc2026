@@ -144,7 +144,7 @@ $cert_check_stmt->close();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon"
         href="https://th.bing.com/th/id/OIP.gFmJnHNp6W9CRH9d587CJgHaHa?pid=ImgDet&rs=1" />
-    <title>Participant Dashboard | Philippine Textile Congress</title>
+    <title>Participant Dashboard | <?= $congress_type === 'GTC' ? 'Global' : 'Philippine' ?> Textile Congress</title>
 
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" 
