@@ -48,8 +48,12 @@ usually via a form submission or an AJAX call. Running an UPDATE on every page l
 ?>
 <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light user-nav">
     <div class="container-fluid">
-        <a href="<?php echo $base_url; ?>/index2025.php">
+        <a href="<?php echo $base_url; ?>/index2026.php">
+            <?php if ((string)$congress_type === 'GTC') : ?>
+            <img src="<?php echo $base_url; ?>/GDC/assets/img/GTC_LOGO_2026.png" alt="GTC Logo" class="user-nav__logo" style = "max-height:70px;">
+            <?php else: ?>
             <img src="<?php echo $base_url; ?>/nav&foot_logo/navlogo.png" alt="PTC Logo" class="user-nav__logo">
+            <?php endif; ?>
         </a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarUserContent"
