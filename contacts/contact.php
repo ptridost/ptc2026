@@ -2,6 +2,7 @@
 // Keep navbar context consistent with the year being viewed.
 
 $page_event_year = isset($_GET['year']) ? (int)$_GET['year'] : null;
+$congress_type = isset($_GET['congress_type']) ? (string)$_GET['congress_type'] : null;
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();

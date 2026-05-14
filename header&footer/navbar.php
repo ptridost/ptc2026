@@ -10,7 +10,10 @@ $base_url = '';          //live server
 
 
 $year_suffix = isset($page_event_year) && $page_event_year !== null ? (string)$page_event_year : '2026';
-
+$congress_type = $_SESSION['congress_type'] ?? ($_GET['congress_type'] ?? ($congress_type ?? 'PTC'));
+if (isset($congress_type) && $congress_type !== null) {
+    $congress_type = (string)$congress_type;
+}
 
 $user_firstname = null;
 if (isset($_SESSION['participant_id'])) {
@@ -49,7 +52,7 @@ if (isset($_SESSION['participant_id'])) {
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link"
-                        href="<?php echo $base_url; ?>/index<?php echo $year_suffix; ?>.php">HOME</a></li>
+                        href="<?php echo $base_url; ?>/<?php echo $congress_type === 'GTC' ? 'gtc2026.php' : 'index' . $year_suffix . '.php'; ?>">HOME</a></li>
 
                 <?php if ((string) $year_suffix !== '2026'): ?>
                     <li class="nav-item"><a class="nav-link"
@@ -57,6 +60,7 @@ if (isset($_SESSION['participant_id'])) {
                     <li class="nav-item"><a class="nav-link"
                             href="<?php echo $base_url; ?>/speakersPage<?php echo $year_suffix; ?>.php">SPEAKERS</a></li>
                 <?php endif; ?>
+                <?php if ($congress_type !== 'GTC'): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                         data-bs-toggle="dropdown" data-bs-auto-close="outside">PAST EVENTS</a>
@@ -67,8 +71,9 @@ if (isset($_SESSION['participant_id'])) {
                         <li><a class="dropdown-item" href="<?php echo $base_url; ?>/index2022.php">2022 PTC</a></li>
                     </ul>
                 </li>
+                <?php endif; ?>
                 <li class="nav-item"><a class="nav-link"
-                        href="<?php echo $base_url; ?>/contacts/contact.php?year=<?php echo urlencode($year_suffix); ?>">CONTACTS</a>
+                    href="<?php echo $base_url; ?>/contacts/contact.php?year=<?php echo urlencode($year_suffix); ?>&congress_type=<?php echo $congress_type; ?>">CONTACTS</a>
                 </li>
                 <?php if ((string) $year_suffix !== '2026'): ?>
                     <li class="nav-item">
@@ -99,14 +104,14 @@ if (isset($_SESSION['participant_id'])) {
                     <li class="nav-item"><a class="nav-link" href="<?php echo $base_url; ?>/logout.php">Logout</a></li>
                 <?php else: ?>
                     <li class="nav-item">
-                        <button onclick="window.location.href='<?php echo $base_url; ?>/Loginn.php';" type="button"
+                        <button onclick="window.location.href='<?php echo $base_url; ?>/Loginn.php?congress_type=<?php echo urlencode($congress_type); ?>'" type="button"
                             class="btn-nav-action btn-nav-action--primary">
                             <span class="buttontext">LOGIN</span>
                             <span class="buttonicon"><i class="fa-solid fa-user-plus"></i></span>
                         </button>
                     </li>
                     <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-                        <button onclick="window.location.href='<?php echo $base_url; ?>/registration.php';" type="button"
+                        <button onclick="window.location.href='<?php echo $base_url; ?>/registration.php?congress_type=<?php echo urlencode($congress_type); ?>'" type="button"
                             class="btn-nav-action btn-nav-action--danger">
                             <span class="buttontext">REGISTER</span>
                             <span class="buttonicon"><i class="fa-solid fa-qrcode fa-lg"></i></span>

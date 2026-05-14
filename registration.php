@@ -39,7 +39,7 @@ if (isset($_GET['status'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     if (!isset($_POST['csrf_token']) || !validate_csrf_token($_POST['csrf_token'])) {
-        header('Location: registration.php?error=csrf');
+        header('Location: registration.php?error=csrf&congress_type=' . $congress_type);
         exit;
     }
 
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     $responseData = json_decode($verifyResponse);
 
     if (!$responseData->success) {
-        header('Location: registration.php?error=recaptcha');
+        header('Location: registration.php?error=recaptcha&congress_type=' . $congress_type);
         exit;
     }
 
@@ -67,10 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     $username     = $_POST['username'];
     $birthdate    = $_POST['birthdate'];
     $password     = $_POST['password'];
-    $congress_type = $_POST['congress_type'];
+    $congress = $_POST['congress_type'];
     $confirm_password = $_POST['confirm_password'];
     if ($password !== $confirm_password) {
-        header('Location: registration.php?error=password_mismatch');
+        header('Location: registration.php?error=password_mismatch&congress_type=' . $congress_type);
         exit;
     }
    
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     }
 
     if (!isAgeInRange($calculated_age, $age_range_from_form)) {
-        header('Location: registration.php?error=age_mismatch');
+        header('Location: registration.php?error=age_mismatch&congress_type=' . $congress_type);
         exit;
     }
     $organization = $_POST['organization'];
@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
 
     if ($stmt_check->num_rows > 0) {
         $stmt_check->close();
-        header('Location: registration.php?error=username_taken');
+        header('Location: registration.php?error=username_taken&congress_type=' . $congress_type);
         exit;
     }
     $stmt_check->close();
@@ -128,15 +128,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
     $stmt_insert->bind_param("ssssssssssssssssssssss",
         $firstname, $middlename, $lastname, $gender, $birthdate, $citizenship, $country, $region, $cityprov,
         $organization, $position, $age, $username, $hashed_password, $profession,
-        $chem_prc, $chemen_prc, $chemtech_prc, $mech_prc, $agri_prc, $other_prof, $congress_type
+        $chem_prc, $chemen_prc, $chemtech_prc, $mech_prc, $agri_prc, $other_prof, $congress
     );
 
     if ($stmt_insert->execute()) {
         $stmt_insert->close();
-        header("Location: registration.php?status=success");
+        header("Location: registration.php?status=success&congress_type=" . $congress_type);
         exit();
     } else {
-        header('Location: registration.php?error=' . urlencode($stmt_insert->error));
+        header('Location: registration.php?error=' . urlencode($stmt_insert->error) . '&congress_type=' . $congress_type);
         exit;
     }
   
