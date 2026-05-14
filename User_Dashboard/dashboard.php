@@ -177,7 +177,7 @@ $cert_check_stmt->close();
             <div class="user-card">
                 <div class="user-card__image-wrapper d-none d-md-block">
                     <?php if ($congress_type === 'GTC'): ?>
-                    <img src="../img_outside/ptc.png" class="user-card__image" alt="Profile background image">
+                    <img src="../GDC/assets/img/GTC_LOGO_2026_RESIZED.png" class="user-card__image" alt="Profile background image" style = "border-radius: 50%;">
                     <?php else: ?>
                     <img src="../img_outside/ptc.png" class="user-card__image" alt="Profile background image">
                     <?php endif; ?>
