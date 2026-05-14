@@ -1,5 +1,6 @@
 <?php
 $page_event_year = 2026; 
+$congress_type = 'GTC';
 
 // CHANGE 1 of 3: Added the session_start() command to the very top of the file.
 if (session_status() === PHP_SESSION_NONE) {
@@ -19,7 +20,7 @@ require('./dbcon.php');
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <link rel="shortcut icon" type="image/x-icon"
         href="https://th.bing.com/th/id/OIP.gFmJnHNp6W9CRH9d587CJgHaHa?pid=ImgDet&rs=1" />
-    <title>Philippine Textile Congress</title>
+    <title>Global Textile Congress</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -33,7 +34,7 @@ require('./dbcon.php');
 </head>
 
 
-<body>
+<body class = 'gtc-2026'>
 
     <?php include("header&footer/navbar.php"); // Includes the "smart" navbar ?>
     <main>
@@ -41,11 +42,14 @@ require('./dbcon.php');
         <div class="page-content-wrapper pb-5">
             <div class="container-fluid">
                 <div class="row justify-content-center">
-                    <div class="col-12">
-                        <video class="shadow-lg w-100" loop muted autoplay playsinline>
+                    <div class="col-12 position-relative">
+                        <video id = "gtc_teaser" class="shadow-lg w-100" loop muted autoplay playsinline>
                             <source src="GDC/assets/videos/GTC_2026_TEASER_FINAL.mp4" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
+                        <button id="muteBtn" onclick="toggleMute()" class="btn btn-dark btn-sm rounded-circle position-absolute bottom-0 end-0 m-3">
+                            <i class="fa-solid fa-volume-xmark" id="volumeIcon"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -86,8 +90,8 @@ require('./dbcon.php');
                     </div>
                     -->
                     <div class="info pt-5 text-center">
-                        <h1> <span style="color:#BB121B">Global</span>
-                            <span style="color:#163180">Textile </span><span style="color:#EFC130">Congress</span>
+                        <h1> <span style="color:#1185A8">Global</span>
+                            <span style="color:#D89B00">Textile </span><span style="color:#00963A">Congress</span>
                         </h1>
                         <p> A platform for researchers, students, creatives, industry partners, and textile experts to
                             converge,converse and collaborate to spur innovation in textiles.</p>
@@ -347,6 +351,18 @@ require('./dbcon.php');
             $(this).toggleClass('is-flipped');
         });
     });
+
+    function toggleMute() {
+        const video = document.getElementById('gtc_teaser');
+        const icon = document.getElementById('volumeIcon');
+        
+        video.muted = !video.muted;
+        
+        icon.className = video.muted 
+            ? 'fa-solid fa-volume-xmark' 
+            : 'fa-solid fa-volume-high';
+    }
+
     </script>
 
 
