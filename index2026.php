@@ -92,7 +92,7 @@ require('./dbcon.php');
                         </h1>
                         <p> A platform for researchers, students, creatives, industry partners, and textile experts to
                             converge,converse and collaborate to spur innovation in Philippine textiles.</p>
-                        <center><a href="registration.php" target="_blank" class="btn btn-md text-center"
+                        <center><a href="registration.php?congress_type=PTC" target="_blank" class="btn btn-md text-center"
                                 id="btn1"><span>REGISTER NOW</span></a></center>
 
                         <script>
