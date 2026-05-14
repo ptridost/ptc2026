@@ -152,7 +152,7 @@ $csrf_token = generate_csrf_token();
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/x-icon"
         href="https://th.bing.com/th/id/OIP.gFmJnHNp6W9CRH9d587CJgHaHa?pid=ImgDet&rs=1" />
-    <title>Philippine Textile Congress - Registration</title>
+    <title><?= $congress_type === 'GTC' ? 'Global' : 'Philippine' ?> Textile Congress - Registration</title>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -163,7 +163,7 @@ $csrf_token = generate_csrf_token();
     <link rel="stylesheet" type="text/css" href="./header&footer/footers.css">
 </head>
 
-<body>
+<body <?= $congress_type === 'GTC' ? 'class="gtc-2026"' : '' ?>>
     <?php include("header&footer/navbar.php"); ?>
     <div class="container registration-card">
         <!-- NEW: Left-side branding panel -->
@@ -173,9 +173,9 @@ $csrf_token = generate_csrf_token();
         <div class="registration-info-panel"> 
             <div class="info-panel__logo">
                 <?php if ($congress_type === 'GTC'): ?>
-                <img src="./GDC/assets/img/GTC_LOGO_2026_RESIZED.png" alt="GTC Logo">
+                <img src="./GDC/assets/img/GTC_LOGO_2026_RESIZED.png" alt="GTC Logo" style = "border-radius: 50%;">
                 <?php else: ?>
-                <img src="./img_outside/logo.png" alt="PTC Logo">
+                <img src="./img_outside/logo.png" alt="PTC Logo" style = "border-radius: 50%; max-height: 90%;">
                 <?php endif; ?>
             </div>
             <div class="info-panel__text">
