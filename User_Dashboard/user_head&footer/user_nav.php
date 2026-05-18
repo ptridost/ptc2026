@@ -5,9 +5,6 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/../../dbcon.php'; // Corrected path example
 
-// Add the base_url variable
-$base_url = ''; 
-
 // Use the single, consistent database connection
 // Make sure the path to dbcon.php is correct from where this file is included.
 // require_once __DIR__ . '/dbcon.php'; // Example of a more robust include
@@ -48,11 +45,11 @@ usually via a form submission or an AJAX call. Running an UPDATE on every page l
 ?>
 <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light user-nav">
     <div class="container-fluid">
-        <a href="<?php echo $base_url; ?>/index2026.php">
+        <a href="<?php echo BASE_PATH; ?>/index2026.php">
             <?php if ((string)$congress_type === 'GTC') : ?>
-            <img src="<?php echo $base_url; ?>/GDC/assets/img/GTC_LOGO_2026.png" alt="GTC Logo" class="user-nav__logo" style = "max-height:70px;">
+            <img src="<?php echo BASE_PATH; ?>/GDC/assets/img/GTC_LOGO_2026.png" alt="GTC Logo" class="user-nav__logo" style = "max-height:70px;">
             <?php else: ?>
-            <img src="<?php echo $base_url; ?>/nav&foot_logo/navlogo.png" alt="PTC Logo" class="user-nav__logo">
+            <img src="<?php echo BASE_PATH; ?>/nav&foot_logo/navlogo.png" alt="PTC Logo" class="user-nav__logo">
             <?php endif; ?>
         </a>
 
@@ -82,17 +79,17 @@ usually via a form submission or an AJAX call. Running an UPDATE on every page l
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle user-nav__profile" href="#" id="userDropdown" role="button"
                         data-bs-toggle="dropdown" aria-expanded="false">
-                        <img class="user-nav__avatar" src="<?php echo $base_url; ?>/user_profile/user.png"
+                        <img class="user-nav__avatar" src="<?php echo BASE_PATH; ?>/user_profile/user.png"
                             alt="User Avatar">
                         <span class="user-nav__name"><?php echo $user_name; ?></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="<?php echo $base_url; ?>/User_Dashboard/dashboard.php"><i
+                        <li><a class="dropdown-item" href="<?php echo BASE_PATH; ?>/User_Dashboard/dashboard.php"><i
                                     class="fa fa-clipboard"></i> Dashboard</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="<?php echo $base_url; ?>/logout.php" name="logout"><i
+                        <li><a class="dropdown-item" href="<?php echo BASE_PATH; ?>/logout.php" name="logout"><i
                                     class="fa fa-sign-out"></i> Logout</a></li>
                     </ul>
                 </li>

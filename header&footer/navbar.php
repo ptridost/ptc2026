@@ -4,10 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Use a root-relative path for localhost and live server flexibility
-//$base_url = '/ptc';      //localhost
-$base_url = '';          //live server
-
+ require_once(dirname(__DIR__) . '/config.php');
 
 $year_suffix = isset($page_event_year) && $page_event_year !== null ? (string)$page_event_year : '2026';
 $congress_type = $_SESSION['congress_type'] ?? ($_GET['congress_type'] ?? ($congress_type ?? 'PTC'));
@@ -32,17 +29,18 @@ if (isset($_SESSION['participant_id'])) {
     <div class="container">
         <?php if ((string) $year_suffix === '2026'): ?>
             <div class="nav-brand">
-                <a class="navbar-brand" href="<?php echo $base_url; ?>/gtc2026.php">
-                    <img src="<?php echo $base_url; ?>/GDC/assets/img/GTC_LOGO_2026.png" id="gtc-logo" alt="GTC Logo">
+                <?php //var_dump($congress_type); // type checker for debugging?>
+                <a class="navbar-brand" href="<?php echo BASE_PATH; ?>/gtc2026.php">
+                    <img src="<?php echo BASE_PATH; ?>/GDC/assets/img/GTC_LOGO_2026.png" id="gtc-logo" alt="GTC Logo">
                 </a>
                 <div class="vr" style="width: 2px; height: 70px;"></div>
-                <a class="navbar-brand" href="<?php echo $base_url; ?>/index2026.php">
-                    <img src="<?php echo $base_url; ?>/img_outside/navlogo.png" id="logog" alt="PTC Logo">
+                <a class="navbar-brand" href="<?php echo BASE_PATH; ?>/index2026.php">
+                    <img src="<?php echo BASE_PATH; ?>/img_outside/navlogo.png" id="logog" alt="PTC Logo">
                 </a>
             </div>
         <?php else: ?>
-            <a class="navbar-brand" href="<?php echo $base_url; ?>/index2026.php">
-                <img src="<?php echo $base_url; ?>/img_outside/navlogo.png" id="logog" alt="PTC Logo">
+            <a class="navbar-brand" href="<?php echo BASE_PATH; ?>/index2026.php">
+                <img src="<?php echo BASE_PATH; ?>/img_outside/navlogo.png" id="logog" alt="PTC Logo">
             </a>
         <?php endif; ?>
 
@@ -52,31 +50,31 @@ if (isset($_SESSION['participant_id'])) {
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link"
-                        href="<?php echo $base_url; ?>/<?php echo $congress_type === 'GTC' ? 'gtc2026.php' : 'index' . $year_suffix . '.php'; ?>">HOME</a></li>
+                        href="<?php echo BASE_PATH; ?>/<?php echo $congress_type === 'GTC' ? 'gtc2026.php' : 'index' . $year_suffix . '.php'; ?>">HOME</a></li>
 
                 <?php if ((string) $year_suffix !== '2026'): ?>
                     <li class="nav-item"><a class="nav-link"
-                            href="<?php echo $base_url; ?>/programme<?php echo $year_suffix; ?>.php">PROGRAMME</a></li>
+                            href="<?php echo BASE_PATH; ?>/programme<?php echo $year_suffix; ?>.php">PROGRAMME</a></li>
                     <li class="nav-item"><a class="nav-link"
-                            href="<?php echo $base_url; ?>/speakersPage<?php echo $year_suffix; ?>.php">SPEAKERS</a></li>
+                            href="<?php echo BASE_PATH; ?>/speakersPage<?php echo $year_suffix; ?>.php">SPEAKERS</a></li>
                 <?php endif; ?>
                 <?php if ($congress_type !== 'GTC'): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button">PAST EVENTS</a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="<?php echo $base_url; ?>/index2025.php">2025 PTC</a></li>
-                        <li><a class="dropdown-item" href="<?php echo $base_url; ?>/index2024.php">2024 PTC</a></li>
-                        <li><a class="dropdown-item" href="<?php echo $base_url; ?>/index2023.php">2023 PTC</a></li>
-                        <li><a class="dropdown-item" href="<?php echo $base_url; ?>/index2022.php">2022 PTC</a></li>
+                        <li><a class="dropdown-item" href="<?php echo BASE_PATH; ?>/index2025.php">2025 PTC</a></li>
+                        <li><a class="dropdown-item" href="<?php echo BASE_PATH; ?>/index2024.php">2024 PTC</a></li>
+                        <li><a class="dropdown-item" href="<?php echo BASE_PATH; ?>/index2023.php">2023 PTC</a></li>
+                        <li><a class="dropdown-item" href="<?php echo BASE_PATH; ?>/index2022.php">2022 PTC</a></li>
                     </ul>
                 </li>
                 <?php endif; ?>
                 <li class="nav-item"><a class="nav-link"
-                    href="<?php echo $base_url; ?>/contacts/contact.php?year=<?php echo urlencode($year_suffix); ?>&congress_type=<?php echo $congress_type; ?>">CONTACTS</a>
+                    href="<?php echo BASE_PATH; ?>/contacts/contact.php?year=<?php echo urlencode($year_suffix); ?>&congress_type=<?php echo $congress_type; ?>">CONTACTS</a>
                 </li>
                 <?php if ((string) $year_suffix !== '2026'): ?>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?php echo $base_url; ?>/analytics.php">STATISTICS</a>
+                        <a class="nav-link" href="<?php echo BASE_PATH; ?>/analytics.php">STATISTICS</a>
                     </li>
                 <?php endif; ?>
             </ul>
@@ -89,28 +87,28 @@ if (isset($_SESSION['participant_id'])) {
                             Hi, <?php echo htmlspecialchars($user_firstname); ?>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="<?php echo $base_url; ?>/User_Dashboard/dashboard.php">My
+                            <li><a class="dropdown-item" href="<?php echo BASE_PATH; ?>/User_Dashboard/dashboard.php">My
                                     Dashboard</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
-                            <li><a class="dropdown-item" href="<?php echo $base_url; ?>/logout.php">Logout</a></li>
+                            <li><a class="dropdown-item" href="<?php echo BASE_PATH; ?>/logout.php">Logout</a></li>
                         </ul>
                     </li>
                 <?php elseif (isset($_SESSION['admin_id'])): ?>
-                    <li class="nav-item"><a class="nav-link" href="<?php echo $base_url; ?>/admin/admindashboard.php">Admin
+                    <li class="nav-item"><a class="nav-link" href="<?php echo BASE_PATH; ?>/admin/admindashboard.php">Admin
                             Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="<?php echo $base_url; ?>/logout.php">Logout</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo BASE_PATH; ?>/logout.php">Logout</a></li>
                 <?php else: ?>
                     <li class="nav-item">
-                        <button onclick="window.location.href='<?php echo $base_url; ?>/Loginn.php?congress_type=<?php echo urlencode($congress_type); ?>'" type="button"
+                        <button onclick="window.location.href='<?php echo BASE_PATH; ?>/Loginn.php?congress_type=<?php echo urlencode($congress_type); ?>'" type="button"
                             class="btn-nav-action btn-nav-action--primary">
                             <span class="buttontext">LOGIN</span>
                             <span class="buttonicon"><i class="fa-solid fa-user-plus"></i></span>
                         </button>
                     </li>
                     <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
-                        <button onclick="window.location.href='<?php echo $base_url; ?>/registration.php?congress_type=<?php echo urlencode($congress_type); ?>'" type="button"
+                        <button onclick="window.location.href='<?php echo BASE_PATH; ?>/registration.php?congress_type=<?php echo urlencode($congress_type); ?>'" type="button"
                             class="btn-nav-action btn-nav-action--danger">
                             <span class="buttontext">REGISTER</span>
                             <span class="buttonicon"><i class="fa-solid fa-qrcode fa-lg"></i></span>
