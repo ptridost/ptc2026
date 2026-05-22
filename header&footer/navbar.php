@@ -69,6 +69,9 @@ if (isset($_SESSION['participant_id'])) {
                     </ul>
                 </li>
                 <?php endif; ?>
+                 <li class="nav-item"><a class="nav-link"
+                    href="https://forms.gle/xPfojgA5wMgcUw9e6" target="_blank">ABSTRACT SUBMISSION</a>
+                </li>
                 <li class="nav-item"><a class="nav-link"
                     href="<?php echo BASE_PATH; ?>/contacts/contact.php?year=<?php echo urlencode($year_suffix); ?>&congress_type=<?php echo $congress_type; ?>">CONTACTS</a>
                 </li>
