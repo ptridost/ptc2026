@@ -206,9 +206,6 @@ $stmt_feedback->close();
 // Calculate CPD points based on profession, session count, and feedback
 $profession_raw = $row['profession'] ?? '';
 $profession_list = array_filter(array_map('trim', explode(',', $profession_raw)));
-$cpd_text = "";
-$cpd_points = 0;
-$profession = '';
 
 $cpd_map = [
     'Chemical Engineer' => 25,
@@ -216,150 +213,164 @@ $cpd_map = [
     'Chemist' => 22,
 ];
 
+
+$certificates = [];
 if ($feedback_submitted) {
     foreach ($profession_list as $prof) {
         $prof_normalized = ucwords(strtolower($prof));
         if (isset($cpd_map[$prof_normalized])) {
-            $profession = $prof_normalized;
-            $cpd_points = $sessions_count >= 9 ? $cpd_map[$profession] : $sessions_count;
-            $cpd_text = "and has earned a total of <b>[ {$cpd_points} ] CPD units</b> applicable for {$profession}s";
-            break;
+            $cpd_points = $sessions_count >= 9 ? $cpd_map[$prof_normalized] : $sessions_count;
+            $cpd_text = "and has earned a total of <b>[ {$cpd_points} ] CPD units</b> applicable for {$prof_normalized}s";
+            $certificates[] = ['cpd_text' => $cpd_text];
         }
     }
 }
+
+if (empty($certificates))
+    {
+        $certificates[] = ['cpd_text' => ''];
+    }
 
 // --- END of new code ---
 
 
 // The main certificate HTML. Notice how clean and easy to read this is.
 if ($use_single_template) {
+    $first = true;
+    $html = '
+    <html>
+        <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <style>
+            @page { margin: 0; }
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                height: 100%;
+            }
+            @font-face {
+                font-family: "Poppins-Regular";
+                src: url("../../fonts/Poppins-Regular.ttf") format("truetype");
+            }
+            @font-face {
+                font-family: "Poppins-Bold";
+                src: url("../../fonts/Poppins-Bold.ttf") format("truetype");
+            }
+            body {
+                font-family: "Poppins-Regular", sans-serif;
+                position: relative;
+                width: 100%;
+                height: 100%;
+            }
+            .background-image {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                z-index: 0;
+            }
+            .certificate-content {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 1;
+            }
+            .certificate-name {
+                font-family: "Poppins-Bold", sans-serif;
+                font-size: 39px;
+                margin: 0;
+                line-height: 1.0;
+                position: absolute;
+                top: 25%;
+                left: 50%;
+                transform: translateX(-50%);
+                color: #000;
+                width: 80%;
+                text-align: center;
+            }
+            .certificate-subtitle {
+                font-family: "Poppins-Bold", sans-serif;
+                font-size: 18px;
+                margin: 0;
+                position: absolute;
+                top: 39%;
+                left: 50%;
+                transform: translateX(-50%);
+                color: #000;
+                width: 85%;
+                text-align: center;
+            }
+            .certificate-text {
+                font-family: "Poppins-Regular", sans-serif;
+                font-size: 18px;
+                margin: 0;
+                position: absolute;
+                top: 58%;
+                left: 50%;
+                transform: translateX(-50%);
+                color: #000;
+            }
+            .certificate-banner {
+                font-size: 18px;
+                margin: 0;
+                position: absolute;
+                top: 58%;
+                left: 50%;
+                transform: translateX(-50%);
+                color: #000;
+                width: 100%;
+                length: 100%;
+                text-align: center;
+            }
+            .certificate-cpd {
+                font-family: "Poppins-Regular", sans-serif;
+                font-size: 18px;
+                margin: 0;
+                position: absolute;
+                top: 73%;
+                left: 50%;
+                transform: translateX(-50%);
+                color: #000;
+            }
+            .certificate-date {
+                font-size: 18px;
+                margin: 0;
+                position: absolute;
+                top: 78%;
+                left: 50%;
+                transform: translateX(-50%);
+                color: #000;
+                width: 80%;
+                text-align: center;
+            }
+        </style>
+        </head>
+        <body>';
+
+    foreach ($certificates as $cert) {
+        $cpd_text = $cert['cpd_text'];
+        $page_break = $first ? '' : '<div style="page-break-before: always;"></div>';
+        $first = false;
     // 2025: Single template with overlaid text
-    $html = <<<HTML
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<style>
-    @page { margin: 0; }
-    html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
+        $html .= <<<HTML
+        {$page_break}
+            <img class="background-image" src="{$background_path}" alt="Certificate background">
+            <div class="certificate-content">
+                <h1 class="certificate-name">{$firstName} {$middleInitial} {$lastName}</h1>
+                <h3 class="certificate-subtitle">{$sessions_attended}</h3>
+                <p class="certificate-text">during the</p>
+                <div class = "certificate-banner"><img src="{$ptcbanner_path}" style="height:130px; margin:0;"></div>
+                <p class="certificate-cpd">{$cpd_text}</p>
+                <p class="certificate-date">{$certificate_date_text}</p>
+            </div>
+        HTML;
     }
-    @font-face {
-        font-family: "Poppins-Regular";
-        src: url("../../fonts/Poppins-Regular.ttf") format("truetype");
-    }
-    @font-face {
-        font-family: "Poppins-Bold";
-        src: url("../../fonts/Poppins-Bold.ttf") format("truetype");
-    }
-    body {
-        font-family: "Poppins-Regular", sans-serif;
-        position: relative;
-        width: 100%;
-        height: 100%;
-    }
-    .background-image {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        z-index: 0;
-    }
-    .certificate-content {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-    }
-    .certificate-name {
-        font-family: "Poppins-Bold", sans-serif;
-        font-size: 39px;
-        margin: 0;
-        line-height: 1.0;
-        position: absolute;
-        top: 25%;
-        left: 50%;
-        transform: translateX(-50%);
-        color: #000;
-        width: 80%;
-        text-align: center;
-    }
-    .certificate-subtitle {
-        font-family: "Poppins-Bold", sans-serif;
-        font-size: 18px;
-        margin: 0;
-        position: absolute;
-        top: 41%;
-        left: 50%;
-        transform: translateX(-50%);
-        color: #000;
-        width: 85%;
-        text-align: center;
-    }
-    .certificate-text {
-        font-family: "Poppins-Regular", sans-serif;
-        font-size: 18px;
-        margin: 0;
-        position: absolute;
-        top: 56%;
-        left: 50%;
-        transform: translateX(-50%);
-        color: #000;
-    }
-     .certificate-banner {
-        font-size: 18px;
-        margin: 0;
-        position: absolute;
-        top: 57%;
-        left: 50%;
-        transform: translateX(-50%);
-        color: #000;
-        width: 100%;
-        length: 100%;
-        text-align: center;
-    }
-    .certificate-cpd {
-        font-family: "Poppins-Regular", sans-serif;
-        font-size: 18px;
-        margin: 0;
-        position: absolute;
-        top: 73%;
-        left: 50%;
-        transform: translateX(-50%);
-        color: #000;
-    }
-    .certificate-date {
-        font-size: 18px;
-        margin: 0;
-        position: absolute;
-        top: 78%;
-        left: 50%;
-        transform: translateX(-50%);
-        color: #000;
-        width: 80%;
-        text-align: center;
-    }
-</style>
-</head>
-<body>
-    <img class="background-image" src="{$background_path}" alt="Certificate background">
-    <div class="certificate-content">
-        <h1 class="certificate-name">{$firstName} {$middleInitial} {$lastName}</h1>
-        <h3 class="certificate-subtitle">{$sessions_attended}</h3>
-        <p class="certificate-text">during the</p>
-        <div class = "certificate-banner"><img src="{$ptcbanner_path}" style="height:130px; margin:0;"></div>
-        <p class="certificate-cpd">{$cpd_text}</p>
-        <p class="certificate-date">{$certificate_date_text}</p>
-    </div>
-</body>
-</html>
-HTML;
+    $html .= '</body></html>';
 } else {
     // Original multi-image layout for other years
     // The main certificate HTML. Notice how clean and easy to read this is.
@@ -428,18 +439,6 @@ $arrID = [5340, 6588]; // Array of special participant IDs
 
 if (in_array($participant_id, $arrID)) {
     // This is the HTML for the second page, "Certificate of Participation"
-    if ($use_single_template) {
-        $secondPage = <<<HTML
-        <div style="page-break-before: always;">
-            <img class="background-image" src="{$background_path}" alt="Certificate background">
-            <div class="certificate-content">
-                <h1 class="certificate-name">{$firstName} {$middleInitial} {$lastName}</h1>
-                <p class="certificate-subtitle">in acknowledgement of {$genderText} in the</p>
-                <p class="certificate-date">{$certificate_date_text}</p>
-            </div>
-        </div>
-HTML;
-    } else {
         $secondPage = <<<HTML
         <div style="page-break-before: always;">
             <div style="margin-top: 80px; text-align: center;">
@@ -467,8 +466,6 @@ HTML;
             </div> 
         </div>
 HTML;
-    }
-
     // Append the second page to the first one
     $html .= $secondPage;
 }
