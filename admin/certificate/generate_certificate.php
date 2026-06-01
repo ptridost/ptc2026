@@ -221,12 +221,8 @@ if ($feedback_submitted) {
         if (isset($cpd_map[$prof_normalized])) {
             $cpd_points = $sessions_count >= 9 ? $cpd_map[$prof_normalized] : $sessions_count;
             $cpd_text = "and has earned a total of <b>[ {$cpd_points} ] CPD units</b> applicable for {$prof_normalized}s";
+            $certificates[] = ['cpd_text' => $cpd_text];
         }
-        else {
-            $cpd_text = '';
-        }
-
-        $certificates[] = ['cpd_text' => $cpd_text];
     }
 }
 
