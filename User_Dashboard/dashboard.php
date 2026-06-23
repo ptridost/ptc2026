@@ -481,24 +481,31 @@ $cert_check_stmt->close();
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="mb-3"><label class="form-label">First Name</label><input type="text"
-                                class="form-control" name="pfname"
-                                value="<?php echo htmlspecialchars($participant_data['firstName']); ?>"></div>
-                        <div class="mb-3"><label class="form-label">Middle Name</label><input type="text"
-                                class="form-control" name="pmname"
-                                value="<?php echo htmlspecialchars($participant_data['middleName']); ?>"></div>
-                        <div class="mb-3"><label class="form-label">Last Name</label><input type="text"
-                                class="form-control" name="plname"
-                                value="<?php echo htmlspecialchars($participant_data['lastName']); ?>"></div>
-                        <div class="mb-3"><label class="form-label">Age Group</label><input type="text"
-                                class="form-control" name="partage"
-                                value="<?php echo htmlspecialchars($participant_data['Age']); ?>"></div>
-                        <div class="mb-3"><label class="form-label">Institution</label><input type="text"
-                                class="form-control" name="organization"
-                                value="<?php echo htmlspecialchars($participant_data['organization']); ?>"></div>
-                        <div class="mb-3"><label class="form-label">Email / Username</label><input type="email"
-                                class="form-control" name="username"
-                                value="<?php echo htmlspecialchars($participant_data['username']); ?>"></div>
+                        <div class="mb-3"><label class="form-label">First Name</label>
+                            <input type="text" class="form-control" name="pfname"
+                                value="<?php echo htmlspecialchars($participant_data['firstName']); ?>">
+                        </div>
+                        <div class="mb-3"><label class="form-label">Middle Name</label>
+                            <input type="text" class="form-control" name="pmname"
+                                value="<?php echo htmlspecialchars($participant_data['middleName']); ?>">
+                        </div>
+                        <div class="mb-3"><label class="form-label">Last Name</label>
+                            <input type="text" class="form-control" name="plname"
+                                value="<?php echo htmlspecialchars($participant_data['lastName']); ?>">
+                        </div>
+                        <div class="mb-3"><label class="form-label">Age Group</label>
+                            <input type="text" class="form-control" name="partage"
+                                value="<?php echo htmlspecialchars($participant_data['Age']); ?>">
+                        </div>
+                        <div class="mb-3"><label class="form-label">Institution</label>
+                            <input type="text" class="form-control" name="organization"
+                                value="<?php echo htmlspecialchars($participant_data['organization']); ?>">
+                        </div>
+                        <div class="mb-3"><label class="form-label">Email / Username</label>
+                            <input type="email" class="form-control" name="username"
+                                value="<?php echo htmlspecialchars($participant_data['username']); ?>">
+                        </div>
+
                         <hr>
                         <p class="text-center fw-bold">PRC License Numbers</p>
                         <?php foreach ($prc_map as $column_name => $label): ?>
