@@ -55,6 +55,9 @@ if (isset($_POST['submit_profile_update'])) {
     $other_profession = $_POST['other_profession'];
     
     // Get all PRC license data from the form
+    $profession = (isset($_POST['profession']) && is_array($_POST['profession']))
+    ? implode(',', $_POST['profession'])
+    : 'None';
     $chemEnPrc = $_POST['ChemEn_prc'];
     $chemPrc = $_POST['Chem_prc'];
     $chemTechPrc = $_POST['ChemTech_prc'];
@@ -66,13 +69,13 @@ if (isset($_POST['submit_profile_update'])) {
     $stmt = $dbcon->prepare("UPDATE participant SET 
         firstName = ?, middleName = ?, lastName = ?, Age = ?, organization = ?, username = ?,
         ChemEn_prc = ?, Chem_prc = ?, ChemTech_prc = ?, Others_prc = ?, other_profession = ?,
-        MechEn_prc = ?, AgriEn_prc = ? 
+        MechEn_prc = ?, AgriEn_prc = ?, profession = ?
         WHERE id = ?");
         
-    $stmt->bind_param("sssssssssssssi", 
+    $stmt->bind_param("ssssssssssssssi", 
         $pfname, $pmname, $plname, $partage, $institution, $emailuser,
         $chemEnPrc, $chemPrc, $chemTechPrc, $othersPrc, $other_profession,
-        $mechEnPrc, $agriEnPrc,
+        $mechEnPrc, $agriEnPrc, $profession,
         $_SESSION['participant_id']
     );
     
