@@ -507,18 +507,63 @@ $cert_check_stmt->close();
                         </div>
 
                         <hr>
-                        <p class="text-center fw-bold">PRC License Numbers</p>
-                        <?php foreach ($prc_map as $column_name => $label): ?>
-                        <div class="mb-3">
-                            <label class="form-label"><?php echo htmlspecialchars($label); ?></label>
-                            <input type="text" class="form-control" name="<?php echo $column_name; ?>"
-                                value="<?php echo htmlspecialchars($participant_data[$column_name] ?? ''); ?>">
+                        <p class="fw-bold mb-1">Profession</p>
+                        <small class="text-muted d-block mb-3">Select all that apply. Required for CPD units.</small>
+
+                        <?php
+                        $current_professions = array_map('trim', explode(',', $participant_data['profession'] ?? ''));
+
+                        $profession_options = [
+                            ['value' => 'Chemist',                             'label' => 'Chemist',                             'prc_name' => 'Chem_prc',     'prc_label' => 'Chemist PRC License #'],
+                            ['value' => 'Chemical Engineer',                   'label' => 'Chemical Engineer',                   'prc_name' => 'ChemEn_prc',   'prc_label' => 'Chemical Eng. PRC License #'],
+                            ['value' => 'Chemical Technician',                 'label' => 'Chemical Technician',                 'prc_name' => 'ChemTech_prc', 'prc_label' => 'Chemical Tech. PRC License #'],
+                            ['value' => 'Mechanical Engineer',                 'label' => 'Mechanical Engineer',                 'prc_name' => 'MechEn_prc',   'prc_label' => 'Mechanical Eng. PRC License #'],
+                            ['value' => 'Agricultural and Biosystems Engineer','label' => 'Agricultural & Biosystems Engineer',  'prc_name' => 'AgriEn_prc',   'prc_label' => 'Agri. & Biosystems Eng. PRC License #'],
+                        ];
+
+                        foreach ($profession_options as $opt):
+                            $isChecked  = in_array($opt['value'], $current_professions);
+                            $hasPrcValue = !empty($participant_data[$opt['prc_name']]);
+                        ?>
+                        <div class="profession-group">
+                            <div class="form-check">
+                                <input class="form-check-input prof-checkbox" type="checkbox"
+                                    name="profession[]"
+                                    value="<?php echo htmlspecialchars($opt['value']); ?>"
+                                    id="edit_<?php echo $opt['prc_name']; ?>"
+                                    <?php echo $isChecked ? 'checked' : ''; ?>>
+                                <label class="form-check-label" for="edit_<?php echo $opt['prc_name']; ?>">
+                                    <?php echo htmlspecialchars($opt['label']); ?>
+                                </label>
+                            </div>
+                            <div class="prc-field" <?php echo ($isChecked || $hasPrcValue) ? 'style="display:block"' : ''; ?>>
+                                <input type="text" class="form-control form-control-sm"
+                                    name="<?php echo $opt['prc_name']; ?>"
+                                    placeholder="<?php echo htmlspecialchars($opt['prc_label']); ?>"
+                                    value="<?php echo htmlspecialchars($participant_data[$opt['prc_name']] ?? ''); ?>">
+                            </div>
                         </div>
                         <?php endforeach; ?>
-                        <div class="mb-3">
-                            <label class="form-label">If 'Other', please specify</label>
-                            <input type="text" class="form-control" name="other_profession"
-                                value="<?php echo htmlspecialchars($participant_data['other_profession'] ?? ''); ?>">
+
+                        <div class="profession-group">
+                            <div class="form-check">
+                                <input class="form-check-input prof-checkbox" type="checkbox"
+                                    name="profession[]"
+                                    value="Others"
+                                    id="edit_others"
+                                    <?php echo in_array('Others', $current_professions) ? 'checked' : ''; ?>>
+                                <label class="form-check-label" for="edit_others">Others</label>
+                            </div>
+                            <div class="prc-field" <?php echo (in_array('Others', $current_professions) || !empty($participant_data['other_profession'])) ? 'style="display:block"' : ''; ?>>
+                                <input type="text" class="form-control form-control-sm"
+                                    name="other_profession"
+                                    placeholder="Please specify profession"
+                                    value="<?php echo htmlspecialchars($participant_data['other_profession'] ?? ''); ?>">
+                                <input type="text" class="form-control form-control-sm mt-1"
+                                    name="Others_prc"
+                                    placeholder="Other profession PRC License # (if applicable)"
+                                    value="<?php echo htmlspecialchars($participant_data['Others_prc'] ?? ''); ?>">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -640,6 +685,61 @@ $cert_check_stmt->close();
         });
         $("#show2023").click(function() {
             filterSessions('2023');
+        });
+
+
+        $('#editProfileModal .prc-field').hide();
+        $('#editProfileModal .prof-checkbox:checked').each(function() {
+            $(this).closest('.profession-group').find('.prc-field').show();
+        });
+        // When user checks/unchecks a profession
+        $('#editProfileModal').on('change', '.prof-checkbox', function() {
+            var prcField = $(this).closest('.profession-group').find('.prc-field');
+            if (this.checked) {
+                prcField.slideDown(200);
+            } else {
+                prcField.slideUp(200);
+                prcField.find('input').val('');
+            }
+        });
+
+        $('form[action="dashboard.php"]').on('submit', function(e) {
+            var valid = true;
+
+            // Validate the 5 main professions — PRC number required
+            $('#editProfileModal .prof-checkbox:checked').not('#edit_others').each(function() {
+                var prcInput = $(this).closest('.profession-group').find('.prc-field input');
+
+                if (prcInput.val().trim() === '') {
+                    valid = false;
+                    prcInput.addClass('is-invalid');
+                    if (prcInput.next('.invalid-feedback').length === 0) {
+                        prcInput.after('<div class="invalid-feedback">PRC License number is required.</div>');
+                    }
+                } else {
+                    prcInput.removeClass('is-invalid');
+                    prcInput.next('.invalid-feedback').remove();
+                }
+            });
+
+            // Validate "Others" — profession name is required, PRC is optional
+            if ($('#edit_others').is(':checked')) {
+                var otherName = $('input[name="other_profession"]');
+                if (otherName.val().trim() === '') {
+                    valid = false;
+                    otherName.addClass('is-invalid');
+                    if (otherName.next('.invalid-feedback').length === 0) {
+                        otherName.after('<div class="invalid-feedback">Please specify your profession.</div>');
+                    }
+                } else {
+                    otherName.removeClass('is-invalid');
+                    otherName.next('.invalid-feedback').remove();
+                }
+            }
+            if (!valid) {
+                e.preventDefault();
+                bootstrap.Modal.getInstance(document.getElementById('editProfileModal')).show();
+            }
         });
     });
 
