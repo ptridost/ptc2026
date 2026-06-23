@@ -231,6 +231,19 @@
 .modal-header { background-color: #0D1E53; color: #fff; text-transform: uppercase; }
 .modal-title { font-family: 'MelodyBold', sans-serif; }
 .btn-close-white { filter: invert(1) grayscale(100%) brightness(200%); }
+.modal .prc-field {
+    margin-top: 8px;
+    padding: 10px 12px 10px 24px;
+    background: var(--bs-light, #f8f9fa);
+    border-radius: 6px;
+}
+.modal .profession-group {
+    margin-bottom: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+
 
 /* --- 7. RESPONSIVE STYLES --- */
 @media (max-width: 767px) {
