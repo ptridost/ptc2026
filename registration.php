@@ -331,7 +331,12 @@ $csrf_token = generate_csrf_token();
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="profession[]" value="Chemist"
                                     id="prof_chemists">
-                                <label class="form-check-label" for="prof_chemists">Chemist</label>
+                                <label class="form-check-label" for="prof_chemists">
+                                    Chemist
+                                    <span class = "small text-muted">
+                                        (0510)
+                                    </span>
+                                </label>
                             </div>
                             <div class="prc-field">
                                 <div class="input-container">
@@ -345,7 +350,12 @@ $csrf_token = generate_csrf_token();
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="profession[]"
                                     value="Chemical Engineer" id="prof_chem_eng">
-                                <label class="form-check-label" for="prof_chem_eng">Chemical Engineer</label>
+                                <label class="form-check-label" for="prof_chem_eng">
+                                    Chemical Engineer
+                                    <span class = "small text-muted">
+                                        (0410)
+                                    </span>
+                                </label>
                             </div>
                             <div class="prc-field">
                                 <div class="input-container">
@@ -359,7 +369,12 @@ $csrf_token = generate_csrf_token();
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="profession[]"
                                     value="Chemical Technician" id="prof_chem_tech">
-                                <label class="form-check-label" for="prof_chem_tech">Chemical Technician</label>
+                                <label class="form-check-label" for="prof_chem_tech">
+                                    Chemical Technician
+                                    <span class = "small text-muted">
+                                        (0520)
+                                     </span>
+                                </label>
                             </div>
                             <div class="prc-field">
                                 <div class="input-container">
