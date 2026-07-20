@@ -8,6 +8,19 @@ if (empty($_SESSION['admin_id'])) {
  require('../dbcon.php');
  $userId = isset($_GET['id'])? $_GET['id']:'';
  $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
+ $availableYears = [];
+ $yearResult = $dbcon->query("SELECT DISTINCT YEAR(session_date) AS session_year FROM tblptcsession WHERE session_date IS NOT NULL ORDER BY session_year DESC");
+ if ($yearResult) {
+     while ($yearRow = $yearResult->fetch_assoc()) {
+         if (!empty($yearRow['session_year'])) {
+             $availableYears[] = (int) $yearRow['session_year'];
+         }
+     }
+ }
+ $selectedYear = isset($_GET['year']) ? (int) $_GET['year'] : ($availableYears[0] ?? (int) date('Y'));
+ if (!in_array($selectedYear, $availableYears, true) && !empty($availableYears)) {
+     $selectedYear = $availableYears[0];
+ }
  $sql_query_participant = "SELECT sampledb.participant.*, world.countries.name AS 'countryName'  FROM sampledb.participant INNER JOIN world.countries ON world.countries.iso2 = sampledb.participant.Country WHERE sampledb.participant.id = ?";
  $stmt = $dbcon -> prepare($sql_query_participant);
  $stmt -> bind_param("i",$userId);
@@ -47,6 +60,19 @@ if (empty($_SESSION['admin_id'])) {
             <div class="d-flex justify-content-center">
                 <h3 class="fw-bold" id="exampleModalLabel">Attendance and Feedback</h3>
             </div>
+            <form method="GET" action="editAttendance.php" class="d-flex justify-content-center align-items-end gap-2 mb-3">
+                <input type="hidden" name="id" value="<?= htmlspecialchars($userId) ?>">
+                <input type="hidden" name="search" value="<?= htmlspecialchars($searchTerm) ?>">
+                <div>
+                    <label for="year" class="form-label fw-bold mb-1">Congress year</label>
+                    <select id="year" name="year" class="form-select" onchange="this.form.submit()">
+                        <?php foreach ($availableYears as $year): ?>
+                            <option value="<?= $year ?>" <?= $year === $selectedYear ? 'selected' : '' ?>><?= $year ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <noscript><button type="submit" class="btn btn-primary">Apply</button></noscript>
+            </form>
             <div class="modal-body">
                 
             <?php 
@@ -136,9 +162,10 @@ if (empty($_SESSION['admin_id'])) {
                                         (CASE WHEN session_number IN(SELECT session_id FROM tblattendance WHERE participant_id = ?) THEN 1 ELSE 0 END) *
                                         (CASE WHEN session_number IN(SELECT session_id FROM tblfeedback WHERE participant_id = ?) THEN 1 ELSE 0 END) AS qualified
                                     FROM tblptcsession 
-                                    WHERE session_date LIKE '2025%';";
+                                    WHERE YEAR(session_date) = ?
+                                    ORDER BY session_number ASC;";
                                     $stmt = $dbcon -> prepare($sql_query_attendance);
-                                    $stmt->bind_param("iiii", $userId,$userId, $userId,$userId);
+                                    $stmt->bind_param("iiiii", $userId, $userId, $userId, $userId, $selectedYear);
                                     $stmt-> execute();
                                     $result1 = $stmt -> get_result();
                                     while($row1=mysqli_fetch_assoc($result1)){                                        
@@ -157,7 +184,7 @@ if (empty($_SESSION['admin_id'])) {
                                     }
                                     ?>
                                  </td>
-                                 <form action="editAttendance.php?id=<?php echo $userId;?>&search=<?php echo $searchTerm; ?>" method="POST">
+                                 <form action="editAttendance.php?id=<?= urlencode($userId) ?>&search=<?= urlencode($searchTerm) ?>&year=<?= $selectedYear ?>" method="POST">
                                         <input type="hidden" name="searchTerm" value="<?php echo $searchTerm;?>">
                                      <td><button class="btn <?php echo $row1['attendance']?'btn-success disabled':'btn-danger';?>" name="attendance<?php echo $row1['session_number']?>"><?php echo $row1['attendance']?'Present':'Absent';?></button></td>
                                  </form>
@@ -225,8 +252,8 @@ if (empty($_SESSION['admin_id'])) {
                             "><?php echo $totalQualified;?></span>
                             </div>
                             <div class="d-grid">
-                                <button onclick="window.open('./certificate/generatecert2024_admin.php?id=<?= $_GET['id'] ?>')" class="btn btn-info text-white">
-                                    View certificate
+                                <button onclick="window.open('./certificate/generate_certificate.php?id=<?= urlencode($userId) ?>&year=<?= $selectedYear ?>')" class="btn btn-info text-white">
+                                    View <?= $selectedYear ?> certificate
                                 </button>
                                 </div>
 
