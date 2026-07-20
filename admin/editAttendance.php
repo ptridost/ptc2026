@@ -136,7 +136,7 @@ if (empty($_SESSION['admin_id'])) {
                                         (CASE WHEN session_number IN(SELECT session_id FROM tblattendance WHERE participant_id = ?) THEN 1 ELSE 0 END) *
                                         (CASE WHEN session_number IN(SELECT session_id FROM tblfeedback WHERE participant_id = ?) THEN 1 ELSE 0 END) AS qualified
                                     FROM tblptcsession 
-                                    WHERE session_date LIKE '2024%';";
+                                    WHERE session_date LIKE '2025%';";
                                     $stmt = $dbcon -> prepare($sql_query_attendance);
                                     $stmt->bind_param("iiii", $userId,$userId, $userId,$userId);
                                     $stmt-> execute();
