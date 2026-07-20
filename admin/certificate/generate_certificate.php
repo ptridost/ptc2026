@@ -51,7 +51,14 @@ $stmt_attendance_count->close();
 
 // If they haven't attended at least 6 sessions for that year, redirect them.
 if ($attendance_count < 6 && !$TEST_MODE) {
-    header("Location: " . BASE_URL . "/User_dashboard/dashboard.php");
+    $not_eligible_url = "certificate_not_eligible.php?year=" . urlencode($year)
+        . "&attended=" . urlencode($attendance_count)
+        . "&required=6"
+        . "&id=" . urlencode($participant_id);
+    if (($_GET['source'] ?? '') === 'admin') {
+        $not_eligible_url .= "&source=admin";
+    }
+    header("Location: " . $not_eligible_url);
     exit;
 }
 

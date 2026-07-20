@@ -252,7 +252,7 @@ if (empty($_SESSION['admin_id'])) {
                             "><?php echo $totalQualified;?></span>
                             </div>
                             <div class="d-grid">
-                                <button onclick="window.open('./certificate/generate_certificate.php?id=<?= urlencode($userId) ?>&year=<?= $selectedYear ?>')" class="btn btn-info text-white">
+                                <button onclick="window.open('./certificate/generate_certificate.php?id=<?= urlencode($userId) ?>&year=<?= $selectedYear ?>&source=admin')" class="btn btn-info text-white">
                                     View <?= $selectedYear ?> certificate
                                 </button>
                                 </div>
