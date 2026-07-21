@@ -76,11 +76,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $certificateYears = array_map('intval', $_POST['certificate_years'] ?? []);
     foreach ($certificateYears as $certificateYear) {
         $minSessions = max(1, (int) ($_POST['certificate_min_sessions'][$certificateYear] ?? 6));
+        $minFeedback = max(0, (int) ($_POST['certificate_min_feedback'][$certificateYear] ?? 0));
         $feedbackRequired = isset($_POST['certificate_feedback_required'][$certificateYear]) ? '1' : '0';
         $distributionDate = $_POST['certificate_distribution_date'][$certificateYear] ?? '';
         $validDate = $_POST['certificate_valid_date'][$certificateYear] ?? '';
 
         $settingsToSave['certificate_min_sessions_' . $certificateYear] = (string) $minSessions;
+        $settingsToSave['certificate_min_feedback_' . $certificateYear] = (string) $minFeedback;
         $settingsToSave['certificate_feedback_required_' . $certificateYear] = $feedbackRequired;
         $settingsToSave['certificate_distribution_date_' . $certificateYear] = $distributionDate;
         $settingsToSave['certificate_valid_date_' . $certificateYear] = $validDate;
@@ -209,22 +211,28 @@ $dbcon->close();
                 <?php foreach ($certificateYears as $certificateYear): ?>
                     <?php
                         $minSessionsName = 'certificate_min_sessions_' . $certificateYear;
+                        $minFeedbackName = 'certificate_min_feedback_' . $certificateYear;
                         $feedbackRequiredName = 'certificate_feedback_required_' . $certificateYear;
                         $distributionDateName = 'certificate_distribution_date_' . $certificateYear;
                         $validDateName = 'certificate_valid_date_' . $certificateYear;
                         $minSessionsValue = htmlspecialchars($settings[$minSessionsName] ?? '6');
                         $feedbackRequiredValue = filter_var($settings[$feedbackRequiredName] ?? false, FILTER_VALIDATE_BOOLEAN);
+                        $minFeedbackValue = htmlspecialchars($settings[$minFeedbackName] ?? ($feedbackRequiredValue ? '1' : '0'));
                         $distributionDateValue = htmlspecialchars($settings[$distributionDateName] ?? '');
                         $validDateValue = htmlspecialchars($settings[$validDateName] ?? '');
                     ?>
                     <input type="hidden" name="certificate_years[]" value="<?php echo $certificateYear; ?>">
-                    <div class="row align-items-center mb-2">
+                    <div class="row align-items-center mb-3">
                         <div class="col-md-2 fw-bold"><?php echo $certificateYear; ?></div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label class="form-label mb-1">Minimum attended sessions</label>
                             <input type="number" class="form-control" name="certificate_min_sessions[<?php echo $certificateYear; ?>]" value="<?php echo $minSessionsValue; ?>" min="1" required>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
+                            <label class="form-label mb-1">Minimum feedback submitted</label>
+                            <input type="number" class="form-control" name="certificate_min_feedback[<?php echo $certificateYear; ?>]" value="<?php echo $minFeedbackValue; ?>" min="0" required>
+                        </div>
+                        <div class="col-md-2">
                             <label class="form-label mb-1">Certificate date</label>
                             <input type="date" class="form-control" name="certificate_distribution_date[<?php echo $certificateYear; ?>]" value="<?php echo $distributionDateValue; ?>">
                         </div>
@@ -232,11 +240,11 @@ $dbcon->close();
                             <label class="form-label mb-1">Valid until</label>
                             <input type="date" class="form-control" name="certificate_valid_date[<?php echo $certificateYear; ?>]" value="<?php echo $validDateValue; ?>">
                         </div>
-                        <div class="col-md-2 pt-4">
+                        <div class="col-md-12 offset-md-2 mt-2">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="feedback_required_<?php echo $certificateYear; ?>" name="certificate_feedback_required[<?php echo $certificateYear; ?>]" value="1" <?php echo $feedbackRequiredValue ? 'checked' : ''; ?>>
                                 <label class="form-check-label" for="feedback_required_<?php echo $certificateYear; ?>">
-                                    Require feedback before certificate
+                                    Legacy feedback required flag
                                 </label>
                             </div>
                         </div>

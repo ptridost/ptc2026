@@ -291,24 +291,8 @@ $session_years = getAvailableEventYears($dbcon);
                                 $count = $attended_sessions_by_year[$year] ?? 0;
                                 $dist_date_name = 'certificate_distribution_date_' . $year;
                                 $dist_date = $settings[$dist_date_name] ?? '2030-12-31';
-                                $minimumSessions = max(1, (int) ($settings['certificate_min_sessions_' . $year] ?? 6));
-                                $feedbackRequired = filter_var(
-                                    $settings['certificate_feedback_required_' . $year] ?? false,
-                                    FILTER_VALIDATE_BOOLEAN
-                                );
-
-                                // Check eligibility
-                                // --- FEEDBACK ELIGIBILITY CHECK (NEW) ---
-                                $stmt = $dbcon->prepare("SELECT feedback_id FROM tblfeedback WHERE participant_id = ? AND YEAR(fDate) = ?");
-                                $stmt->bind_param("ii", $_SESSION['participant_id'], $year);
-                                $stmt->execute();
-                                $feedback_result = $stmt->get_result();
-                                $hasFeedback = ($feedback_result->num_rows > 0);
-                                $stmt->close();
-                                // --- END: FEEDBACK ELIGIBILITY CHECK ---
-
-                                $hasRequiredFeedback = !$feedbackRequired || $hasFeedback;
-                                $eligible = ($count >= $minimumSessions && $hasPRC && $dist_date <= date('Y-m-d') && $hasRequiredFeedback);
+                                $eligibility = getParticipantCertificateEligibility($dbcon, (int) $_SESSION['participant_id'], (int) $year);
+                                $eligible = ($eligibility['eligible'] && $hasPRC && $dist_date <= date('Y-m-d'));
                                 //$eligible = true; // TEMPORARY: force eligibility for testing
                                 //$TEST_MODE = true; // For testing only
                                 //if ($eligible|| $TEST_MODE) {
@@ -326,17 +310,7 @@ $session_years = getAvailableEventYears($dbcon);
                                     //  Not eligible → show modal with reasons
                                     $reasons = [];
 
-                                    if ($count < $minimumSessions) {
-                                        if ($count === 0){
-                                            $reasons[] = "No session attendance record found for $year.";
-                                        }
-                                        else{
-                                            $reasons[] = "You attended $count of the required $minimumSessions sessions for $year.";
-                                        }
-                                    }
-                                    if ($feedbackRequired && !$hasFeedback) {
-                                        $reasons[] = "Feedback is required for the $year certificate.";
-                                    }
+                                    $reasons = array_merge($reasons, $eligibility['reasons']);
                                     if (!$hasPRC) {
                                         $reasons[] = "A PRC License number is required. Please use the 'Edit Profile' button to add it.";
                                     }

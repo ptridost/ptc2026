@@ -39,25 +39,12 @@ if ((empty($participant_id) || !is_numeric($participant_id) || !is_numeric($year
 }
 
 
-// --- NEW: Final security check for attendance count ---
-$stmt_attendance_count = $dbcon->prepare("
-    SELECT COUNT(DISTINCT session_id) as count 
-    FROM tblattendance 
-    WHERE participant_id = ? AND YEAR(date_submitted) = ?
-");
-$stmt_attendance_count->bind_param("is", $participant_id, $year);
-$stmt_attendance_count->execute();
-$attendance_count = $stmt_attendance_count->get_result()->fetch_assoc()['count'] ?? 0;
-$stmt_attendance_count->close();
+// Final security check: dashboard and direct URLs must use the same eligibility rules.
+$eligibility = getParticipantCertificateEligibility($dbcon, (int) $participant_id, (int) $year);
+$attendance_count = $eligibility['attended_count'];
+$minimum_sessions = $eligibility['rules']['minimum_attendance'];
 
-$minimum_sessions = max(1, (int) getEventSetting(
-    $dbcon,
-    'certificate_min_sessions_' . $year,
-    '6'
-));
-
-// If they haven't met the configured attendance requirement, show why.
-if ($attendance_count < $minimum_sessions && !$TEST_MODE) {
+if (!$eligibility['eligible'] && !$TEST_MODE) {
     $not_eligible_url = "certificate_not_eligible.php?year=" . urlencode($year)
         . "&attended=" . urlencode($attendance_count)
         . "&required=" . urlencode($minimum_sessions)
@@ -176,8 +163,9 @@ $background_path = convertImage("./assets/{$asset_year}/certificate{$asset_year}
 $logo2_path = convertImage('logo2.png');
 $logo1_path = convertImage('logo1.png');
 
-// Check if using single-template certificate layout
-$use_single_template = ($asset_year == 2025);
+// The 2025-style certificate is a full-background template with text overlays.
+// Use it for copied dry-run assets until a dedicated yearly layout is added.
+$use_single_template = ($asset_year >= 2025);
 
 // DYNAMIC Text for the certificate date
 $distribution_date_from_db = ''; // Default to empty
@@ -205,7 +193,7 @@ if (!empty($distribution_date_from_db)) {
     // --- YEAR-SPECIFIC TEXT ---
     if ($year == 2023) {
         $certificate_date_text = "Given this {$day} Day of {$month} {$cert_year} at the National Museum Western Visayas, Iloilo City, Philippines";
-    } else if ($year == 2025) {
+    } else if ($year >= 2025) {
         $paper_size = "Legal";
         $certificate_date_text = "Given this {$day}<sup>{$suffix}</sup> Day of {$month}, {$cert_year}.";
     } else {
@@ -350,15 +338,16 @@ if ($use_single_template) {
             }
             .certificate-subtitle {
                 font-family: "Poppins-Bold", sans-serif;
-                font-size: 18px;
+                font-size: 12px;
                 margin: 0;
                 position: absolute;
-                top: 39%;
+                top: 38%;
                 left: 50%;
                 transform: translateX(-50%);
                 color: #000;
-                width: 85%;
+                width: 78%;
                 text-align: center;
+                line-height: 1.25;
             }
             .certificate-text {
                 font-family: "Poppins-Regular", sans-serif;

@@ -75,3 +75,84 @@ function resolveEventYear(mysqli $dbcon, mixed $requestedYear, string $congressT
 
     return $availableYears[0] ?? $currentYear;
 }
+
+function getCertificateEligibilityRules(mysqli $dbcon, int $year): array
+{
+    $stmt = $dbcon->prepare(
+        "SELECT COUNT(DISTINCT session_number) AS total
+         FROM tblptcsession
+         WHERE YEAR(session_date) = ?"
+    );
+    $stmt->bind_param("i", $year);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    $totalSessions = (int) ($row['total'] ?? 0);
+    $minimumAttendance = max(1, (int) getEventSetting(
+        $dbcon,
+        'certificate_min_sessions_' . $year,
+        '6'
+    ));
+
+    $legacyFeedbackRequired = filter_var(
+        getEventSetting($dbcon, 'certificate_feedback_required_' . $year, $year === 2025 ? '1' : '0'),
+        FILTER_VALIDATE_BOOLEAN
+    );
+    $minimumFeedback = max(0, (int) getEventSetting(
+        $dbcon,
+        'certificate_min_feedback_' . $year,
+        $legacyFeedbackRequired ? '1' : '0'
+    ));
+
+    return [
+        'total_sessions' => $totalSessions,
+        'attendance_mode' => 'fixed',
+        'minimum_attendance' => $minimumAttendance,
+        'feedback_mode' => $minimumFeedback > 0 ? 'fixed' : 'none',
+        'minimum_feedback' => $minimumFeedback,
+    ];
+}
+
+function getParticipantCertificateEligibility(mysqli $dbcon, int $participantId, int $year): array
+{
+    $rules = getCertificateEligibilityRules($dbcon, $year);
+
+    $stmt = $dbcon->prepare(
+        "SELECT
+            COUNT(DISTINCT a.session_id) AS attended_count,
+            COUNT(DISTINCT f.session_id) AS feedback_count
+         FROM tblattendance a
+         INNER JOIN tblptcsession s ON a.session_id = s.session_number
+         LEFT JOIN tblfeedback f
+            ON f.participant_id = a.participant_id
+            AND f.session_id = a.session_id
+         WHERE a.participant_id = ?
+            AND YEAR(s.session_date) = ?"
+    );
+    $stmt->bind_param("ii", $participantId, $year);
+    $stmt->execute();
+    $row = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    $attendedCount = (int) ($row['attended_count'] ?? 0);
+    $feedbackCount = (int) ($row['feedback_count'] ?? 0);
+    $reasons = [];
+    if ($attendedCount < $rules['minimum_attendance']) {
+        $reasons[] = $attendedCount === 0
+            ? "No session attendance record found for {$year}."
+            : "You attended {$attendedCount} of the required {$rules['minimum_attendance']} sessions for {$year}.";
+    }
+    if ($feedbackCount < $rules['minimum_feedback']) {
+        $reasons[] = $rules['minimum_feedback'] === 1
+            ? "Feedback is required for the {$year} certificate."
+            : "You submitted {$feedbackCount} of the required {$rules['minimum_feedback']} feedback forms for {$year}.";
+    }
+    return [
+        'eligible' => empty($reasons),
+        'reasons' => $reasons,
+        'attended_count' => $attendedCount,
+        'feedback_count' => $feedbackCount,
+        'rules' => $rules,
+    ];
+}
