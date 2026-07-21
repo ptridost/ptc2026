@@ -1,212 +1,75 @@
-@font-face {
- 	font-family: Melody;
-	 src:url(BLMelodyMono-Bold.otf);
-}
-@font-face {
- 	font-family: MelodyBold;
- 	src:url(BLMelody-Bold.otf);
-}
-@font-face {
- 	font-family: MelodyRegular;
-	 src:url(BLMelody-Regular.otf);
-}
-@font-face {
-	 font-family: MelodySemibold;
- 	src:url(BLMelodyMono-SemiBold.otf);
-}
-@font-face {
- 	font-family: MelodyLight;
- 	src:url(BLMelody-Light.otf);
-}
-@font-face {
- 	font-family: MelodyMedium;
- 	src:url(BLMelody-Medium.otf);
-}
-.navbutton button{
-	font-family: MelodyLight;
-	font-weight: bold;
-	color: #ffffff;
-	background: #0E1736;
-	border: none;
-	border-radius: 20px;
-	padding-left: 20px;
-	padding-right: 20px;
-	transition: 0.5s;
-}
-.navbutton button:hover{
-	background: #FED300;
-	color: #0E1736;
-	}
-.navbutton .ddownadmin{
-	background: none;
-	color: #000000;
-	border: none;
-}
-.navbutton .ddownadmin img{
-	width: 30px;
-	border: solid 2px;
-	border-radius: 50%;
-}
-.navbutton .ddownadmin .useradmin{
-	font-size: 13px;
-}
-#participantbtn{
-	height: 50px;
-}
-#uploadbtn{
-	height: 50px;
-}
-.modal .inputBox{
-	margin-top: 20px;
-    position: relative;
-    width: 100%;
-    gap: 2px;
-    display: flex;
-    align-items: center;
-}
-.modal .inputBox input{
-    width: 100%;
-    padding: 10px;
-    border: 2px solid rgb(60, 60, 60);
-    background: #fff;
-    border-radius: 5px;
-    outline: none;
-    color: #000000;
-    font-size: 1em;
-    font-family: MelodyRegular;
-    transition: 0.5s;
-    border-left: none;
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
-
-}
-.modal .inputBox span{
-	font-family: MelodyRegular;
-    position: absolute;
-    left: 0;
-    padding: 10px; 
-    pointer-events: none;
-    font-size: 1em;
-    color: rgb(60, 60, 60);
-    transition: 0.5s;
-    padding-left: 60px;
-    font-weight: 5px;
-    align-items: center;
-}
-.modal .inputBox  i{
-	padding-right: 10px;
-	padding-left: 10px;
-	color: rgb(60, 60, 60);
-	font-size: 17px;
-	border: solid 2px;
-	padding-top: 13px;
-	padding-bottom: 13px;
-	border: 2px solid rgb(60, 60, 60);
-	border-top-left-radius: 5px;
-	border-bottom-left-radius: 5px;
-	border-right: solid 3px;
+:root {
+  --admin-navy: #102a43;
+  --admin-navy-deep: #071a2c;
+  --admin-blue: #1668b2;
+  --admin-gold: #f4c542;
+  --admin-sidebar-width: 272px;
 }
 
-.modal .inputBox input:valid ~ span, 
-.modal .inputBox input:focus ~ span
-{
-    color: #18306E;
-    transform: translateX(45px) translateY(-20px);
-    font-size: 0.65em;
-    padding: 0 10px;
-    background: #fff;
-    border-left: 1px solid #18306E;
-    border-right: 1px solid #18306E;
-    letter-spacing: 0.2em;
-    margin-left: 15px;
+body.admin-shell-active {
+  background: #f4f7fa;
+  color: #243b53;
+  min-height: 100vh;
+  padding-left: var(--admin-sidebar-width);
 }
-.modal .inputBox:nth-child(2) input:valid ~ span, 
-.modal .inputBox:nth-child(2) input:focus ~ span
-{
 
+.admin-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 1040;
+  width: var(--admin-sidebar-width);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  color: #fff;
+  background: linear-gradient(180deg, var(--admin-navy-deep), var(--admin-navy));
+  box-shadow: 8px 0 30px rgba(7, 26, 44, .12);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-.modal .inputBox input:valid, 
-.modal .inputBox input:focus{
-    border: 1px solid #18306E;
-}
-.modal-footer .button_close{
-	font-family: MelodyRegular;
-	font-weight: bold;
-	padding-top: 8px;
-	padding-bottom: 8px;
-	padding-right: 15px;
-	padding-left: 15px;
-	align-items: center;
-	border-radius: 17px;
-	background-color: #ff0011;
-	color: #fff;
-	border: none;
-}
-.modal-footer .button_close:hover{
-	background-color: #ab000c;
-}
-.modal-footer .button_change{
-	font-family: MelodyRegular;
-	font-weight: bold;
-	padding-top: 8px;
-	padding-bottom: 8px;
-	padding-right: 15px;
-	padding-left: 15px;
-	align-items: center;
-	border-radius: 17px;
-	background-color: #234fd9;
-	color: #fff;
-	border: none;
-}
-.modal-footer .button_change:hover{
-	background-color: #0D1E53;
-}
-.modal .change_prof{
-	margin-top: 30px;
-}
-.modal .change_prof h5{
-	font-family: MelodyRegular;
-	font-weight: bold;
-	font-size: 15px;
 
+.admin-sidebar::-webkit-scrollbar { display: none; width: 0; height: 0; }
+
+.admin-sidebar__brand { padding: 1.5rem 1.4rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,.1); }
+.admin-sidebar__brand a { display: block; width: fit-content; padding: .45rem .7rem; border-radius: 10px; background: #fff; }
+.admin-sidebar__brand img { display: block; width: 145px; height: auto; }
+.admin-sidebar__brand span { display: block; margin-top: 1rem; font-size: .95rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.admin-sidebar__brand small { color: #9fb3c8; font-size: .78rem; }
+
+.admin-sidebar__nav { flex: 1; padding: 1rem .85rem; }
+.admin-sidebar__label { margin: 1.1rem .75rem .45rem; color: #829ab1; font-size: .67rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.admin-sidebar__label:first-child { margin-top: 0; }
+.admin-sidebar__link { display: flex; align-items: center; gap: .8rem; margin: .18rem 0; padding: .72rem .8rem; border-radius: 8px; color: #d9e2ec; font-size: .88rem; font-weight: 500; text-decoration: none; transition: background .18s, color .18s, transform .18s; }
+.admin-sidebar__link i { width: 1.15rem; color: #9fb3c8; text-align: center; }
+.admin-sidebar__link:hover { color: #fff; background: rgba(255,255,255,.09); transform: translateX(2px); }
+.admin-sidebar__link.active { color: #fff; background: var(--admin-blue); box-shadow: 0 5px 15px rgba(0,0,0,.16); }
+.admin-sidebar__link.active i { color: var(--admin-gold); }
+
+.admin-sidebar__account { display: grid; grid-template-columns: 38px 1fr 34px; align-items: center; gap: .7rem; margin: .9rem; padding: .8rem; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; background: rgba(255,255,255,.06); }
+.admin-sidebar__account img { width: 38px; height: 38px; object-fit: cover; border: 2px solid rgba(255,255,255,.7); border-radius: 50%; }
+.admin-sidebar__account strong, .admin-sidebar__account span { display: block; }
+.admin-sidebar__account strong { font-size: .8rem; }
+.admin-sidebar__account span { color: #9fb3c8; font-size: .68rem; }
+.admin-sidebar__account a { display: grid; width: 34px; height: 34px; place-items: center; border-radius: 7px; color: #fff; text-decoration: none; }
+.admin-sidebar__account a:hover { color: var(--admin-navy-deep); background: var(--admin-gold); }
+
+.admin-sidebar-toggle { display: none; position: fixed; top: .8rem; left: .8rem; z-index: 1060; width: 42px; height: 42px; border: 0; border-radius: 8px; color: #fff; background: var(--admin-navy); box-shadow: 0 4px 14px rgba(7,26,44,.25); }
+.admin-sidebar-backdrop { display: none; position: fixed; inset: 0; z-index: 1035; background: rgba(7,26,44,.58); opacity: 0; transition: opacity .2s; }
+
+@media (max-width: 991.98px) {
+  body.admin-shell-active { padding-left: 0; padding-top: 3.5rem; }
+  body.admin-sidebar-open { overflow: hidden; }
+  .admin-sidebar { transform: translateX(-105%); transition: transform .22s ease; }
+  .admin-sidebar.is-open { transform: translateX(0); }
+  .admin-sidebar-toggle { display: grid; place-items: center; }
+  .admin-sidebar-backdrop.is-visible { display: block; opacity: 1; }
 }
-.modal .filetoupload{
-	font-family: MelodyLight;
-	font-size: 15px;
-	font-weight: bold;
-	padding-top: 10px;
-	margin-top: -10px;
-	margin-left: 20px;
-}
-.modal-header{
-	background-color: #0D1E53;
-	color: #fff;
-	text-transform: uppercase;
-}
-.modal-body{
-	margin-bottom: 10px;
-}
-#change_pass{
-	margin-top: 20px;
-	font-family: MelodyRegular;
-	padding-top: 5px;
-	padding-bottom: 5px;
-	padding-left: 10px;
-	padding-right: 10px;
-	background: #122B7C;
-	color: #fff;
-	border-radius: 10px;
-	border: none;
-	transition: 0.5s;
-	float: right;
-}
-#change_pass:hover{
-	background-color: #CE1A22;
-}
-#change_pass ion-icon{
-	--ionicon-stroke-width: 40px;
-	padding-right: 4px;
-    transform: translate(0%, 18%);
-    font-size: 20px;
-    color: #fff;
-}
+
+/* Existing form/modal behavior retained with a cleaner visual treatment. */
+.modal .inputBox { position: relative; display: flex; align-items: center; width: 100%; margin-top: 20px; }
+.modal .inputBox input { width: 100%; padding: 10px; border: 1px solid #bcccdc; border-radius: 0 6px 6px 0; outline: none; }
+.modal .inputBox i { padding: 13px 12px; color: #486581; border: 1px solid #bcccdc; border-right: 0; border-radius: 6px 0 0 6px; }
+.modal .inputBox span { position: absolute; left: 45px; padding: 10px; pointer-events: none; color: #627d98; transition: .2s; }
+.modal .inputBox input:valid ~ span, .modal .inputBox input:focus ~ span { padding: 0 6px; color: var(--admin-blue); background: #fff; font-size: .72rem; transform: translateY(-22px); }
+.modal .inputBox input:focus { border-color: var(--admin-blue); box-shadow: 0 0 0 3px rgba(22,104,178,.12); }
+.modal-header { color: #fff; background: var(--admin-navy); }

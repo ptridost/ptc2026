@@ -12,6 +12,7 @@ require_once('../event_year.php');
 
 $availableYears = getAvailableEventYears($dbcon);
 $currentPtcYear = getCurrentEventYear($dbcon);
+$isSessionsPage = !empty($sessionsManagementPage);
 
 // ===================================================================
 // START: BACKWARD-COMPATIBLE IMAGE PATH HELPER
@@ -95,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Error adding session.'];
             }
             $stmt->close();
-            header("Location: admindashboard.php");
+            header("Location: sessions.php");
             exit();
         }
         // --- Handle EDIT SESSION form ---
@@ -141,7 +142,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 $_SESSION['flash_message'] = ['type' => 'error', 'text' => 'Error updating session.'];
             }
             $stmt->close();
-            header("Location: admindashboard.php");
+            header("Location: sessions.php");
             exit();
         }
 
@@ -197,7 +198,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
                 $_SESSION['flash_message'] = ['type' => 'error', 'text' => $message];
             }
             
-            header("Location: admindashboard.php");
+            header("Location: sessions.php");
             exit();
         }
 
@@ -230,7 +231,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             }
             
             // Redirect after the operation is complete
-            header("Location: admindashboard.php");
+            header("Location: sessions.php");
             exit();
         }
 
@@ -240,6 +241,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 
 // --- 3. FETCH DATA FOR PAGE DISPLAY ---
 $stats = $dbcon->query("SELECT (SELECT COUNT(*) FROM tblptcsession) as total_sessions, (SELECT COUNT(DISTINCT id) FROM participant) as total_participants, (SELECT COUNT(*) FROM tblspeakerses) as total_speakers")->fetch_assoc();
+$sessionOverview = $dbcon->query("SELECT COUNT(*) AS total_sessions, SUM(session_date > CURDATE() OR (session_date = CURDATE() AND session_time > CURTIME())) AS upcoming_sessions, SUM(session_date = CURDATE() AND CURTIME() BETWEEN session_time AND sessionend_time) AS live_sessions FROM tblptcsession")->fetch_assoc();
 $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_head FROM tblptcsession ORDER BY session_date DESC");
 ?>
 
@@ -260,7 +262,7 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
         href="https://th.bing.com/th/id/OIP.gFmJnHNp6W9CRH9d587CJgHaHa?pid=ImgDet&rs=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>PTC | Admin Dashboard</title>
+    <title>PTC | <?php echo $isSessionsPage ? 'Session Management' : 'Admin Dashboard'; ?></title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.1/css/bootstrap.min.css" 
       rel="stylesheet" 
       
@@ -277,47 +279,42 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
     <link rel="stylesheet" type="text/css" href="../analytics2024.css">
 </head>
 
-<body class="pb-5">
+<body>
     <?php include("./nav&footer/usernav.php"); ?>
 
-    <div class="admindash_con container mt-5 pt-5">
+    <main class="admindash_con container-fluid px-3 px-xl-5 py-4">
         <div class="row mb-4">
             <div class="admin_dashboard">
                 <img src="Picture1.png">
-                <h1>Admin Dashboard</h1>
+                <h1><?php echo $isSessionsPage ? 'Session Management' : 'Analytics Dashboard'; ?></h1>
+                <?php if (!$isSessionsPage): ?>
                 <button id="toggle-charts-btn" class="btn-admin-action btn-admin-darkgray">
-                    <i class="fas fa-plus"></i><span class="ms-2">Show Charts</span>
+                    <i class="fas fa-minus"></i><span class="ms-2">Hide Charts</span>
                 </button>
+                <?php endif; ?>
             </div>
+        </div>
+
+        <?php if (!$isSessionsPage): ?>
+        <div class="dashboard-kpi-grid">
+            <div class="overview-kpi overview-kpi--live"><span class="overview-kpi__icon"><i class="fa-solid fa-signal"></i></span><div><small>Live now</small><strong><?php echo (int) ($sessionOverview['live_sessions'] ?? 0); ?></strong><span>Sessions currently in progress</span></div></div>
+            <div class="overview-kpi"><span class="overview-kpi__icon"><i class="fa-regular fa-calendar"></i></span><div><small>Upcoming</small><strong><?php echo (int) ($sessionOverview['upcoming_sessions'] ?? 0); ?></strong><span>Scheduled sessions</span></div></div>
+            <div class="overview-kpi"><span class="overview-kpi__icon"><i class="fa-solid fa-layer-group"></i></span><div><small>All sessions</small><strong><?php echo (int) ($sessionOverview['total_sessions'] ?? 0); ?></strong><span>Complete session records</span></div></div>
         </div>
 
         <div class="dashboard-control-bar">
-            <div class="control-bar__title">
-                <h1>Dashboard Filters</h1>
-                <p class="lead">Filter all charts and stats below by year and session.</p>
-            </div>
+            <div class="control-bar__title"><h1>Analytics Filters</h1><p class="lead">Refine participant data by event year and session.</p></div>
             <div class="control-bar__actions">
-                <div class="btn-group year-selector" role="group">
-                    <?php foreach ($availableYears as $availableYear): ?>
-                        <button type="button" class="btn year-btn btn-year-<?php echo $availableYear; ?> <?php echo $currentPtcYear === $availableYear ? 'active' : ''; ?>" data-year="<?php echo $availableYear; ?>">
-                            <?php echo $availableYear; ?>
-                        </button>
-                    <?php endforeach; ?>
-                </div>
-                <div class="session-selector">
-                    <button class="selector-arrow" id="btnLeft"><i class="fas fa-chevron-left"></i></button>
-                    <div class="dropdown">
-                        <button class="selector-button dropdown-toggle" type="button" id="dropdownMenuButton"
-                            data-bs-toggle="dropdown" aria-expanded="false">Loading...</button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="session_list"></ul>
-                    </div>
-                    <button class="selector-arrow" id="btnRight"><i class="fas fa-chevron-right"></i></button>
-                </div>
+                <div class="filter-field"><label for="analytics-year-filter">Event year</label><select id="analytics-year-filter" class="form-select year-selector">
+                    <?php foreach ($availableYears as $availableYear): ?><option value="<?php echo $availableYear; ?>" <?php echo $currentPtcYear === $availableYear ? 'selected' : ''; ?>><?php echo $availableYear; ?></option><?php endforeach; ?>
+                </select></div>
+                <div class="filter-field filter-field--session"><label for="session_list">Session</label><select id="session_list" class="form-select"><option value="all">Loading sessions...</option></select></div>
+                <button type="button" id="reset-analytics-filters" class="btn btn-outline-secondary filter-reset"><i class="fa-solid fa-arrow-rotate-left"></i> Reset</button>
             </div>
+            <p class="filter-summary mb-0">Displaying: <strong id="analytics-filter-summary"><?php echo $currentPtcYear; ?> · All registrants</strong></p>
         </div>
 
-
-        <div id="charts-wrapper" style="display: none;">
+        <div id="charts-wrapper">
             <div class="row g-4">
                 <div class="col-12 col-md-4">
                     <div class="dashboard-card kpi-card h-100">
@@ -364,6 +361,8 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
                 </div>
             </div>
         </div>
+        <?php else: ?>
+        <select id="session_list" hidden aria-hidden="true"><option value="all">All registrants</option></select>
 
         <div class="row mt-4">
 
@@ -415,7 +414,7 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
                     <h1> Live Now</h1>
                 </div>
             </div>
-            <div class="row g-4 mt-2">
+            <div class="session-table-wrap mt-3"><table class="session-table" data-session-table="live"><thead><tr><th>Session</th><th>Date</th><th>Time</th><th class="text-end">Actions</th></tr></thead><tbody>
                 <?php
             // This query finds sessions happening on today's date and where the current time is between the start and end times
             $stmt_live = $dbcon->prepare("SELECT * FROM tblptcsession WHERE session_date = CURDATE() AND CURTIME() BETWEEN session_time AND sessionend_time ORDER BY session_time");
@@ -425,17 +424,14 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
             if ($live_sessions_result->num_rows > 0) {
                 while ($row = $live_sessions_result->fetch_assoc()) {
                     $row['correct_logo_path'] = getImagePath($row['logo_image'], 'logo');
-                    echo '<div class="col-sm-12 col-md-6 col-lg-4 session-card">';
-                    // We reuse the same admin card template
-                    include('adminSessionCards.php');
-                    echo '</div>';
+                    include('adminSessionRow.php');
                 }
             } else {
-                echo '<div class="col-12"><p class="h4 text-center text-muted my-4">There are no sessions currently live.</p></div>';
+                echo '<tr><td colspan="4" class="session-table__empty">There are no sessions currently live.</td></tr>';
             }
             $stmt_live->close();
         ?>
-            </div>
+            </tbody></table></div><div class="session-pagination" data-pagination-for="live"></div>
         </div>
 
         <div class="row mt-5">
@@ -444,7 +440,7 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
                     <h1>Upcoming Sessions</h1>
                 </div>
             </div>
-            <div class="row g-4 mt-2">
+            <div class="session-table-wrap mt-3"><table class="session-table" data-session-table="upcoming"><thead><tr><th>Session</th><th>Date</th><th>Time</th><th class="text-end">Actions</th></tr></thead><tbody>
                 <?php
             $today_date = date('Y-m-d');
             $stmt_upcoming = $dbcon->prepare("SELECT * FROM tblptcsession WHERE session_date >= ? ORDER BY session_date ASC, session_time ASC");
@@ -454,16 +450,14 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
             if ($upcoming_sessions_result->num_rows > 0) {
                 while ($row = $upcoming_sessions_result->fetch_assoc()) {
                     $row['correct_logo_path'] = getImagePath($row['logo_image'], 'logo');
-                    echo '<div class="col-sm-12 col-md-6 col-lg-4 session-card">';
-                    include('adminSessionCards.php');
-                    echo '</div>';
+                    include('adminSessionRow.php');
                 }
             } else {
-                echo '<div class="col-12"><p class="h4 text-center text-muted my-4">No upcoming sessions scheduled.</p></div>';
+                echo '<tr><td colspan="4" class="session-table__empty">No upcoming sessions scheduled.</td></tr>';
             }
             $stmt_upcoming->close();
         ?>
-            </div>
+            </tbody></table></div><div class="session-pagination" data-pagination-for="upcoming"></div>
         </div>
 
         <div class="row mt-5">
@@ -471,16 +465,17 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
                 <div class="d-flex align-items-center"><img src="Picture1.png" alt="PTC Logo">
                     <h1>All Sessions</h1>
                 </div>
-                <div class="btn-group btn-group-lg year-filter-group" role="group">
-                    <button type="button" class="btn btn-dashboard selected" data-year="all">All</button>
+                <div class="session-year-filter">
+                    <label for="session-year-filter">Filter by year</label>
+                    <select id="session-year-filter" class="form-select">
+                    <option value="all">All years</option>
                     <?php foreach ($availableYears as $availableYear): ?>
-                        <button type="button" class="btn btn-dashboard" data-year="<?php echo $availableYear; ?>">
-                            <?php echo $availableYear; ?>
-                        </button>
+                        <option value="<?php echo $availableYear; ?>"><?php echo $availableYear; ?></option>
                     <?php endforeach; ?>
+                    </select>
                 </div>
             </div>
-            <div class="row g-4 mt-2" id="all-sessions-list">
+            <div class="session-table-wrap mt-3"><table class="session-table" data-session-table="all"><thead><tr><th>Session</th><th>Date</th><th>Time</th><th class="text-end">Actions</th></tr></thead><tbody id="all-sessions-list">
                 <?php
             $stmt_all = $dbcon->prepare("SELECT * FROM `tblptcsession` ORDER BY session_date DESC, session_time DESC");
             $stmt_all->execute();
@@ -488,19 +483,17 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
             while($row = $all_session_list->fetch_assoc()){
                 $session_year = date('Y', strtotime($row['session_date']));
                 $row['correct_logo_path'] = getImagePath($row['logo_image'], 'logo');
-                echo "<div class='col-sm-12 col-md-6 col-lg-4 session-card' data-session-year='{$session_year}'>";
-                include('adminSessionCards.php');
-                echo '</div>';
+                include('adminSessionRow.php');
             }
             $stmt_all->close();
         ?>
-            </div>
+            </tbody></table></div><div class="session-pagination" data-pagination-for="all"></div>
         </div>
 
         <div class="modal fade" id="addSessionModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <form action="admindashboard.php" method="POST" enctype="multipart/form-data">
+                    <form action="sessions.php" method="POST" enctype="multipart/form-data">
                         <div class="modal-header">
                             <h5 class="modal-title">ADD SESSION</h5><button type="button" class="btn-close"
                                 data-bs-dismiss="modal"></button>
@@ -543,7 +536,7 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
         <div class="modal fade" id="addSpeakerModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <form action="admindashboard.php" method="POST" enctype="multipart/form-data">
+                    <form action="sessions.php" method="POST" enctype="multipart/form-data">
                         <div class="modal-header">
                             <h5 class="modal-title">ADD SPEAKER</h5><button type="button" class="btn-close"
                                 data-bs-dismiss="modal"></button>
@@ -589,7 +582,7 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
         <div class="modal fade" id="addCpdModal" tabindex="-1" aria-labelledby="addCpdModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <form action="admindashboard.php" method="POST">
+                    <form action="sessions.php" method="POST">
                         <div class="modal-header">
                             <h5 class="modal-title" id="addCpdModalLabel">Add CPD Units Manually</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -616,7 +609,7 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
         <div class="modal fade" id="deleteConfirmationModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <form action="admindashboard.php" method="POST" enctype="multipart/form-data">
+                    <form action="sessions.php" method="POST" enctype="multipart/form-data">
                         <div class="modal-header bg-danger text-white">
                             <h5 class="modal-title">Confirm Deletion</h5>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -677,7 +670,7 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
         <div class="modal fade" id="editSessionModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <form id="editForm" method="POST" action="admindashboard.php" enctype="multipart/form-data">
+                    <form id="editForm" method="POST" action="sessions.php" enctype="multipart/form-data">
                         <div class="modal-header">
                             <h5 class="modal-title">Edit Session Information</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -727,6 +720,8 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
                 </div>
             </div>
         </div>
+        <?php endif; ?>
+    </main>
         <?php include("./nav&footer/footer.php"); ?>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"
@@ -809,19 +804,22 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
 
 
             // 1. Create the modal objects once when the page loads
-            const addSessionModal = new bootstrap.Modal(document.getElementById('addSessionModal'));
-            const addSpeakerModal = new bootstrap.Modal(document.getElementById('addSpeakerModal'));
-            const addCpdModal = new bootstrap.Modal(document.getElementById('addCpdModal'));
+            const addSessionModalElement = document.getElementById('addSessionModal');
+            const addSpeakerModalElement = document.getElementById('addSpeakerModal');
+            const addCpdModalElement = document.getElementById('addCpdModal');
+            const addSessionModal = addSessionModalElement ? new bootstrap.Modal(addSessionModalElement) : null;
+            const addSpeakerModal = addSpeakerModalElement ? new bootstrap.Modal(addSpeakerModalElement) : null;
+            const addCpdModal = addCpdModalElement ? new bootstrap.Modal(addCpdModalElement) : null;
 
             // 2. The click handlers now just show the existing modal
             $('button[data-bs-target="#addSessionModal"]').on('click', function() {
-                addSessionModal.show();
+                if (addSessionModal) addSessionModal.show();
             });
             $('button[data-bs-target="#addSpeakerModal"]').on('click', function() {
-                addSpeakerModal.show();
+                if (addSpeakerModal) addSpeakerModal.show();
             });
             $('button[data-bs-target="#addCpdModal"]').on('click', function() {
-                addCpdModal.show();
+                if (addCpdModal) addCpdModal.show();
             });
 
 
@@ -834,46 +832,104 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
 
 
 
-            // --- Event Listeners for new controls ---
-            $('.year-btn').click(function() {
-                $('.year-btn').removeClass('active');
-                $(this).addClass('active');
-                currentYear = $(this).data('year');
+            // --- Reusable client-side pagination for session tables ---
+            const sessionPaginators = {};
+
+            function createSessionPaginator(tableName) {
+                const $table = $(`[data-session-table="${tableName}"]`);
+                const $controls = $(`[data-pagination-for="${tableName}"]`);
+                let currentPage = 1;
+                let pageSize = 10;
+
+                function render() {
+                    const $allRows = $table.find('tbody .session-row');
+                    const $rows = $allRows.not('.session-filtered-out');
+                    const totalRows = $rows.length;
+                    const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+                    currentPage = Math.min(currentPage, totalPages);
+
+                    $allRows.hide();
+                    $rows.slice((currentPage - 1) * pageSize, currentPage * pageSize).show();
+
+                    if (totalRows === 0) {
+                        $controls.empty();
+                        return;
+                    }
+
+                    const firstRow = (currentPage - 1) * pageSize + 1;
+                    const lastRow = Math.min(currentPage * pageSize, totalRows);
+                    const pageButtons = Array.from({ length: totalPages }, (_, index) => index + 1)
+                        .filter(page => page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1)
+                        .map((page, index, pages) => {
+                            const gap = index > 0 && page - pages[index - 1] > 1 ? '<span class="pagination-gap">…</span>' : '';
+                            return `${gap}<button type="button" class="pagination-page${page === currentPage ? ' active' : ''}" data-page="${page}" aria-label="Page ${page}">${page}</button>`;
+                        }).join('');
+
+                    $controls.html(`
+                        <div class="pagination-summary">Showing <strong>${firstRow}–${lastRow}</strong> of <strong>${totalRows}</strong></div>
+                        <div class="pagination-size"><label>Rows per page
+                            <select class="form-select form-select-sm" aria-label="Rows per page">
+                                <option value="5" ${pageSize === 5 ? 'selected' : ''}>5</option>
+                                <option value="10" ${pageSize === 10 ? 'selected' : ''}>10</option>
+                                <option value="25" ${pageSize === 25 ? 'selected' : ''}>25</option>
+                            </select></label>
+                        </div>
+                        <div class="pagination-pages">
+                            <button type="button" class="pagination-nav" data-direction="previous" ${currentPage === 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i><span>Previous</span></button>
+                            ${pageButtons}
+                            <button type="button" class="pagination-nav" data-direction="next" ${currentPage === totalPages ? 'disabled' : ''}><span>Next</span><i class="fa-solid fa-chevron-right"></i></button>
+                        </div>`);
+
+                    $controls.find('.pagination-page').on('click', function() {
+                        currentPage = Number($(this).data('page'));
+                        render();
+                    });
+                    $controls.find('.pagination-nav').on('click', function() {
+                        currentPage += $(this).data('direction') === 'next' ? 1 : -1;
+                        render();
+                    });
+                    $controls.find('select').on('change', function() {
+                        pageSize = Number($(this).val());
+                        currentPage = 1;
+                        render();
+                    });
+                }
+
+                sessionPaginators[tableName] = {
+                    refresh: render,
+                    firstPage: function() { currentPage = 1; render(); }
+                };
+                render();
+            }
+
+            ['live', 'upcoming', 'all'].forEach(createSessionPaginator);
+
+            // --- Event Listeners for dashboard controls ---
+            $('#analytics-year-filter').on('change', function() {
+                currentYear = $(this).val();
                 updateSessionsDropdown();
             });
-            $('#btnLeft').click(function() {
-                const $items = $('#session_list .dropdown-item');
-                if ($items.length === 0) return;
-                currentIndex = (currentIndex === 0) ? $items.length - 1 : currentIndex - 1;
-                updateSelection();
-                fetchData();
-            });
-            $('#btnRight').click(function() {
-                const $items = $('#session_list .dropdown-item');
-                if ($items.length === 0) return;
-                currentIndex = (currentIndex === $items.length - 1) ? 0 : currentIndex + 1;
-                updateSelection();
-                fetchData();
+            $('#session_list').on('change', function() { fetchData(); });
+            $('#reset-analytics-filters').on('click', function() {
+                currentYear = '<?php echo $currentPtcYear; ?>';
+                $('#analytics-year-filter').val(currentYear);
+                updateSessionsDropdown();
             });
 
             // --- Client-side filter for the "All Sessions" list ---
-            $('.year-filter-group .btn-dashboard').on('click', function() {
-                $('.year-filter-group .btn-dashboard').removeClass('selected');
-                $(this).addClass('selected');
-                const yearToShow = $(this).data('year');
+            $('#session-year-filter').on('change', function() {
+                const yearToShow = $(this).val();
 
                 // This now specifically targets the list we want to filter
                 const allSessionsList = $('#all-sessions-list');
 
                 if (yearToShow === 'all') {
-                    // Show all cards INSIDE the target list
-                    allSessionsList.find('.session-card').show();
+                    allSessionsList.find('.session-row').removeClass('session-filtered-out');
                 } else {
-                    // Hide all cards INSIDE the target list
-                    allSessionsList.find('.session-card').hide();
-                    // Show only the cards that match the year INSIDE the target list
-                    allSessionsList.find(`.session-card[data-session-year="${yearToShow}"]`).show();
+                    allSessionsList.find('.session-row').addClass('session-filtered-out');
+                    allSessionsList.find(`.session-row[data-session-year="${yearToShow}"]`).removeClass('session-filtered-out');
                 }
+                sessionPaginators.all.firstPage();
             });
 
 
@@ -929,17 +985,12 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
                         const $sessionList = $('#session_list');
                         $sessionList.empty();
                         $sessionList.append(
-                            `<li class="dropdown-item" data-session-number="all">${currentYear} Registrants</li>`
+                            `<option value="all">All registrants</option>`
                         );
                         sessions.forEach(session => {
                             $sessionList.append(
-                                `<li class="dropdown-item" data-session-number="${session.session_number}">${session.session_head}</li>`
+                                `<option value="${session.session_number}">${session.session_head}</option>`
                             );
-                        });
-                        $('#session_list .dropdown-item').click(function() {
-                            currentIndex = $('#session_list .dropdown-item').index(this);
-                            updateSelection();
-                            fetchData();
                         });
                         currentIndex = 0;
                         updateSelection();
@@ -949,23 +1000,20 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
             }
 
             function updateSelection() {
-                const $items = $('#session_list .dropdown-item');
+                const $items = $('#session_list option');
                 if ($items.length === 0) {
-                    $('#dropdownMenuButton').text(`No Sessions for ${currentYear}`);
+                    $('#session_list').html(`<option value="all">No sessions for ${currentYear}</option>`);
                     return;
                 }
-                if (currentIndex >= $items.length) {
-                    currentIndex = 0;
-                }
-                const selectedItem = $items.eq(currentIndex);
-                $('#dropdownMenuButton').text(selectedItem.text());
+                $('#session_list').prop('selectedIndex', 0);
+                $('#analytics-filter-summary').text(`${currentYear} · ${$items.eq(0).text()}`);
             }
 
             function fetchData() {
-                const $items = $('#session_list .dropdown-item');
-                if ($items.length === 0) return;
-                const selectedItem = $items.eq(currentIndex);
-                const selectedValue = selectedItem.data('session-number');
+                const $selector = $('#session_list');
+                const selectedValue = $selector.val();
+                if (selectedValue === null) return;
+                $('#analytics-filter-summary').text(`${currentYear} · ${$selector.find('option:selected').text()}`);
 
                 $.ajax({
                     url: '../graphs_2024/get_analytics_data.php',
@@ -1114,7 +1162,7 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
             }
 
             // --- Initial Load ---
-            updateSessionsDropdown();
+            if (document.getElementById('analytics-year-filter')) updateSessionsDropdown();
 
             // --- SweetAlert for Flash Messages ---
             <?php
