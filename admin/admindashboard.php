@@ -823,15 +823,6 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
             });
 
 
-            $('.dropdown-toggle').on('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                var dropdownInstance = bootstrap.Dropdown.getOrCreateInstance(this);
-                dropdownInstance.toggle();
-            });
-
-
-
             // --- Reusable client-side pagination for session tables ---
             const sessionPaginators = {};
 

@@ -22,7 +22,8 @@ $sessionNumber = (int) $row['session_number'];
     </td>
     <td class="text-end" data-label="Actions">
         <div class="dropdown session-actions">
-            <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                data-bs-boundary="viewport" aria-expanded="false">
                 Actions
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
