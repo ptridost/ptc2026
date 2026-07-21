@@ -20,3 +20,13 @@ gh-webhook-deploy.php
 .env.backup
 .env.production
 
+# Local dry-run/generated image assets
+admin/certificate/assets/2026/
+admin/speaker_images/99a03148375f3b0993447c7c40a42e45.jpg
+landingpageimg/1b920af371ac6575a785cc06add657f1.png
+landingpageimg/37827a763387d3140f4998ad89be16f5.png
+landingpageimg/4d8e14311eaa064c536aa29f29cb09ff.png
+landingpageimg/a738839d205f961e14c92d8c4e1bbf78.png
+landingpageimg/b498ee3521762e0737a7a6b3cb9785b2.png
+landingpageimg/d18d84b32cf25004cfd488b213df539f.png
+
