@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
 :root {
   --admin-navy: #102a43;
   --admin-navy-deep: #071a2c;
@@ -11,6 +13,11 @@ body.admin-shell-active {
   color: #243b53;
   min-height: 100vh;
   padding-left: var(--admin-sidebar-width);
+  font-family: "Poppins", sans-serif;
+}
+
+body.admin-shell-active :where(h1, h2, h3, h4, h5, h6, p, a, button, input, select, textarea, label, span, small, td, th) {
+  font-family: "Poppins", sans-serif;
 }
 
 .admin-sidebar {

@@ -368,40 +368,29 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
 
             <div class="col-12">
                 <div class="session_inner_item h-100">
-                    <div class="session_header">
-                        <h1 class="m-0">PTC CONTROLS</h1>
-                    </div>
-                    <div class="p-3 d-flex flex-wrap justify-content-center gap-2">
-                        <button class="btn-admin-action btn-admin-blue" data-bs-toggle="modal"
-                            data-bs-target="#addSessionModal">
-                            <ion-icon name="clipboard-outline"></ion-icon> Add Session
-                        </button>
-                        <button class="btn-admin-action btn-admin-blue" data-bs-toggle="modal"
-                            data-bs-target="#addSpeakerModal">
-                            <ion-icon name="people-outline"></ion-icon> Add Speaker
-                        </button>
-                        <a href="editParticipants.php" class="btn-admin-action btn-admin-darkblue">
-                            <ion-icon name="search-outline"></ion-icon> Search Participants
-                        </a>
-                        <a href="monitoring.php" class="btn-admin-action btn-admin-darkblue">
-                            <ion-icon name="eye-outline"></ion-icon> Participant Monitoring
-                        </a>
-                        <a href="speaker_rating.php" class="btn-admin-action btn-admin-yellow">
-                            <ion-icon name="podium-outline"></ion-icon> Speaker Ratings
-                        </a>
-                        <a href="editVariables.php" class="btn-admin-action btn-admin-darkgray">
-                            <ion-icon name="settings-outline"></ion-icon> Session Settings
-                        </a>
-                        <a href="viewpartcert.php" class="btn-admin-action btn-admin-darkblue">
-                            <ion-icon name="ribbon-outline"></ion-icon> View Participant with Certificate
-                        </a>
-                        <a href="overall.php" class="btn-admin-action btn-admin-darkgray">
-                            <ion-icon name="document-text-outline"></ion-icon> Overall Summary Report
-                        </a>
-                        <button class="btn-admin-action btn-admin-blue" data-bs-toggle="modal"
-                            data-bs-target="#addCpdModal">
-                            <ion-icon name="add-circle-outline"></ion-icon> Add CPD Units
-                        </button>
+                    <div class="session-controls-bar">
+                        <div class="session-controls-bar__title">
+                            <h2>Session Actions</h2>
+                            <p>Create sessions, assign speakers, and manage session settings.</p>
+                        </div>
+                        <div class="session-controls-bar__actions">
+                            <button class="btn-admin-action btn-admin-blue" data-bs-toggle="modal"
+                                data-bs-target="#addSessionModal">
+                                <ion-icon name="clipboard-outline"></ion-icon> Add Session
+                            </button>
+                            <button class="btn-admin-action btn-admin-blue" data-bs-toggle="modal"
+                                data-bs-target="#addSpeakerModal">
+                                <ion-icon name="people-outline"></ion-icon> Add Speaker
+                            </button>
+                            <button class="btn-admin-action btn-admin-blue" data-bs-toggle="modal"
+                                data-bs-target="#addCpdModal">
+                                <ion-icon name="add-circle-outline"></ion-icon> Add CPD Units
+                            </button>
+                            <button type="button" class="btn-admin-action btn-admin-darkgray" data-bs-toggle="modal"
+                                data-bs-target="#sessionSettingsModal">
+                                <ion-icon name="settings-outline"></ion-icon> Session Settings
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -488,6 +477,20 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
             $stmt_all->close();
         ?>
             </tbody></table></div><div class="session-pagination" data-pagination-for="all"></div>
+        </div>
+
+        <div class="modal fade" id="sessionSettingsModal" tabindex="-1" aria-labelledby="sessionSettingsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered">
+                <div class="modal-content session-settings-modal">
+                    <div class="modal-header">
+                        <div><h5 class="modal-title" id="sessionSettingsModalLabel">Session Settings</h5><small>Configure event, certificate, feedback, and attendance rules.</small></div>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-0">
+                        <iframe src="editVariables.php?embedded=1" title="Session Settings" class="session-settings-frame"></iframe>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="modal fade" id="addSessionModal" tabindex="-1">

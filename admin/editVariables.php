@@ -1,4 +1,7 @@
-
+<?php
+$embeddedSettingsView = isset($_GET['embedded']) || isset($_POST['embedded']);
+$settingsReturnUrl = $embeddedSettingsView ? 'editVariables.php?embedded=1' : 'editVariables.php';
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -8,7 +11,50 @@
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="./editSpeakers.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <?php if ($embeddedSettingsView): ?>
+    <style>
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #fff; font-family: "Poppins", sans-serif; }
+        *, *::before, *::after { box-sizing: border-box; }
+        body :where(h1, h2, h3, h4, h5, h6, p, a, button, input, select, textarea, label, span, small) { font-family: "Poppins", sans-serif; }
+        .form__container { width: 100%; max-width: none; height: 100%; margin-top: 0 !important; padding: .75rem 1rem; overflow: hidden; border-radius: 0; background: #fff !important; }
+        #title { display: none; }
+        #editSettings { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .65rem 1rem; height: 100%; }
+        #editSettings > .mb-4, #editSettings > .modal-footer { grid-column: 1 / -1; }
+        #editSettings > .mb-3 { margin: 0 !important; }
+        #editSettings > .mb-3 .form-label { margin-bottom: .25rem; font-size: .78rem; font-weight: 600; }
+        #editSettings .form-control { min-height: 36px; padding: .35rem .6rem; font-size: .82rem; }
+        .settings-overview { margin: 0 !important; padding: .75rem !important; border-color: #e2e8f0 !important; background: #fff !important; }
+        .settings-overview h5 { margin-bottom: .6rem !important; font-size: .95rem; }
+        .event-year-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+        .event-year-grid .mb-3 { margin: 0 !important; }
+        .event-year-grid small { display: block; margin-top: .15rem; font-size: .68rem; line-height: 1.2; }
+        .certificate-heading { display: flex; align-items: end; justify-content: space-between; gap: 1rem; margin: .7rem 0 .45rem; }
+        .certificate-heading h6 { margin: 0; font-size: .84rem; }
+        .certificate-year-picker { width: 145px; }
+        .certificate-year-picker label { margin-bottom: .15rem; font-size: .66rem; font-weight: 700; text-transform: uppercase; }
+        .certificate-rule-row { margin: 0 !important; padding: .65rem; border: 1px solid #d9e2ec; border-radius: .4rem; background: #fff; }
+        .certificate-rule-row > div { width: auto; flex: 1 1 0; }
+        .certificate-rule-row > div:first-of-type { flex: 0 0 60px; }
+        .certificate-rule-row .form-label { font-size: .7rem; line-height: 1.15; }
+        .certificate-rule-row .offset-md-2 { margin-left: 60px; }
+        #editSettings > .modal-footer { align-self: end; padding: .65rem 0 0; }
+        @media (max-width: 767.98px) {
+            html, body, .form__container { overflow-y: auto; }
+            #editSettings { display: block; height: auto; }
+            #editSettings > .mb-3 { margin-bottom: .75rem !important; }
+            .event-year-grid { grid-template-columns: 1fr; }
+            .certificate-heading { align-items: stretch; flex-direction: column; }
+            .certificate-year-picker { width: 100%; }
+            .certificate-rule-row { display: block; }
+            .certificate-rule-row > div { margin-bottom: .5rem; }
+            .certificate-rule-row .offset-md-2 { margin-left: 0; }
+        }
+    </style>
+    <?php endif; ?>
 </head>
 
 <?php
@@ -105,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
-                        window.location.href = 'editVariables.php'; 
+                        window.location.href = '$settingsReturnUrl';
                     });
                 });
             </script>";
@@ -180,11 +226,13 @@ $dbcon->close();
 <body>
 	<div class="container mt-5 form__container">
 		<h3 id="title"class="pt-4">Edit Overall Session Settings</h3>
-		<form id="editSettings" method="POST" action="editVariables.php"> <!-- Change action to your PHP processing file -->
+		<form id="editSettings" method="POST" action="editVariables.php<?php echo $embeddedSettingsView ? '?embedded=1' : ''; ?>"> <!-- Change action to your PHP processing file -->
 		    <input type="hidden" id="hidden1" name="settings"> <!-- This will hold the session ID -->
+            <?php if ($embeddedSettingsView): ?><input type="hidden" name="embedded" value="1"><?php endif; ?>
 
-            <div class="mb-4 p-3 border rounded bg-light">
+            <div class="mb-4 p-3 border rounded bg-light settings-overview">
                 <h5 class="mb-3">Event Year Settings</h5>
+                <div class="event-year-grid">
                 <div class="mb-3">
                     <label for="current_ptc_year" class="form-label">Current PTC Year</label>
                     <select class="form-control" id="current_ptc_year" name="current_ptc_year" required>
@@ -208,8 +256,19 @@ $dbcon->close();
                     </select>
                     <small class="text-muted">Used as fallback when the selected certificate year has no uploaded asset folder yet.</small>
                 </div>
+                </div>
 
-                <h6 class="mt-4">Certificate Eligibility Rules</h6>
+                <div class="certificate-heading">
+                    <h6>Certificate Eligibility Rules</h6>
+                    <?php if ($embeddedSettingsView): ?>
+                    <div class="certificate-year-picker">
+                        <label for="certificate_rule_year">Rule year</label>
+                        <select id="certificate_rule_year" class="form-select form-select-sm">
+                            <?php foreach ($certificateYears as $certificateYear): ?><option value="<?php echo $certificateYear; ?>"><?php echo $certificateYear; ?></option><?php endforeach; ?>
+                        </select>
+                    </div>
+                    <?php endif; ?>
+                </div>
                 <?php foreach ($certificateYears as $certificateYear): ?>
                     <?php
                         $minSessionsName = 'certificate_min_sessions_' . $certificateYear;
@@ -224,7 +283,7 @@ $dbcon->close();
                         $validDateValue = htmlspecialchars($settings[$validDateName] ?? '');
                     ?>
                     <input type="hidden" name="certificate_years[]" value="<?php echo $certificateYear; ?>">
-                    <div class="row align-items-center mb-3">
+                    <div class="row align-items-center mb-3 certificate-rule-row" data-certificate-year="<?php echo $certificateYear; ?>">
                         <div class="col-md-2 fw-bold"><?php echo $certificateYear; ?></div>
                         <div class="col-md-2">
                             <label class="form-label mb-1">Minimum attended sessions</label>
@@ -276,11 +335,30 @@ $dbcon->close();
 		    </div>
 
 		    <div class="modal-footer">
-		        <a href="./admindashboard.php" type="button" name="cancel" class="btn btn-danger"> Cancel</a>
+		        <?php if ($embeddedSettingsView): ?>
+                <button type="button" class="btn btn-outline-secondary" onclick="window.parent.bootstrap.Modal.getInstance(window.parent.document.getElementById('sessionSettingsModal')).hide()">Cancel</button>
+                <?php else: ?>
+                <a href="./admindashboard.php" type="button" name="cancel" class="btn btn-danger">Cancel</a>
+                <?php endif; ?>
 		        <button type="submit" class="btn btn-primary" id="saveChanges" form="editSettings" name="editSettings">Save changes</button>
 		    </div>
 		</form>
 	</div>
+    <?php if ($embeddedSettingsView): ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const picker = document.getElementById('certificate_rule_year');
+            const rows = document.querySelectorAll('.certificate-rule-row');
+            function showSelectedRule() {
+                rows.forEach(function (row) {
+                    row.hidden = row.dataset.certificateYear !== picker.value;
+                });
+            }
+            picker.addEventListener('change', showSelectedRule);
+            showSelectedRule();
+        });
+    </script>
+    <?php endif; ?>
    
 </body>
 
