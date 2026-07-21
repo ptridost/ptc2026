@@ -60,7 +60,8 @@ if (isset($_SESSION['participant_id'])) {
                 <?php endif; ?>
                 <?php if ($congress_type !== 'GTC'): ?>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button">PAST EVENTS</a>
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">PAST EVENTS</a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="<?php echo BASE_PATH; ?>/index2025.php">2025 PTC</a></li>
                         <li><a class="dropdown-item" href="<?php echo BASE_PATH; ?>/index2024.php">2024 PTC</a></li>
@@ -85,7 +86,7 @@ if (isset($_SESSION['participant_id'])) {
                 <?php if (isset($_SESSION['participant_id']) && $user_firstname): ?>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
-                            role="button">
+                            role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <div class="profile-pic me-2"><?php echo strtoupper(substr($user_firstname, 0, 1)); ?></div>
                             Hi, <?php echo htmlspecialchars($user_firstname); ?>
                         </a>
