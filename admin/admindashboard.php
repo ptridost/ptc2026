@@ -8,6 +8,10 @@ if(empty($_SESSION['admin_id'])){
 }
 
 require('../dbcon.php');
+require_once('../event_year.php');
+
+$availableYears = getAvailableEventYears($dbcon);
+$currentPtcYear = getCurrentEventYear($dbcon);
 
 // ===================================================================
 // START: BACKWARD-COMPATIBLE IMAGE PATH HELPER
@@ -294,9 +298,11 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
             </div>
             <div class="control-bar__actions">
                 <div class="btn-group year-selector" role="group">
-                    <button type="button" class="btn year-btn btn-year-2023" data-year="2023">2023</button>
-                    <button type="button" class="btn year-btn btn-year-2024 active" data-year="2024">2024</button>
-                    <button type="button" class="btn year-btn btn-year-2025" data-year="2025">2025</button>
+                    <?php foreach ($availableYears as $availableYear): ?>
+                        <button type="button" class="btn year-btn btn-year-<?php echo $availableYear; ?> <?php echo $currentPtcYear === $availableYear ? 'active' : ''; ?>" data-year="<?php echo $availableYear; ?>">
+                            <?php echo $availableYear; ?>
+                        </button>
+                    <?php endforeach; ?>
                 </div>
                 <div class="session-selector">
                     <button class="selector-arrow" id="btnLeft"><i class="fas fa-chevron-left"></i></button>
@@ -467,9 +473,11 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
                 </div>
                 <div class="btn-group btn-group-lg year-filter-group" role="group">
                     <button type="button" class="btn btn-dashboard selected" data-year="all">All</button>
-                    <button type="button" class="btn btn-dashboard" data-year="2025">2025</button>
-                    <button type="button" class="btn btn-dashboard" data-year="2024">2024</button>
-                    <button type="button" class="btn btn-dashboard" data-year="2023">2023</button>
+                    <?php foreach ($availableYears as $availableYear): ?>
+                        <button type="button" class="btn btn-dashboard" data-year="<?php echo $availableYear; ?>">
+                            <?php echo $availableYear; ?>
+                        </button>
+                    <?php endforeach; ?>
                 </div>
             </div>
             <div class="row g-4 mt-2" id="all-sessions-list">
@@ -793,7 +801,7 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
         // --- New Dynamic Dashboard Engine ---
         $(document).ready(function() {
             let chartInstances = {};
-            let currentYear = 2024;
+            let currentYear = <?php echo (int) $currentPtcYear; ?>;
             let currentIndex = 0;
 
 

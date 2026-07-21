@@ -8,6 +8,7 @@ if (empty($_SESSION["admin_id"])) {
 }
 
 require "../dbcon.php";
+require_once "../event_year.php";
 set_time_limit(300);
 
 // ============================================================
@@ -34,7 +35,8 @@ function getRatingClass($rating)
 // ============================================================
 // FILTER SETUP
 // ============================================================
-$year_filter = $_GET["year"] ?? 2025;
+$availableYears = getAvailableEventYears($dbcon);
+$year_filter = resolveEventYear($dbcon, $_GET["year"] ?? null);
 $session_filter = $_GET["session_id"] ?? "all";
 
 $where_conditions = ["YEAR(s.session_date) = ?"];
@@ -640,9 +642,11 @@ $dbcon->close();
             <div class="col-md-4">
                 <label class="form-label fw-bold">Year</label>
                 <select name="year" class="form-select">
-                    <option value="2025" <?= $year_filter == 2025 ? 'selected' : '' ?>>2025</option>
-                    <option value="2024" <?= $year_filter == 2024 ? 'selected' : '' ?>>2024</option>
-                    <option value="2023" <?= $year_filter == 2023 ? 'selected' : '' ?>>2023</option>
+                    <?php foreach ($availableYears as $availableYear): ?>
+                        <option value="<?= $availableYear ?>" <?= $year_filter == $availableYear ? 'selected' : '' ?>>
+                            <?= $availableYear ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             <div class="col-md-4">

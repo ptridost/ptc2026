@@ -8,6 +8,7 @@ if (empty($_SESSION["admin_id"])) {
 }
 
 require "../dbcon.php";
+require_once "../event_year.php";
 set_time_limit(300);
 
 // ============================================================
@@ -58,13 +59,15 @@ function getRatingClass($rating)
 // ============================================================
 // FILTER SETUP
 // ============================================================
+$available_years = getAvailableEventYears($dbcon);
+$year_filter = resolveEventYear($dbcon, $_GET["year"] ?? null);
 $session_filter = $_GET["session_id"] ?? "all";
 $date_from = $_GET["date_from"] ?? "";
 $date_to = $_GET["date_to"] ?? "";
 
-$where_conditions = ["YEAR(s.session_date) = 2025"];
-$params = [];
-$types = "";
+$where_conditions = ["YEAR(s.session_date) = ?"];
+$params = [$year_filter];
+$types = "i";
 
 if ($session_filter !== "all" && !empty($session_filter)) {
     $where_conditions[] = "s.session_number = ?";
@@ -91,9 +94,9 @@ $where_clause = implode(" AND ", $where_conditions);
 // ============================================================
 if (isset($_GET["export"]) && $_GET["export"] === "per_session_responses") {
     // Build export-specific where clause
-    $export_where = ["YEAR(s.session_date) = 2025"];
-    $export_params = [];
-    $export_types = "";
+    $export_where = ["YEAR(s.session_date) = ?"];
+    $export_params = [$year_filter];
+    $export_types = "i";
 
     if ($session_filter !== "all" && !empty($session_filter)) {
         $export_where[] = "f.session_id = ?";
@@ -119,7 +122,7 @@ if (isset($_GET["export"]) && $_GET["export"] === "per_session_responses") {
                    s.session_date
             FROM tblfeedback f
             INNER JOIN tblptcsession s ON f.session_id = s.session_number
-            WHERE YEAR(s.session_date) = 2025";
+            WHERE YEAR(s.session_date) = " . (int) $year_filter;
     
     // Add additional filters if provided
     if ($session_filter !== "all" && !empty($session_filter)) {
@@ -152,14 +155,14 @@ if (isset($_GET["export"]) && $_GET["export"] === "per_session_responses") {
     }
 
     // Second pass: get responses for each session
-    $filename = "Unique_Responses_Per_Session_2025_" . date("Y-m-d_His") . ".csv";
+    $filename = "Unique_Responses_Per_Session_" . $year_filter . "_" . date("Y-m-d_His") . ".csv";
     header("Content-Type: text/csv; charset=utf-8");
     header('Content-Disposition: attachment; filename="' . $filename . '"');
 
     $output = fopen("php://output", "w");
     fprintf($output, chr(0xef) . chr(0xbb) . chr(0xbf));
 
-    fputcsv($output, ["UNIQUE RESPONSES PER SESSION - YEAR 2025"]);
+    fputcsv($output, ["UNIQUE RESPONSES PER SESSION - YEAR " . $year_filter]);
     fputcsv($output, ["Generated: " . date("F d, Y h:i A")]);
     fputcsv($output, ["Filter: " . ($session_filter !== "all" ? "Session " . $session_filter : "All Sessions")]);
     fputcsv($output, [""]);
@@ -443,18 +446,17 @@ while ($row = $result->fetch_assoc()) {
 }
 $stmt->close();
 
-// Get Filter Data - Get all sessions from 2025 for the dropdown
+// Get Filter Data - Get all sessions for the selected year
 $sql = "SELECT session_number, session_head, session_title, YEAR(session_date) as year
         FROM tblptcsession 
-        WHERE YEAR(session_date) = 2025
+        WHERE YEAR(session_date) = ?
         ORDER BY session_number ASC";
-$result = $dbcon->query($sql);
+$stmt = $dbcon->prepare($sql);
+$stmt->bind_param("i", $year_filter);
+$stmt->execute();
+$result = $stmt->get_result();
 $all_sessions = $result->fetch_all(MYSQLI_ASSOC);
-
-$sql = "SELECT DISTINCT YEAR(session_date) as year FROM tblptcsession
-        WHERE session_date IS NOT NULL ORDER BY year DESC";
-$result = $dbcon->query($sql);
-$available_years = array_column($result->fetch_all(MYSQLI_ASSOC), "year");
+$stmt->close();
 
 // Debug information - should match the filtered query
 $debug_sql = "SELECT COUNT(*) as total, 
@@ -519,10 +521,13 @@ $dbcon->close();
         <form method="GET" action="" class="row g-3">
             <div class="col-md-3">
                 <label class="form-label fw-bold">Year</label>
-                <select name="year" class="form-select" disabled>
-                    <option value="2025" selected>2025</option>
+                <select name="year" class="form-select">
+                    <?php foreach ($available_years as $available_year): ?>
+                        <option value="<?= $available_year ?>" <?= $year_filter == $available_year ? "selected" : "" ?>>
+                            <?= $available_year ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
-                <small class="text-muted">Fixed to 2025 only</small>
             </div>
             <div class="col-md-3">
                 <label class="form-label fw-bold">Session</label>
@@ -551,7 +556,7 @@ $dbcon->close();
 
     <div class="alert alert-info">
         <strong>✨ Smart Filtering Enabled:</strong> Responses with less than 4 words and common empty responses (none, n/a, wala, etc.) are automatically filtered out. Only unique, meaningful responses are shown.
-        <br><strong>📊 Data Stats:</strong> Processing <?= number_format($debug_info['total']) ?> total feedback entries from <?= $debug_info['unique_sessions'] ?> sessions in 2025.
+        <br><strong>📊 Data Stats:</strong> Processing <?= number_format($debug_info['total']) ?> total feedback entries from <?= $debug_info['unique_sessions'] ?> sessions in <?= $year_filter ?>.
     </div>
 
     <!-- PER-SESSION RESPONSES -->

@@ -1,10 +1,13 @@
 <?php
-$page_event_year = 2025; 
 // This MUST be the very first line
 if (session_status() === PHP_SESSION_NONE) { 
     session_start(); 
 }
 require("./dbcon.php");
+require_once("./event_year.php");
+
+$availableYears = getAvailableEventYears($dbcon);
+$page_event_year = getCurrentEventYear($dbcon);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -45,9 +48,11 @@ require("./dbcon.php");
             </div>
 
             <div class="btn-group year-selector" role="group" aria-label="Year Selection">
-                <button type="button" class="btn year-btn btn-year-2023" data-year="2023">2023</button>
-                <button type="button" class="btn year-btn btn-year-2024" data-year="2024">2024</button>
-                <button type="button" class="btn year-btn btn-year-2025 active" data-year="2025">2025</button>
+                <?php foreach ($availableYears as $availableYear): ?>
+                    <button type="button" class="btn year-btn btn-year-<?php echo $availableYear; ?> <?php echo $page_event_year === $availableYear ? 'active' : ''; ?>" data-year="<?php echo $availableYear; ?>">
+                        <?php echo $availableYear; ?>
+                    </button>
+                <?php endforeach; ?>
             </div>
 
             <div class="session-selector">
@@ -310,7 +315,7 @@ require("./dbcon.php");
 
         // --- Global variables for analytics ---
         let chartInstances = {};
-        let currentYear = 2025;
+        let currentYear = <?php echo (int) $page_event_year; ?>;
         let currentIndex = 0;
 
         /*$('#userDropdown, #navbarDropdown, #dropdownMenuButton').on('click', function(e) {

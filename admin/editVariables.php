@@ -32,45 +32,62 @@ if ($dbcon->connect_error) {
     die("Connection failed: " . $dbcon->connect_error);
 }
 
+require_once('../event_year.php');
+
+function saveVariable(mysqli $dbcon, string $name, string $value): bool
+{
+    $check = $dbcon->prepare("SELECT id FROM variables WHERE name = ? LIMIT 1");
+    $check->bind_param("s", $name);
+    $check->execute();
+    $result = $check->get_result();
+    $existing = $result->fetch_assoc();
+    $check->close();
+
+    if ($existing) {
+        $stmt = $dbcon->prepare("UPDATE variables SET value = ? WHERE name = ?");
+        $stmt->bind_param("ss", $value, $name);
+        $success = $stmt->execute();
+        $stmt->close();
+        return $success;
+    }
+
+    $nextIdResult = $dbcon->query("SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM variables");
+    $nextId = (int) $nextIdResult->fetch_assoc()['next_id'];
+    $stmt = $dbcon->prepare("INSERT INTO variables (id, name, value) VALUES (?, ?, ?)");
+    $stmt->bind_param("iss", $nextId, $name, $value);
+    $success = $stmt->execute();
+    $stmt->close();
+    return $success;
+}
+
 // Check if form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve the form data
-    $acceptingTimeFeedbackMorning = $_POST['atfm'];
-    $acceptingTimeFeedbackAfternoon = $_POST['atfa'];
-    $closingTimeFeedback = $_POST['ctf'];
-    $acceptingTimeAttendanceMorning = $_POST['atam'];
-    $acceptingTimeAttendanceAfternoon = $_POST['ataa'];
+    $settingsToSave = [
+        'acceptingTimeFeedbackMorning' => $_POST['atfm'] ?? '',
+        'acceptingTimeFeedbackAfternoon' => $_POST['atfa'] ?? '',
+        'closingTimeFeedback' => $_POST['ctf'] ?? '',
+        'acceptingTimeAttendanceMorning' => $_POST['atam'] ?? '',
+        'acceptingTimeAttendanceAfternoon' => $_POST['ataa'] ?? '',
+        'current_ptc_year' => (string) (int) ($_POST['current_ptc_year'] ?? date('Y')),
+    ];
 
-    // Prepare the SQL update query
-    $stmt = $dbcon->prepare("UPDATE variables SET value = ? WHERE name = ?");
+    $certificateYears = array_map('intval', $_POST['certificate_years'] ?? []);
+    foreach ($certificateYears as $certificateYear) {
+        $minSessions = max(1, (int) ($_POST['certificate_min_sessions'][$certificateYear] ?? 6));
+        $feedbackRequired = isset($_POST['certificate_feedback_required'][$certificateYear]) ? '1' : '0';
 
-    // Update Accepting Time for Feedback Morning
-    $stmt->bind_param("ss", $acceptingTimeFeedbackMorning, $name);
-    $name = 'acceptingTimeFeedbackMorning';
-    $stmt->execute();
-
-    // Update Accepting Time for Feedback Afternoon
-    $stmt->bind_param("ss", $acceptingTimeFeedbackAfternoon, $name);
-    $name = 'acceptingTimeFeedbackAfternoon';
-    $stmt->execute();
-
-    // Update Closing Time for Feedback
-    $stmt->bind_param("ss", $closingTimeFeedback, $name);
-    $name = 'closingTimeFeedback';
-    $stmt->execute();
-
-    // Update Accepting Time for Attendance Morning
-    $stmt->bind_param("ss", $acceptingTimeAttendanceMorning, $name);
-    $name = 'acceptingTimeAttendanceMorning';
-    $stmt->execute();
-
-    // Update Accepting Time for Attendance Afternoon
-    $stmt->bind_param("ss", $acceptingTimeAttendanceAfternoon, $name);
-    $name = 'acceptingTimeAttendanceAfternoon';
-    $stmt->execute();
+        $settingsToSave['certificate_min_sessions_' . $certificateYear] = (string) $minSessions;
+        $settingsToSave['certificate_feedback_required_' . $certificateYear] = $feedbackRequired;
+    }
 
     // Check if the query executed successfully
-    if ($stmt -> execute()) {
+    $allSaved = true;
+    foreach ($settingsToSave as $name => $value) {
+        $allSaved = saveVariable($dbcon, $name, trim((string) $value)) && $allSaved;
+    }
+
+    if ($allSaved) {
         $message = "Settings updated successfully!";
         echo "<script>
                 document.addEventListener('DOMContentLoaded', function() {
@@ -98,8 +115,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 });
             </script>";
     }
-
-    $stmt->close();
 }
 
 $dbcon->close();
@@ -119,6 +134,8 @@ if ($dbcon->connect_error) {
     die("Connection failed: " . $dbcon->connect_error);
 }
 
+require_once('../event_year.php');
+
 // SQL query to fetch settings from the 'variables' table
 $sql_settings = "SELECT * FROM variables";
 $result = $dbcon->query($sql_settings);
@@ -135,6 +152,14 @@ if ($result->num_rows > 0) {
     echo "No settings found.";
 }
 
+$availableYears = getAvailableEventYears($dbcon);
+$currentPtcYear = getCurrentEventYear($dbcon);
+$certificateYears = $availableYears;
+if (!in_array($currentPtcYear, $certificateYears, true)) {
+    array_unshift($certificateYears, $currentPtcYear);
+}
+rsort($certificateYears);
+
 // Close the database connection
 $dbcon->close();
 ?>
@@ -144,6 +169,47 @@ $dbcon->close();
 		<h3 id="title"class="pt-4">Edit Overall Session Settings</h3>
 		<form id="editSettings" method="POST" action="editVariables.php"> <!-- Change action to your PHP processing file -->
 		    <input type="hidden" id="hidden1" name="settings"> <!-- This will hold the session ID -->
+
+            <div class="mb-4 p-3 border rounded bg-light">
+                <h5 class="mb-3">Event Year Settings</h5>
+                <div class="mb-3">
+                    <label for="current_ptc_year" class="form-label">Current PTC Year</label>
+                    <select class="form-control" id="current_ptc_year" name="current_ptc_year" required>
+                        <?php foreach ($availableYears as $availableYear): ?>
+                            <option value="<?php echo $availableYear; ?>" <?php echo $currentPtcYear === $availableYear ? 'selected' : ''; ?>>
+                                <?php echo $availableYear; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <small class="text-muted">This controls the default year used by dashboards and certificate checks.</small>
+                </div>
+
+                <h6 class="mt-4">Certificate Eligibility Rules</h6>
+                <?php foreach ($certificateYears as $certificateYear): ?>
+                    <?php
+                        $minSessionsName = 'certificate_min_sessions_' . $certificateYear;
+                        $feedbackRequiredName = 'certificate_feedback_required_' . $certificateYear;
+                        $minSessionsValue = htmlspecialchars($settings[$minSessionsName] ?? '6');
+                        $feedbackRequiredValue = filter_var($settings[$feedbackRequiredName] ?? false, FILTER_VALIDATE_BOOLEAN);
+                    ?>
+                    <input type="hidden" name="certificate_years[]" value="<?php echo $certificateYear; ?>">
+                    <div class="row align-items-center mb-2">
+                        <div class="col-md-2 fw-bold"><?php echo $certificateYear; ?></div>
+                        <div class="col-md-4">
+                            <label class="form-label mb-1">Minimum attended sessions</label>
+                            <input type="number" class="form-control" name="certificate_min_sessions[<?php echo $certificateYear; ?>]" value="<?php echo $minSessionsValue; ?>" min="1" required>
+                        </div>
+                        <div class="col-md-6 pt-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="feedback_required_<?php echo $certificateYear; ?>" name="certificate_feedback_required[<?php echo $certificateYear; ?>]" value="1" <?php echo $feedbackRequiredValue ? 'checked' : ''; ?>>
+                                <label class="form-check-label" for="feedback_required_<?php echo $certificateYear; ?>">
+                                    Require feedback before certificate
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
 
 		    <div class="mb-3">
 		        <label for="atm" class="form-label">Accepting Time for Feedback Morning Sessions</label>

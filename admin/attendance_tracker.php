@@ -9,9 +9,11 @@ if (empty($_SESSION["admin_id"])) {
 
 require "../dbcon.php";
 require "../dbcon_world.php";
+require_once "../event_year.php";
 
 // Get filter parameters
-$year = $_GET['year'] ?? 2025;
+$availableYears = getAvailableEventYears($dbcon);
+$year = resolveEventYear($dbcon, $_GET['year'] ?? null);
 $min_sessions = $_GET['min_sessions'] ?? 1;
 $view_mode = $_GET['view'] ?? 'overview';
 $selected_session = $_GET['session_id'] ?? null;
@@ -800,9 +802,11 @@ $dbcon->close();
             <div class="col-md-3">
                 <label class="form-label fw-bold">Year</label>
                 <select name="year" class="form-select">
-                    <option value="2025" <?= $year == 2025 ? 'selected' : '' ?>>2025</option>
-                    <option value="2024" <?= $year == 2024 ? 'selected' : '' ?>>2024</option>
-                    <option value="2023" <?= $year == 2023 ? 'selected' : '' ?>>2023</option>
+                    <?php foreach ($availableYears as $availableYear): ?>
+                        <option value="<?= $availableYear ?>" <?= $year == $availableYear ? 'selected' : '' ?>>
+                            <?= $availableYear ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             
