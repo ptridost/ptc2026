@@ -6,21 +6,11 @@ if (empty($_SESSION['admin_id'])) {
     exit();
 }
  require('../dbcon.php');
+ require_once('../event_year.php');
  $userId = isset($_GET['id'])? $_GET['id']:'';
  $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
- $availableYears = [];
- $yearResult = $dbcon->query("SELECT DISTINCT YEAR(session_date) AS session_year FROM tblptcsession WHERE session_date IS NOT NULL ORDER BY session_year DESC");
- if ($yearResult) {
-     while ($yearRow = $yearResult->fetch_assoc()) {
-         if (!empty($yearRow['session_year'])) {
-             $availableYears[] = (int) $yearRow['session_year'];
-         }
-     }
- }
- $selectedYear = isset($_GET['year']) ? (int) $_GET['year'] : ($availableYears[0] ?? (int) date('Y'));
- if (!in_array($selectedYear, $availableYears, true) && !empty($availableYears)) {
-     $selectedYear = $availableYears[0];
- }
+ $availableYears = getAvailableEventYears($dbcon);
+ $selectedYear = resolveEventYear($dbcon, $_GET['year'] ?? null);
  $sql_query_participant = "SELECT sampledb.participant.*, world.countries.name AS 'countryName'  FROM sampledb.participant INNER JOIN world.countries ON world.countries.iso2 = sampledb.participant.Country WHERE sampledb.participant.id = ?";
  $stmt = $dbcon -> prepare($sql_query_participant);
  $stmt -> bind_param("i",$userId);

@@ -8,15 +8,24 @@ if(empty($_SESSION['participant_id'])){
 }
 
 require('../dbcon.php');
+require_once('../event_year.php');
+
+function getPerformanceLogoPath($filename) {
+    if (empty($filename) || str_contains($filename, '..')) {
+        return './user_dash_img/PTClogo.jpg';
+    }
+
+    $relativePath = 'landingpageimg/' . ltrim(str_replace('\\', '/', $filename), '/');
+    $absolutePath = dirname(__DIR__) . '/' . $relativePath;
+
+    return file_exists($absolutePath)
+        ? '../' . $relativePath
+        : './user_dash_img/PTClogo.jpg';
+}
 
 // --- START: YEAR FILTERING LOGIC ---
-$years_result = $dbcon->query("SELECT DISTINCT YEAR(session_date) as session_year FROM tblptcsession ORDER BY session_year DESC");
-$available_years = [];
-while($row = $years_result->fetch_assoc()) {
-    $available_years[] = $row['session_year'];
-}
-$default_year = !empty($available_years) ? $available_years[0] : date('Y');
-$target_year = isset($_GET['year']) && in_array($_GET['year'], $available_years) ? $_GET['year'] : $default_year;
+$available_years = getAvailableEventYears($dbcon);
+$target_year = resolveEventYear($dbcon, $_GET['year'] ?? null, $_SESSION['congress_type'] ?? 'PTC');
 // --- END: YEAR FILTERING LOGIC ---
 
 // Get ALL sessions for the TARGET YEAR.
@@ -102,8 +111,11 @@ $stmt_feed->close();
         .year-filter-group .btn {
             font-family: MelodySemibold, sans-serif; border-radius: 50px !important; padding: 0.5rem 1.5rem;
             margin: 0 5px; font-weight: bold; transition: all 0.3s ease; border-width: 2px; border-style: solid;
+            color: #0E2369; border-color: #0E2369; background-color: #fff;
         }
-        .year-filter-group .btn.active { box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+        .year-filter-group .btn:hover, .year-filter-group .btn.active {
+            background-color: #0E2369; color: #fff; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
         .year-color-2025 { color: #C7000D; } .btn-year-2025 { color: #C7000D; border-color: #C7000D; background-color: #fff; }
         .btn-year-2025:hover, .btn-year-2025.active { background-color: #C7000D; color: #fff !important; }
         .year-color-2024 { color: #DAA520; } .btn-year-2024 { color: #b59400; border-color: #FED300; background-color: #fff; }
@@ -157,7 +169,7 @@ $stmt_feed->close();
                 ?>
                 <div class="performance-card">
                     <div class="performance-card-logo">
-                        <img src="../landingpageimg/<?php echo htmlspecialchars($session['logo_image']); ?>" alt="Session Logo">
+                        <img src="<?= htmlspecialchars(getPerformanceLogoPath($session['logo_image'])) ?>" alt="Session Logo">
                     </div>
                     <div class="performance-card-content">
                         <div class="performance-card-header">

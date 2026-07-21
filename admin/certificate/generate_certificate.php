@@ -6,6 +6,7 @@ use Dompdf\Dompdf;
 
 // Use our central, secure database connection
 require('../../dbcon.php');
+require_once('../../event_year.php');
 
 
 // Get the participant ID and the YEAR from the URL
@@ -49,11 +50,17 @@ $stmt_attendance_count->execute();
 $attendance_count = $stmt_attendance_count->get_result()->fetch_assoc()['count'] ?? 0;
 $stmt_attendance_count->close();
 
-// If they haven't attended at least 6 sessions for that year, redirect them.
-if ($attendance_count < 6 && !$TEST_MODE) {
+$minimum_sessions = max(1, (int) getEventSetting(
+    $dbcon,
+    'certificate_min_sessions_' . $year,
+    '6'
+));
+
+// If they haven't met the configured attendance requirement, show why.
+if ($attendance_count < $minimum_sessions && !$TEST_MODE) {
     $not_eligible_url = "certificate_not_eligible.php?year=" . urlencode($year)
         . "&attended=" . urlencode($attendance_count)
-        . "&required=6"
+        . "&required=" . urlencode($minimum_sessions)
         . "&id=" . urlencode($participant_id);
     if (($_GET['source'] ?? '') === 'admin') {
         $not_eligible_url .= "&source=admin";

@@ -5,6 +5,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require_once __DIR__ . '/../../dbcon.php'; // Corrected path example
 
+// Pages that include this navbar do not all define a local congress type.
+$congress_type = $congress_type ?? ($_SESSION['congress_type'] ?? 'PTC');
+
 // Use the single, consistent database connection
 // Make sure the path to dbcon.php is correct from where this file is included.
 // require_once __DIR__ . '/dbcon.php'; // Example of a more robust include

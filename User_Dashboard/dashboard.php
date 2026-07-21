@@ -11,6 +11,7 @@ if(empty($_SESSION['participant_id'])){
 $congress_type = $_SESSION["congress_type"];
 
 require('../dbcon.php');
+require_once('../event_year.php');
 
 function getImagePath($filename, $type = 'logo') {
     if (empty($filename)) {
@@ -138,6 +139,9 @@ while ($year_row = $cert_result->fetch_assoc()) {
     $attended_sessions_by_year[$year_row['year']] = $year_row['session_count'];
 }
 $cert_check_stmt->close();
+
+// Build dashboard session filters from the years that actually exist in the database.
+$session_years = getAvailableEventYears($dbcon);
 ?>
 <!doctype html>
 <html lang="en">
@@ -248,7 +252,7 @@ $cert_check_stmt->close();
                         'mecheng'  => 'Mechanical Engineer',
                         'agrien'   => 'Agricultural & Biosystems Engineer'
                     ];
-                    $years_to_check = ['2023','2024', '2025', '2026']; // You can add more years here
+                    $years_to_check = $session_years;
 
                     foreach ($years_to_check as $year) {
                         foreach ($professions_to_check as $key => $label) {
@@ -278,7 +282,7 @@ $cert_check_stmt->close();
                             // --- ALWAYS SHOW BUTTONS FOR ALL YEARS ---
                             // If you want fixed years (e.g., 2023–2025), define the range explicitly:
                             //$years = [2023, 2024, 2025];
-                            $years = [2023, 2024, 2025];
+                            $years = $session_years;
                             
                             // Or if you want dynamic based on attended sessions, uncomment this line:
                             // $years = array_keys($attended_sessions_by_year);
@@ -287,6 +291,11 @@ $cert_check_stmt->close();
                                 $count = $attended_sessions_by_year[$year] ?? 0;
                                 $dist_date_name = 'certificate_distribution_date_' . $year;
                                 $dist_date = $settings[$dist_date_name] ?? '2030-12-31';
+                                $minimumSessions = max(1, (int) ($settings['certificate_min_sessions_' . $year] ?? 6));
+                                $feedbackRequired = filter_var(
+                                    $settings['certificate_feedback_required_' . $year] ?? false,
+                                    FILTER_VALIDATE_BOOLEAN
+                                );
 
                                 // Check eligibility
                                 // --- FEEDBACK ELIGIBILITY CHECK (NEW) ---
@@ -298,9 +307,8 @@ $cert_check_stmt->close();
                                 $stmt->close();
                                 // --- END: FEEDBACK ELIGIBILITY CHECK ---
 
-                                // Make feedback requirement apply only for 2025
-                                $hasFeedbackForYear = ($year == 2025) ? $hasFeedback : true;
-                                $eligible = ($count >= 6 && $hasPRC && $dist_date <= date('Y-m-d') && $hasFeedbackForYear);
+                                $hasRequiredFeedback = !$feedbackRequired || $hasFeedback;
+                                $eligible = ($count >= $minimumSessions && $hasPRC && $dist_date <= date('Y-m-d') && $hasRequiredFeedback);
                                 //$eligible = true; // TEMPORARY: force eligibility for testing
                                 //$TEST_MODE = true; // For testing only
                                 //if ($eligible|| $TEST_MODE) {
@@ -318,21 +326,16 @@ $cert_check_stmt->close();
                                     //  Not eligible → show modal with reasons
                                     $reasons = [];
 
-                                    // 2025 feedback requirement addition
-                                    if ($year == 2025){
-                                        if ($count == 0 || !$hasFeedback){
-                                            $reasons[] = "No attendance/feedback submitted at the end of each session.";
+                                    if ($count < $minimumSessions) {
+                                        if ($count === 0){
+                                            $reasons[] = "No session attendance record found for $year.";
+                                        }
+                                        else{
+                                            $reasons[] = "You attended $count of the required $minimumSessions sessions for $year.";
                                         }
                                     }
-                                    else {
-                                        if ($count < 6) {
-                                            if ($count === 0){
-                                                $reasons[] = "No session attendance record found for $year.";
-                                            }
-                                            else{
-                                                $reasons[] = "You attended $count of the required 6 sessions for $year.";
-                                            }
-                                        }
+                                    if ($feedbackRequired && !$hasFeedback) {
+                                        $reasons[] = "Feedback is required for the $year certificate.";
                                     }
                                     if (!$hasPRC) {
                                         $reasons[] = "A PRC License number is required. Please use the 'Edit Profile' button to add it.";
@@ -438,8 +441,8 @@ $cert_check_stmt->close();
                     <h1>All Sessions</h1>
                 </div>
                 <div class="btn-group btn-group-lg year-filter-group" role="group">
-                    <button id="showAll" class="btn btn-dashboard selected">All</button>
-                    <button id="show2025" class="btn btn-dashboard border-0" disabled>2026</button>
+                    <button type="button" class="btn btn-dashboard selected" data-filter-year="all">All</button>
+                    <button type="button" class="btn btn-dashboard border-0 disabled">2026</button>
                 </div>
                 <div class="col-12 pb-3">
                     <p class="no-session-title h4 text-center my-4">Coming soon..</p>
@@ -452,10 +455,12 @@ $cert_check_stmt->close();
                     <h1>All Sessions</h1>
                 </div>
                 <div class="btn-group btn-group-lg year-filter-group" role="group">
-                    <button id="showAll" class="btn btn-dashboard selected">All</button>
-                    <button id="show2025" class="btn btn-dashboard">2025</button>
-                    <button id="show2024" class="btn btn-dashboard">2024</button>
-                    <button id="show2023" class="btn btn-dashboard">2023</button>
+                    <button type="button" class="btn btn-dashboard selected" data-filter-year="all">All</button>
+                    <?php foreach ($session_years as $session_filter_year): ?>
+                        <button type="button" class="btn btn-dashboard" data-filter-year="<?= $session_filter_year ?>">
+                            <?= $session_filter_year ?>
+                        </button>
+                    <?php endforeach; ?>
                 </div>
             </div>
             <div class="row g-4 mt-2">
@@ -667,8 +672,7 @@ $cert_check_stmt->close();
     $(document).ready(function() {
         function filterSessions(yearToShow) {
             $('.btn-dashboard').removeClass('selected');
-            const buttonId = (yearToShow === 'all') ? '#showAll' : '#show' + yearToShow;
-            $(buttonId).addClass('selected');
+            $(`.btn-dashboard[data-filter-year="${yearToShow}"]`).addClass('selected');
             if (yearToShow === 'all') {
                 $(".session-card").fadeIn(400);
             } else {
@@ -677,17 +681,8 @@ $cert_check_stmt->close();
                 });
             }
         }
-        $("#showAll").click(function() {
-            filterSessions('all');
-        });
-        $("#show2025").click(function() {
-            filterSessions('2025');
-        });
-        $("#show2024").click(function() {
-            filterSessions('2024');
-        });
-        $("#show2023").click(function() {
-            filterSessions('2023');
+        $('.btn-dashboard[data-filter-year]').click(function() {
+            filterSessions(String($(this).data('filter-year')));
         });
 
 

@@ -16,7 +16,7 @@ require('../dbcon.php');
 // ===================================================================
 // IMAGE PATH HELPERS
 // ===================================================================
-function getSpeakerImagePath($filename) {
+function getSpeakerImagePath($filename, $eventYear) {
     if (empty($filename)) {
         return '../admin/placeholder.jpg'; 
     }
@@ -24,8 +24,8 @@ function getSpeakerImagePath($filename) {
     if (file_exists(__DIR__ . '/../admin/speaker_images/' . $filename)) {
         return '../admin/speaker_images/' . $filename;
     } 
-    elseif (file_exists(__DIR__ . '/2024/' . $filename)) {
-        return './2024/' . $filename;
+    elseif ($eventYear && file_exists(__DIR__ . '/' . $eventYear . '/' . $filename)) {
+        return './' . $eventYear . '/' . $filename;
     }
 
     return '../admin/placeholder.jpg';
@@ -188,13 +188,14 @@ if ($session_id) {
 
     // Get speaker images
     if ($session_data) {
+        $session_year = (int) date('Y', strtotime($session_data['session_date']));
         $speaker_stmt = $dbcon->prepare("SELECT speaker_Img FROM tblspeakerses WHERE session_id = ? AND speaker_Img != 'placeholder.jpg'");
         $speaker_stmt->bind_param("i", $session_id);
         $speaker_stmt->execute();
         $speaker_result = $speaker_stmt->get_result();
         while($speaker = $speaker_result->fetch_assoc()) {
             if (!empty($speaker['speaker_Img'])) {
-                $speaker_images[] = getSpeakerImagePath($speaker['speaker_Img']);
+                $speaker_images[] = getSpeakerImagePath($speaker['speaker_Img'], $session_year);
             }
         }
         $speaker_stmt->close();
@@ -263,7 +264,7 @@ if ($session_id) {
                 <div class="col-md-12 inner_p">
                     <p><span>Data Privacy Notice:</span> In line with the Data Privacy Act of 2012, DOST-PTRI is
                         committed to protect and secure your personal information obtained in the evaluation of the
-                        conduct of <span>2024 Philippine Textile Congress</span>. The personal information you provided
+                        conduct of the <span><?= (int) date('Y', strtotime($session_data['session_date'])) ?> Philippine Textile Congress</span>. The personal information you provided
                         herein will be processed and utilized solely for this event. Collected personal information will
                         be kept/stored and accessed only by authorized DOST-PTRI personnel and shall not be shared with
                         any outside parties unless written consent is secured. Information shall be stored within one

@@ -14,7 +14,7 @@ require('../dbcon.php');
 // ===================================================================
 // START: BACKWARD-COMPATIBLE IMAGE PATH HELPER
 // ===================================================================
-function getSpeakerImagePath($filename) {
+function getSpeakerImagePath($filename, $eventYear) {
     if (empty($filename)) {
         // A placeholder image path relative to the User_dashboard folder
         return '../admin/placeholder.jpg'; 
@@ -24,17 +24,28 @@ function getSpeakerImagePath($filename) {
     $new_path = '../admin/speaker_images/' . $filename;
 
     // Path to the OLD speaker images folder, relative to feedbackform.php
-    $old_path = './2024/' . $filename; 
+    $old_path = $eventYear ? './' . $eventYear . '/' . $filename : null;
 
     // Use absolute server paths for a reliable check
     if (file_exists(__DIR__ . '/../admin/speaker_images/' . $filename)) {
         return $new_path;
-    } elseif (file_exists(__DIR__ . '/2024/' . $filename)) {
+    } elseif ($eventYear && file_exists(__DIR__ . '/' . $eventYear . '/' . $filename)) {
         return $old_path;
     }
 
     // If found in neither location, return the placeholder
     return '../admin/placeholder.jpg';
+}
+
+function getFeedbackLogoPath($filename) {
+    if (empty($filename) || str_contains($filename, '..')) {
+        return './user_dash_img/PTClogo.jpg';
+    }
+
+    $relativePath = ltrim(str_replace('\\', '/', $filename), '/');
+    return file_exists(__DIR__ . '/../landingpageimg/' . $relativePath)
+        ? '../landingpageimg/' . $relativePath
+        : './user_dash_img/PTClogo.jpg';
 }
 // ===================================================================
 // END: IMAGE PATH HELPER
@@ -167,13 +178,14 @@ if (isset($_POST['submit']) && $session_id) {
             $result = $stmt->get_result(); if($result->num_rows > 0) $participant_data = $result->fetch_assoc();
             $stmt->close();
 
+            $session_year = $session_data ? (int) date('Y', strtotime($session_data['session_date'])) : null;
             $speaker_sql = "SELECT speaker_id, speaker_Name, speaker_Info, speaker_Img FROM tblspeakerses WHERE session_id = ?";
             $stmt = $dbcon->prepare($speaker_sql);
             $stmt->bind_param("i", $session_id); $stmt->execute();
             $result = $stmt->get_result();
             while($row = $result->fetch_assoc()) {
                 // Add the correct, checked image path to each speaker's data
-                $row['correct_image_path'] = getSpeakerImagePath($row['speaker_Img']);
+                $row['correct_image_path'] = getSpeakerImagePath($row['speaker_Img'], $session_year);
                 $speakers[] = $row;
             }
             $stmt->close();
@@ -215,7 +227,7 @@ if (isset($_POST['submit']) && $session_id) {
         <?php if ($session_data): ?>
         <div class="card feedback-card">
             <div class="feedback-header">
-                <img src="../landingpageimg/<?php echo htmlspecialchars($session_data['logo_image']); ?>"
+                <img src="<?php echo htmlspecialchars(getFeedbackLogoPath($session_data['logo_image'])); ?>"
                     alt="Session Logo" class="session-logo">
                 <h1 class="h3"><?php echo htmlspecialchars($session_data['session_title']); ?></h1>
                 <p class="mb-2">Feedback Form</p>

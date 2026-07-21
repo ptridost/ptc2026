@@ -1,11 +1,11 @@
 <?php
-// Add this PHP block to the very top of the file
-$base_url = ''; // This should be the root folder of your project on the server
+require_once __DIR__ . '/../../config.php';
+$base_url = BASE_PATH;
 ?>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="<?php echo $base_url; ?>/index2025.php">
-            <img src="<?php echo $base_url; ?>../nav&foot_logo/navlogo.png" alt="PTC Logo" height="50">
+            <img src="<?php echo $base_url; ?>/nav&foot_logo/navlogo.png" alt="PTC Logo" height="50">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02"
             aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
