@@ -43,6 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['session_number'])) {
 
 // IMPORTANT: Redirect the admin back to your main sessions page
 // Make sure this file path is correct for your project structure
-header("Location: admindashboard.php"); // Or whatever your main admin page is called
+header("Location: sessions.php");
 exit();
 ?>

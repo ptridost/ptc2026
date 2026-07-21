@@ -1,63 +1,70 @@
-@font-face {
- 	font-family: Melody;
-	 src:url(../../fonts/BLMelodyMono-Bold.otf);
+.admin-footer {
+  width: 100%;
+  margin-top: 2rem;
+  color: #d9e2ec;
+  background: #071a2c;
 }
-@font-face {
- 	font-family: MelodyBold;
- 	src:url(../../fonts/BLMelody-Bold.otf);
+
+body.admin-shell-active { padding-bottom: 0 !important; }
+
+.admin-footer__inner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1600px;
+  min-height: 64px;
+  margin: 0 auto;
+  padding: .65rem 2rem;
 }
-@font-face {
- 	font-family: MelodyRegular;
-	 src:url(../../fonts/BLMelody-Regular.otf);
+
+.admin-footer__logo {
+  width: 112px;
+  max-height: 42px;
+  object-fit: contain;
 }
-@font-face {
-	 font-family: MelodySemibold;
- 	src:url(../../fonts/BLMelodyMono-SemiBold.otf);
+
+.admin-footer__contacts {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-left: auto;
 }
-@font-face {
- 	font-family: MelodyLight;
- 	src:url(../../fonts/BLMelody-Light.otf);
+
+.admin-footer__contacts a,
+.admin-footer__links span {
+  color: #d9e2ec;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: .75rem;
+  text-decoration: none;
+  white-space: nowrap;
 }
-@font-face {
- 	font-family: MelodyMedium;
- 	src:url(../../fonts/BLMelody-Medium.otf);
+
+.admin-footer__contacts a {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
 }
-.navbar-custom{
-	background-color: #071132;
-	align-items: center;
+
+.admin-footer__contacts i { color: #f4c542; font-size: .85rem; }
+.admin-footer__contacts a:hover { color: #fff; }
+
+.admin-footer__links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-left: 1.5rem;
+  border-left: 1px solid rgba(255,255,255,.28);
 }
-#footlogo{
-	width: 150px;
-	height: 70px;
+
+@media (max-width: 991.98px) {
+  .admin-footer__inner { gap: .8rem 1.2rem; padding: .7rem 1rem; flex-wrap: wrap; }
+  .admin-footer__contacts { margin-left: auto; }
+  .admin-footer__links { width: 100%; justify-content: center; padding: .6rem 0 0; border-top: 1px solid rgba(255,255,255,.15); border-left: 0; }
 }
-.footercontacts a{
-	color: #fff;
-	font-family: MelodyLight;
-	height: 15px;
-	text-decoration: none;
-}
-.footercontacts {
-	transform: translate(0%, 8%);
-}
-.footercontacts i{
-	font-size: 20px;
-	transform: translate(0%, 12%);
-}
-.otheritem p{
-	color: #fff;
-	font-family: MelodyLight;
-	font-size: 12px;
-	height: 5px;
-}
-.otheritem{
-	margin-top: 5px;
-}
-.straightline{
-	background-color: #fff;
-	width: 3px;
-	height: 61px;
-	margin-top: 5px;
-}
-.rightfoot{
-	
+
+@media (max-width: 575.98px) {
+  .admin-footer__logo { width: 95px; }
+  .admin-footer__contacts { align-items: flex-start; flex-direction: column; gap: .35rem; }
+  .admin-footer__links { justify-content: flex-start; gap: .75rem; overflow-x: auto; }
 }
