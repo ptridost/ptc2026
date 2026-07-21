@@ -18,6 +18,8 @@
 .participants-table tr:last-child td { border-bottom: 0; }
 .participants-table tbody tr:hover { background: #f8fbfd; }
 .participants-table td strong { color: #102a43; }
+.participant-view-button { display: inline-flex; align-items: center; gap: .4rem; padding: .42rem .7rem; border: 1px solid #1668b2; border-radius: 6px; color: #1668b2; background: #fff; font-size: .7rem; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.participant-view-button:hover { color: #fff; background: #1668b2; }
 .participants-empty { display: grid; min-height: 230px; place-items: center; align-content: center; gap: .35rem; color: #829ab1; text-align: center; }
 .participants-empty[hidden] { display: none; }
 .participants-empty i { margin-bottom: .4rem; font-size: 1.5rem; }

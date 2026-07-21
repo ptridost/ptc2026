@@ -42,13 +42,9 @@ function adminNavActive($pages, $currentPage) {
             href="<?php echo $base_url; ?>/admin/sessions.php">
             <i class="fa-regular fa-calendar-days"></i><span>Sessions</span>
         </a>
-        <a class="admin-sidebar__link<?php echo adminNavActive('participants.php', $current_admin_page); ?>"
+        <a class="admin-sidebar__link<?php echo adminNavActive(['participants.php', 'participant_profile.php'], $current_admin_page); ?>"
             href="<?php echo $base_url; ?>/admin/participants.php">
             <i class="fa-solid fa-users"></i><span>Participants</span>
-        </a>
-        <a class="admin-sidebar__link<?php echo adminNavActive('editParticipants.php', $current_admin_page); ?>"
-            href="<?php echo $base_url; ?>/admin/editParticipants.php">
-            <i class="fa-solid fa-magnifying-glass"></i><span>Search Participants</span>
         </a>
         <a class="admin-sidebar__link<?php echo adminNavActive('monitoring.php', $current_admin_page); ?>"
             href="<?php echo $base_url; ?>/admin/monitoring.php">

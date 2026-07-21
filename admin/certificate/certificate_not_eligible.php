@@ -2,17 +2,22 @@
 $year = filter_input(INPUT_GET, 'year', FILTER_VALIDATE_INT);
 $attended = filter_input(INPUT_GET, 'attended', FILTER_VALIDATE_INT);
 $required = filter_input(INPUT_GET, 'required', FILTER_VALIDATE_INT);
+$feedback = filter_input(INPUT_GET, 'feedback', FILTER_VALIDATE_INT);
+$feedbackRequired = filter_input(INPUT_GET, 'feedback_required', FILTER_VALIDATE_INT);
 $participantId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 $source = filter_input(INPUT_GET, 'source');
 
 $year = $year ?: (int) date('Y');
 $attended = ($attended !== false && $attended !== null) ? max(0, $attended) : 0;
 $required = ($required !== false && $required !== null) ? max(1, $required) : 6;
+$feedback = ($feedback !== false && $feedback !== null) ? max(0, $feedback) : 0;
+$feedbackRequired = ($feedbackRequired !== false && $feedbackRequired !== null) ? max(0, $feedbackRequired) : 0;
 $remaining = max(0, $required - $attended);
+$feedbackRemaining = max(0, $feedbackRequired - $feedback);
 $backUrl = '../../User_dashboard/dashboard.php';
 if ($source === 'admin' && $participantId) {
-    $backUrl = '../editAttendance.php?id=' . urlencode((string) $participantId)
-        . '&year=' . urlencode((string) $year);
+    $backUrl = '../participant_profile.php?id=' . urlencode((string) $participantId)
+        . '&attendance_year=' . urlencode((string) $year);
 }
 ?>
 <!doctype html>
@@ -83,13 +88,20 @@ if ($source === 'admin' && $participantId) {
     <main class="card">
         <div class="icon" aria-hidden="true">!</div>
         <h1>Not eligible for a <?= htmlspecialchars((string) $year) ?> certificate</h1>
-        <p>This participant does not have enough recorded attendance for the selected year.</p>
+        <p>This participant has not completed all certificate requirements for the selected year.</p>
         <div class="summary">
             Attended sessions: <strong><?= $attended ?></strong><br>
             Required sessions: <strong><?= $required ?></strong>
+            <?php if ($feedbackRequired > 0): ?>
+                <br>Feedback submitted: <strong><?= $feedback ?></strong><br>
+                Required feedback: <strong><?= $feedbackRequired ?></strong>
+            <?php endif; ?>
         </div>
         <?php if ($remaining > 0): ?>
             <p><?= $remaining ?> more recorded session<?= $remaining === 1 ? '' : 's' ?> would be required.</p>
+        <?php endif; ?>
+        <?php if ($feedbackRemaining > 0): ?>
+            <p><?= $feedbackRemaining ?> more feedback form<?= $feedbackRemaining === 1 ? '' : 's' ?> must be submitted.</p>
         <?php endif; ?>
         <a class="back-button" href="<?= htmlspecialchars($backUrl) ?>">Go back</a>
     </main>

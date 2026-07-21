@@ -43,11 +43,15 @@ if ((empty($participant_id) || !is_numeric($participant_id) || !is_numeric($year
 $eligibility = getParticipantCertificateEligibility($dbcon, (int) $participant_id, (int) $year);
 $attendance_count = $eligibility['attended_count'];
 $minimum_sessions = $eligibility['rules']['minimum_attendance'];
+$feedback_count = $eligibility['feedback_count'];
+$minimum_feedback = $eligibility['rules']['minimum_feedback'];
 
 if (!$eligibility['eligible'] && !$TEST_MODE) {
     $not_eligible_url = "certificate_not_eligible.php?year=" . urlencode($year)
         . "&attended=" . urlencode($attendance_count)
         . "&required=" . urlencode($minimum_sessions)
+        . "&feedback=" . urlencode($feedback_count)
+        . "&feedback_required=" . urlencode($minimum_feedback)
         . "&id=" . urlencode($participant_id);
     if (($_GET['source'] ?? '') === 'admin') {
         $not_eligible_url .= "&source=admin";

@@ -36,7 +36,7 @@ if (empty($_SESSION['admin_id'])) {
             <div class="participants-loading" id="participantsLoading"><span class="spinner-border spinner-border-sm"></span> Loading participants…</div>
             <div class="table-responsive">
                 <table class="participants-table">
-                    <thead><tr><th>Registration ID</th><th>Full name</th><th>Date of birth</th><th>Email address</th><th>Profession / PRC License</th><th>Organization</th><th>Position</th></tr></thead>
+                    <thead><tr><th>Registration ID</th><th>Full name</th><th>Date of birth</th><th>Email address</th><th>Profession / PRC License</th><th>Organization</th><th>Position</th><th>Actions</th></tr></thead>
                     <tbody id="participantsTableBody"></tbody>
                 </table>
             </div>
@@ -81,6 +81,14 @@ if (empty($_SESSION['admin_id'])) {
                 row.append(cell(participant.profession, 'Profession / PRC'));
                 row.append(cell(participant.organization, 'Organization'));
                 row.append(cell(participant.position, 'Position'));
+                const actionCell = document.createElement('td');
+                actionCell.dataset.label = 'Actions';
+                const viewLink = document.createElement('a');
+                viewLink.className = 'participant-view-button';
+                viewLink.href = `participant_profile.php?id=${encodeURIComponent(participant.id)}`;
+                viewLink.innerHTML = '<i class="fa-regular fa-eye"></i><span>View</span>';
+                actionCell.appendChild(viewLink);
+                row.append(actionCell);
                 body.appendChild(row);
             });
         }
