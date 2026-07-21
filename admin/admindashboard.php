@@ -282,7 +282,7 @@ $add_speaker_sessions_result = $dbcon->query("SELECT session_number, session_hea
 <body>
     <?php include("./nav&footer/usernav.php"); ?>
 
-    <main class="admindash_con container-fluid px-3 px-xl-5 py-4">
+    <main class="admindash_con container-fluid py-4">
         <div class="row mb-4">
             <div class="admin_dashboard">
                 <img src="Picture1.png">

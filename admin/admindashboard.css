@@ -508,8 +508,16 @@ h5 {
 /* Formal admin dashboard presentation. Functional selectors and controls are unchanged. */
 body.admin-shell-active .admindash_con {
   width: 100%;
-  max-width: 1600px;
+  max-width: 1680px;
   margin: 0 auto;
+  padding-right: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+body.admin-shell-active .admindash_con > .row {
+  --bs-gutter-x: 0;
+  margin-right: 0;
+  margin-left: 0;
 }
 
 body.admin-shell-active .admin_dashboard {
@@ -579,6 +587,7 @@ body.admin-shell-active .sessions-header img { width: 34px; height: 34px; object
 
 @media (max-width: 767.98px) {
   .dashboard-kpi-grid { grid-template-columns: 1fr; }
+  body.admin-shell-active .admindash_con { padding-right: 1rem; padding-left: 1rem; }
   body.admin-shell-active .admin_dashboard { align-items: flex-start; }
   body.admin-shell-active #toggle-charts-btn { margin-left: 0; }
   body.admin-shell-active .dashboard-control-bar { padding: 1rem; }
