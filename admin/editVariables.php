@@ -162,13 +162,15 @@ if ($result->num_rows > 0) {
 $availableYears = getAvailableEventYears($dbcon);
 $currentPtcYear = getCurrentEventYear($dbcon);
 $latestCertificateAssetYear = (int) ($settings['latest_certificate_asset_year'] ?? 2025);
-$certificateYears = $availableYears;
-if (!in_array($currentPtcYear, $certificateYears, true)) {
-    array_unshift($certificateYears, $currentPtcYear);
+$settingYears = $availableYears;
+if (!in_array($currentPtcYear, $settingYears, true)) {
+    array_unshift($settingYears, $currentPtcYear);
 }
-if (!in_array($latestCertificateAssetYear, $certificateYears, true)) {
-    array_unshift($certificateYears, $latestCertificateAssetYear);
+if (!in_array($latestCertificateAssetYear, $settingYears, true)) {
+    array_unshift($settingYears, $latestCertificateAssetYear);
 }
+$certificateYears = $settingYears;
+rsort($settingYears);
 rsort($certificateYears);
 
 // Close the database connection
@@ -186,7 +188,7 @@ $dbcon->close();
                 <div class="mb-3">
                     <label for="current_ptc_year" class="form-label">Current PTC Year</label>
                     <select class="form-control" id="current_ptc_year" name="current_ptc_year" required>
-                        <?php foreach ($availableYears as $availableYear): ?>
+                        <?php foreach ($settingYears as $availableYear): ?>
                             <option value="<?php echo $availableYear; ?>" <?php echo $currentPtcYear === $availableYear ? 'selected' : ''; ?>>
                                 <?php echo $availableYear; ?>
                             </option>
@@ -198,7 +200,7 @@ $dbcon->close();
                 <div class="mb-3">
                     <label for="latest_certificate_asset_year" class="form-label">Latest Certificate Asset Year</label>
                     <select class="form-control" id="latest_certificate_asset_year" name="latest_certificate_asset_year" required>
-                        <?php foreach ($availableYears as $availableYear): ?>
+                        <?php foreach ($settingYears as $availableYear): ?>
                             <option value="<?php echo $availableYear; ?>" <?php echo $latestCertificateAssetYear === $availableYear ? 'selected' : ''; ?>>
                                 <?php echo $availableYear; ?>
                             </option>
@@ -283,4 +285,3 @@ $dbcon->close();
 </body>
 
 </html>
-
