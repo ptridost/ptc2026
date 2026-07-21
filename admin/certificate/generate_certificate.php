@@ -102,6 +102,44 @@ function convertImage($path)
     return 'data:image/' . $type . ';base64,' . base64_encode($data);
 }
 
+function certificateAssetSetIsComplete(int $assetYear): bool
+{
+    $requiredFiles = [
+        "assets/{$assetYear}/ptcbanner.png",
+        "assets/{$assetYear}/ptclogowithrc.png",
+        "assets/{$assetYear}/esigdirector.png",
+        "assets/{$assetYear}/certificate{$assetYear}bg.jpg",
+    ];
+
+    foreach ($requiredFiles as $requiredFile) {
+        if (!file_exists(__DIR__ . '/' . $requiredFile)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function resolveCertificateAssetYear(mysqli $dbcon, int $requestedYear): int
+{
+    if (certificateAssetSetIsComplete($requestedYear)) {
+        return $requestedYear;
+    }
+
+    $latestYear = (int) getEventSetting($dbcon, 'latest_certificate_asset_year', '2025');
+    if ($latestYear > 0 && certificateAssetSetIsComplete($latestYear)) {
+        return $latestYear;
+    }
+
+    foreach ([2025, 2024, 2023] as $fallbackYear) {
+        if (certificateAssetSetIsComplete($fallbackYear)) {
+            return $fallbackYear;
+        }
+    }
+
+    return $requestedYear;
+}
+
 function makeDot($middlename)
 {
     return empty(trim($middlename)) ? " " : rtrim(ucfirst($middlename), '.') . ". ";
@@ -127,18 +165,19 @@ $middleInitial = htmlspecialchars(makeDot($row['middleName']));
 $lastName = htmlspecialchars(ucwords($row['lastName']));
 $genderText = makeGen($row['Gender']);
 
-// DYNAMIC Image paths using the $year variable
-$ptcbanner_path = convertImage("./assets/{$year}/ptcbanner.png");
-$ptclogowithrc_path = convertImage("./assets/{$year}/ptclogowithrc.png");
-$esigdirector_path = convertImage("./assets/{$year}/esigdirector.png");
-$background_path = convertImage("./assets/{$year}/certificate{$year}bg.jpg");
+// DYNAMIC Image paths using the requested year, with fallback to latest available assets.
+$asset_year = resolveCertificateAssetYear($dbcon, (int) $year);
+$ptcbanner_path = convertImage("./assets/{$asset_year}/ptcbanner.png");
+$ptclogowithrc_path = convertImage("./assets/{$asset_year}/ptclogowithrc.png");
+$esigdirector_path = convertImage("./assets/{$asset_year}/esigdirector.png");
+$background_path = convertImage("./assets/{$asset_year}/certificate{$asset_year}bg.jpg");
 
 // Static Image Paths (assuming these don't change year to year)
 $logo2_path = convertImage('logo2.png');
 $logo1_path = convertImage('logo1.png');
 
-// Check if using single template for 2025
-$use_single_template = ($year == 2025);
+// Check if using single-template certificate layout
+$use_single_template = ($asset_year == 2025);
 
 // DYNAMIC Text for the certificate date
 $distribution_date_from_db = ''; // Default to empty
@@ -154,6 +193,7 @@ if ($row_dist_date = $result_dist_date->fetch_assoc()) {
 $stmt_dist_date->close();
 
 // Format the date from the database into the text string for the certificate
+$paper_size = "A4"; // Default paper size
 $certificate_date_text = "Given this via Zoom Conference"; // Fallback text
 if (!empty($distribution_date_from_db)) {
     $timestamp = strtotime($distribution_date_from_db);
@@ -163,7 +203,6 @@ if (!empty($distribution_date_from_db)) {
     $cert_year = date('Y', $timestamp);
 
     // --- YEAR-SPECIFIC TEXT ---
-    $paper_size = "A4"; // Default paper size
     if ($year == 2023) {
         $certificate_date_text = "Given this {$day} Day of {$month} {$cert_year} at the National Museum Western Visayas, Iloilo City, Philippines";
     } else if ($year == 2025) {
@@ -204,8 +243,10 @@ if ($sessions_count > 1) {
     $formatted = array_map(fn($s) => "<span style = 'white-space:nowrap'>{$s['head']}: {$s['title']}</span>", $sessions);
     $last = array_pop($formatted);
     $sessions_attended = implode(', ', $formatted) . ' and ' . $last;
+} else if ($sessions_count === 1) {
+    $sessions_attended = "{$sessions[0]['head']}: {$sessions[0]['title']}";
 } else {
-    $sessions_attended = "{$sessions[0]['head']}: {$sessions[0]['title']}" ?? ""; 
+    $sessions_attended = "the Philippine Textile Congress {$year}";
 }
 
 // --- CPD CALCULATION ---

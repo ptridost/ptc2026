@@ -70,15 +70,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'acceptingTimeAttendanceMorning' => $_POST['atam'] ?? '',
         'acceptingTimeAttendanceAfternoon' => $_POST['ataa'] ?? '',
         'current_ptc_year' => (string) (int) ($_POST['current_ptc_year'] ?? date('Y')),
+        'latest_certificate_asset_year' => (string) (int) ($_POST['latest_certificate_asset_year'] ?? date('Y')),
     ];
 
     $certificateYears = array_map('intval', $_POST['certificate_years'] ?? []);
     foreach ($certificateYears as $certificateYear) {
         $minSessions = max(1, (int) ($_POST['certificate_min_sessions'][$certificateYear] ?? 6));
         $feedbackRequired = isset($_POST['certificate_feedback_required'][$certificateYear]) ? '1' : '0';
+        $distributionDate = $_POST['certificate_distribution_date'][$certificateYear] ?? '';
+        $validDate = $_POST['certificate_valid_date'][$certificateYear] ?? '';
 
         $settingsToSave['certificate_min_sessions_' . $certificateYear] = (string) $minSessions;
         $settingsToSave['certificate_feedback_required_' . $certificateYear] = $feedbackRequired;
+        $settingsToSave['certificate_distribution_date_' . $certificateYear] = $distributionDate;
+        $settingsToSave['certificate_valid_date_' . $certificateYear] = $validDate;
     }
 
     // Check if the query executed successfully
@@ -154,9 +159,13 @@ if ($result->num_rows > 0) {
 
 $availableYears = getAvailableEventYears($dbcon);
 $currentPtcYear = getCurrentEventYear($dbcon);
+$latestCertificateAssetYear = (int) ($settings['latest_certificate_asset_year'] ?? 2025);
 $certificateYears = $availableYears;
 if (!in_array($currentPtcYear, $certificateYears, true)) {
     array_unshift($certificateYears, $currentPtcYear);
+}
+if (!in_array($latestCertificateAssetYear, $certificateYears, true)) {
+    array_unshift($certificateYears, $latestCertificateAssetYear);
 }
 rsort($certificateYears);
 
@@ -184,22 +193,46 @@ $dbcon->close();
                     <small class="text-muted">This controls the default year used by dashboards and certificate checks.</small>
                 </div>
 
+                <div class="mb-3">
+                    <label for="latest_certificate_asset_year" class="form-label">Latest Certificate Asset Year</label>
+                    <select class="form-control" id="latest_certificate_asset_year" name="latest_certificate_asset_year" required>
+                        <?php foreach ($availableYears as $availableYear): ?>
+                            <option value="<?php echo $availableYear; ?>" <?php echo $latestCertificateAssetYear === $availableYear ? 'selected' : ''; ?>>
+                                <?php echo $availableYear; ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <small class="text-muted">Used as fallback when the selected certificate year has no uploaded asset folder yet.</small>
+                </div>
+
                 <h6 class="mt-4">Certificate Eligibility Rules</h6>
                 <?php foreach ($certificateYears as $certificateYear): ?>
                     <?php
                         $minSessionsName = 'certificate_min_sessions_' . $certificateYear;
                         $feedbackRequiredName = 'certificate_feedback_required_' . $certificateYear;
+                        $distributionDateName = 'certificate_distribution_date_' . $certificateYear;
+                        $validDateName = 'certificate_valid_date_' . $certificateYear;
                         $minSessionsValue = htmlspecialchars($settings[$minSessionsName] ?? '6');
                         $feedbackRequiredValue = filter_var($settings[$feedbackRequiredName] ?? false, FILTER_VALIDATE_BOOLEAN);
+                        $distributionDateValue = htmlspecialchars($settings[$distributionDateName] ?? '');
+                        $validDateValue = htmlspecialchars($settings[$validDateName] ?? '');
                     ?>
                     <input type="hidden" name="certificate_years[]" value="<?php echo $certificateYear; ?>">
                     <div class="row align-items-center mb-2">
                         <div class="col-md-2 fw-bold"><?php echo $certificateYear; ?></div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <label class="form-label mb-1">Minimum attended sessions</label>
                             <input type="number" class="form-control" name="certificate_min_sessions[<?php echo $certificateYear; ?>]" value="<?php echo $minSessionsValue; ?>" min="1" required>
                         </div>
-                        <div class="col-md-6 pt-4">
+                        <div class="col-md-3">
+                            <label class="form-label mb-1">Certificate date</label>
+                            <input type="date" class="form-control" name="certificate_distribution_date[<?php echo $certificateYear; ?>]" value="<?php echo $distributionDateValue; ?>">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label mb-1">Valid until</label>
+                            <input type="date" class="form-control" name="certificate_valid_date[<?php echo $certificateYear; ?>]" value="<?php echo $validDateValue; ?>">
+                        </div>
+                        <div class="col-md-2 pt-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="feedback_required_<?php echo $certificateYear; ?>" name="certificate_feedback_required[<?php echo $certificateYear; ?>]" value="1" <?php echo $feedbackRequiredValue ? 'checked' : ''; ?>>
                                 <label class="form-check-label" for="feedback_required_<?php echo $certificateYear; ?>">

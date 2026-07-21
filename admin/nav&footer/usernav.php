@@ -1,10 +1,18 @@
 <?php
 require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../dbcon.php';
+require_once __DIR__ . '/../../event_year.php';
+
 $base_url = BASE_PATH;
+$current_ptc_year = getCurrentEventYear($dbcon);
+$home_page = "index{$current_ptc_year}.php";
+if (!file_exists(__DIR__ . "/../../{$home_page}")) {
+    $home_page = 'index2026.php';
+}
 ?>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="<?php echo $base_url; ?>/index2025.php">
+        <a class="navbar-brand" href="<?php echo $base_url; ?>/<?php echo $home_page; ?>">
             <img src="<?php echo $base_url; ?>/nav&foot_logo/navlogo.png" alt="PTC Logo" height="50">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02"
