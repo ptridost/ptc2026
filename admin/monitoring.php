@@ -1,206 +1,234 @@
-
-<!DOCTYPE html>
+<?php
+session_start();
+if (empty($_SESSION['admin_id'])) {
+    header('Location: ../Loginn.php');
+    exit();
+}
+?>
+<!doctype html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PTC | Monitoring</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="monitoring.css">
+    <link rel="stylesheet" href="nav&footer/usernav.css">
+    <link rel="stylesheet" href="nav&footer/footer.css">
 </head>
+<body>
+    <?php include 'nav&footer/usernav.php'; ?>
 
-<body class="">
+    <main class="monitoring-page">
+        <header class="monitoring-heading">
+            <div class="monitoring-heading__title">
+                <span class="monitoring-heading__icon"><i class="fa-solid fa-chart-line"></i></span>
+                <div>
+                    <h1>Participant Monitoring</h1>
+                    <p>Track attendance and feedback completion across every event session.</p>
+                </div>
+            </div>
+            <div class="monitoring-heading__controls">
+                <label class="monitoring-year" for="monitoringYear">
+                    <span>Event year</span>
+                    <select id="monitoringYear" aria-label="Filter sessions by event year" disabled></select>
+                </label>
+                <label class="monitoring-search" for="monitoringSearch">
+                    <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+                    <input type="search" id="monitoringSearch" placeholder="Search participant, profession, or organization" autocomplete="off">
+                    <button type="button" id="clearMonitoringSearch" aria-label="Clear search" hidden><i class="fa-solid fa-xmark"></i></button>
+                </label>
+            </div>
+        </header>
 
-<head>
-  <meta charset="UTF-8">
-  
+        <div class="monitoring-toolbar">
+            <div class="monitoring-legend" aria-label="Status legend">
+                <span><i class="status-dot status-dot--complete"></i>Attendance and feedback</span>
+                <span><i class="status-dot status-dot--partial"></i>Partially complete</span>
+                <span><i class="status-dot status-dot--empty"></i>Not completed</span>
+            </div>
+            <span class="monitoring-count" id="monitoringCount" aria-live="polite"></span>
+        </div>
 
-    <link rel="apple-touch-icon"type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png"/>
+        <section class="monitoring-card" aria-label="Participant monitoring records" aria-live="polite">
+            <div class="monitoring-loading" id="monitoringLoading"><span class="spinner-border spinner-border-sm"></span>Loading monitoring records&hellip;</div>
+            <div class="monitoring-table-wrap">
+                <table class="monitoring-table">
+                    <thead id="monitoringTableHead"></thead>
+                    <tbody id="monitoringTableBody"></tbody>
+                </table>
+            </div>
+            <div class="monitoring-empty" id="monitoringEmpty" hidden>
+                <i class="fa-solid fa-magnifying-glass"></i><strong>No matching participants</strong><span>Try a different search term.</span>
+            </div>
+            <div class="monitoring-error" id="monitoringError" hidden>
+                <i class="fa-solid fa-triangle-exclamation"></i><strong>Unable to load monitoring records</strong><span>Please refresh and try again.</span>
+            </div>
+        </section>
+        <div class="monitoring-pagination" id="monitoringPagination"></div>
+    </main>
 
-    <meta name="apple-mobile-web-app-title" content="CodePen">
+    <?php include 'nav&footer/footer.php'; ?>
+    <script>
+    (function () {
+        const search = document.getElementById('monitoringSearch');
+        const yearSelect = document.getElementById('monitoringYear');
+        const clear = document.getElementById('clearMonitoringSearch');
+        const head = document.getElementById('monitoringTableHead');
+        const body = document.getElementById('monitoringTableBody');
+        const loading = document.getElementById('monitoringLoading');
+        const empty = document.getElementById('monitoringEmpty');
+        const error = document.getElementById('monitoringError');
+        const count = document.getElementById('monitoringCount');
+        const pagination = document.getElementById('monitoringPagination');
+        let page = 1;
+        let pageSize = 10;
+        let selectedYear = '';
+        let debounceTimer;
+        let requestController;
 
-    <link rel="shortcut icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
+        function text(value, fallback = '—') { return value ? String(value) : fallback; }
 
-    <link rel="mask-icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-b4b4269c16397ad2f0f7a01bcdf513a1994f4c94b8af2f191c09eb0d601762b1.svg" color="#111" />
+        function renderYearFilter(years, activeYear) {
+            const signature = years.join(',');
+            if (yearSelect.dataset.years !== signature) {
+                yearSelect.replaceChildren(...years.map(year => {
+                    const option = document.createElement('option');
+                    option.value = String(year);
+                    option.textContent = String(year);
+                    return option;
+                }));
+                yearSelect.dataset.years = signature;
+            }
+            selectedYear = String(activeYear);
+            yearSelect.value = selectedYear;
+            yearSelect.disabled = years.length < 2;
+        }
 
-    <link rel="stylesheet" type="text/css" href="admindashboard.css">
+        function renderHeader(sessions) {
+            const row = document.createElement('tr');
+            ['Participant', 'Gender', 'Profession', 'Position', 'Institution', 'Country'].forEach(label => {
+                const th = document.createElement('th');
+                th.textContent = label;
+                if (label === 'Participant') th.className = 'sticky-column';
+                row.appendChild(th);
+            });
+            sessions.forEach(session => {
+                const th = document.createElement('th');
+                th.className = 'session-column';
+                th.title = session.title;
+                const number = document.createElement('span');
+                number.textContent = `Session ${session.number}`;
+                const title = document.createElement('small');
+                title.textContent = session.title;
+                th.append(number, title);
+                row.appendChild(th);
+            });
+            const action = document.createElement('th');
+            action.textContent = 'Actions';
+            row.appendChild(action);
+            head.replaceChildren(row);
+        }
 
+        function statusCell(status, sessionTitle) {
+            const td = document.createElement('td');
+            td.className = 'session-status-cell';
+            const badge = document.createElement('span');
+            const complete = status.attendance && status.feedback;
+            const partial = status.attendance || status.feedback;
+            badge.className = `session-status ${complete ? 'is-complete' : partial ? 'is-partial' : 'is-empty'}`;
+            badge.title = `${sessionTitle}: Attendance ${status.attendance ? 'complete' : 'missing'}; feedback ${status.feedback ? 'complete' : 'missing'}`;
+            badge.setAttribute('aria-label', badge.title);
+            badge.innerHTML = `<i class="fa-solid ${complete ? 'fa-check' : partial ? 'fa-minus' : 'fa-xmark'}"></i><span>${complete ? 'Complete' : partial ? (status.attendance ? 'Attendance only' : 'Feedback only') : 'Missing'}</span>`;
+            td.appendChild(badge);
+            return td;
+        }
 
+        function renderRows(participants, sessions) {
+            body.replaceChildren();
+            participants.forEach(participant => {
+                const row = document.createElement('tr');
+                const name = document.createElement('td');
+                name.className = 'participant-cell sticky-column';
+                name.innerHTML = `<strong></strong><small></small>`;
+                name.querySelector('strong').textContent = text(participant.full_name);
+                name.querySelector('small').textContent = `ID ${participant.id}`;
+                row.appendChild(name);
+                [participant.gender, participant.profession, participant.position, participant.organization, participant.country].forEach(value => {
+                    const td = document.createElement('td');
+                    td.textContent = text(value);
+                    row.appendChild(td);
+                });
+                sessions.forEach(session => row.appendChild(statusCell(participant.sessions[session.id] || { attendance: false, feedback: false }, session.title)));
+                const action = document.createElement('td');
+                const link = document.createElement('a');
+                link.className = 'monitoring-view-button';
+                link.href = `participant_profile.php?id=${encodeURIComponent(participant.id)}`;
+                link.innerHTML = '<i class="fa-regular fa-eye"></i><span>View</span>';
+                action.appendChild(link);
+                row.appendChild(action);
+                body.appendChild(row);
+            });
+        }
 
-  
-    <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>
+        function renderPagination(data) {
+            if (!data.total) { pagination.innerHTML = ''; return; }
+            const pages = [];
+            for (let candidate = 1; candidate <= data.total_pages; candidate++) {
+                if (candidate === 1 || candidate === data.total_pages || Math.abs(candidate - data.page) <= 1) pages.push(candidate);
+            }
+            let pageLinks = '';
+            pages.forEach((candidate, index) => {
+                if (index && candidate - pages[index - 1] > 1) pageLinks += '<span class="pagination-gap">…</span>';
+                pageLinks += `<button type="button" class="${candidate === data.page ? 'active' : ''}" data-page="${candidate}" aria-label="Page ${candidate}" ${candidate === data.page ? 'aria-current="page"' : ''}>${candidate}</button>`;
+            });
+            pagination.innerHTML = `<div>Showing <strong>${data.first_record}–${data.last_record}</strong> of <strong>${data.total}</strong></div>
+                <label>Rows per page <select aria-label="Rows per page"><option value="10">10</option><option value="25">25</option><option value="50">50</option></select></label>
+                <div class="pagination-buttons"><button type="button" data-page="${data.page - 1}" ${data.page === 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i><span>Previous</span></button>${pageLinks}<button type="button" data-page="${data.page + 1}" ${data.page === data.total_pages ? 'disabled' : ''}><span>Next</span><i class="fa-solid fa-chevron-right"></i></button></div>`;
+            pagination.querySelector('select').value = String(pageSize);
+            pagination.querySelector('select').addEventListener('change', event => { pageSize = Number(event.target.value); page = 1; loadRecords(); });
+            pagination.querySelectorAll('[data-page]').forEach(button => button.addEventListener('click', () => { page = Number(button.dataset.page); loadRecords(); }));
+        }
 
+        async function loadRecords() {
+            if (requestController) requestController.abort();
+            const controller = new AbortController();
+            requestController = controller;
+            loading.hidden = false; empty.hidden = true; error.hidden = true;
+            clear.hidden = search.value.length === 0;
+            const params = new URLSearchParams({ q: search.value.trim(), page, per_page: pageSize });
+            if (selectedYear) params.set('year', selectedYear);
+            try {
+                const response = await fetch(`monitoring_data.php?${params}`, { signal: controller.signal, headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                if (!response.ok) throw new Error('Request failed');
+                const data = await response.json();
+                page = data.page;
+                renderYearFilter(data.available_years, data.selected_year);
+                renderHeader(data.sessions);
+                renderRows(data.participants, data.sessions);
+                renderPagination(data);
+                empty.hidden = data.total !== 0;
+                count.textContent = `${data.total} participant${data.total === 1 ? '' : 's'}`;
+                params.set('page', data.page);
+                history.replaceState(null, '', `?${params}`);
+            } catch (requestError) {
+                if (requestError.name !== 'AbortError') { head.replaceChildren(); body.replaceChildren(); pagination.innerHTML = ''; count.textContent = ''; error.hidden = false; }
+            } finally {
+                if (!controller.signal.aborted) loading.hidden = true;
+            }
+        }
 
-  <title>Participant Monitoring</title>
-
-    <link rel="canonical" href="https://codepen.io/davizp/pen/xVGEwM">
-  <!-- Head is on the body -->
-  
-  
-  
-<style>
-/* No CSS */
-</style>
-
-  <script>
-  window.console = window.console || function(t) {};
-</script>
-
-  
-  
-</head>
-
-<body translate="no">
-  <!-- 
-* Working with dynamic table
-* WebSite: http://www.dynatable.com/
--->
-
-<!--  Bootstrap v2.3.2 -->
-<link rel="stylesheet" media="all" href="https://s3.amazonaws.com/dynatable-docs-assets/css/bootstrap-2.3.2.min.css" />
-<!-- Plugin styles -->
-<link rel="stylesheet" media="all" href="css/jquery.dynatable.css" />
-
-<!--  jQuery v3.0.0-beta1 -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.js"></script>
-
-<!-- JS Pluging -->
-<script type='text/javascript' src='js/jquery.dynatable.js'></script>
-    
-
-<div class = "container" style="margin-left: 200px; margin-top: 40px;">
-  <table id="example" class="table table-striped table-bordered" cellspacing="0" width="100%">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Gender</th>
-                <th>Profession</th>
-                <th>Position</th>
-                <th>Institution</th>
-                <th>Country</th>
-<?php
-    $dbcon = mysqli_connect("localhost","root","ptc@ptri@picts","sampledb") or die(mysqli_error());
-    $sql = "SELECT * FROM tblptcsession";
-    $all_session = $dbcon->query($sql);
-    while($row = mysqli_fetch_assoc($all_session)){
-      $sesid = $row['session_number'];
-?>
-                <th><?php echo $row['session_head']; ?></th>
-<?php
-}
-?>
-                <th>Add Attendance</th>
-                <th>Add Feedback</th>
-               
-
-
-            </tr>
-        </thead>
- 
-        
- 
-        <tbody>
-            
-<?php 
-$sql1 = "SELECT t1.id, t1.firstName, t1.middleName, t1.lastName, t1.Gender, t1.Country, t1.profession, t1.position, t1.organization FROM participant t1 INNER JOIN tblfeedback t2 ON t1.id = t2.participant_id GROUP BY t1.id HAVING COUNT(t1.id) > 0;";
-$all_session1 = $dbcon->query($sql1);
-while($row1 = mysqli_fetch_assoc($all_session1)){
-$countrycode = $row1['Country']; 
-$idpart = $row1['id'];  
-?>              
-                <tr>
-                <td><?php echo $row1['firstName'];?> <?php echo $row1['middleName'];?>. <?php echo $row1['lastName'];?></td>
-                <td><?php echo $row1['Gender'];?></td>
-                <td><?php echo $row1['profession'];?></td>
-                <td><?php echo $row1['position'];?></td>
-                <td><?php echo $row1['organization'];?></td>
-                <?php
-                $dbcon1 = mysqli_connect("localhost","root","ptc@ptri@picts","world") or die(mysqli_error());
-                $sql = mysqli_query($dbcon1, "SELECT name FROM countries WHERE iso2 = '$countrycode'");
-                while($row = mysqli_fetch_array($sql)){
-                $Country= $row['name'];
-                ?>
-                <td><?php echo $Country;?></td>
-<?php
-}
-
-?>
-<?php
-     $sql3 = "SELECT * FROM tblptcsession";
-     $all_session3 = $dbcon->query($sql3);
-     while($row3 = mysqli_fetch_assoc($all_session3)){
-         $sesid = $row3['session_number'];
-?>
-<?php
-  $sql2 = "SELECT * FROM tblattendance WHERE session_id = '$sesid' AND participant_id = '$idpart'";
-  $all_session2 = $dbcon->query($sql2); 
-  if(mysqli_num_rows($all_session2) == 1){
-    $check = $all_session2;
-    echo'
-    <td><img src="https://th.bing.com/th/id/R.7575f3456d9cbda84e8a5de8036b97bf?rik=l5DuCJrvkbBe%2fA&riu=http%3a%2f%2fclipart-library.com%2fimages_k%2fgreen-check-mark-transparent%2fgreen-check-mark-transparent-21.png&ehk=A8Zh2l3lStq%2bS2gkM%2fou4yF0TzDfwOgSS6mE%2f2zG2Ns%3d&risl=&pid=ImgRaw&r=0" style="width:30px; height: 30px;"></td>';
-
-  }
-  else{
-    echo'
-    <td><img src="https://logodix.com/logo/277196.png" style="width:30px; height: 30px;"></td>';
-  } 
-
- 
-?>
-
-<?php
-}
-?>
-<td><button onclick ="" type="button" id="attendance1"><ion-icon name="eye-outline"></ion-icon>Add Attendance</button></td>
-<td><button onclick =""  type="button" id="feedback1"><ion-icon name="eye"></ion-icon>Add Feedback</button></td>
-<?php
-}
-?>
-
-</tr>
-           
-        </tbody>
-        <tfoot>
-            <tr>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-            </tr>
-        </tfoot>
-    </table>
- </div>
-  
-      <script id="rendered-js" >
-$(document).ready(function () {
-  $('#example').dynatable();
-});
-
+        search.addEventListener('input', () => { clearTimeout(debounceTimer); page = 1; debounceTimer = setTimeout(loadRecords, 300); });
+        clear.addEventListener('click', () => { search.value = ''; search.focus(); page = 1; loadRecords(); });
+        yearSelect.addEventListener('change', () => { selectedYear = yearSelect.value; page = 1; loadRecords(); });
+        const initial = new URLSearchParams(location.search);
+        search.value = initial.get('q') || '';
+        selectedYear = initial.get('year') || '';
+        page = Math.max(1, Number(initial.get('page')) || 1);
+        pageSize = [10, 25, 50].includes(Number(initial.get('per_page'))) ? Number(initial.get('per_page')) : 10;
+        loadRecords();
+    })();
     </script>
-
-  
 </body>
-
-</html>
-
-  </div>
-
-</body>
-
 </html>
