@@ -42,8 +42,7 @@ $congress_type = isset($_GET['congress_type']) && in_array($_GET['congress_type'
 
     <title>Login | <?= $congress_type === 'GTC' ? 'Global' : 'Philippine' ?> Textile Congress</title>
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet"
-        xintegrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="./assets/css/bootstrap-5.1.3.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         xintegrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -115,12 +114,9 @@ $congress_type = isset($_GET['congress_type']) && in_array($_GET['congress_type'
     <?php include("header&footer/footer.php"); ?>
 
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"
-        xintegrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
-    </script>
-    <script src="/PTC/app.js"></script>
+    <script src="./jquery.min.js"></script>
+    <script src="./assets/js/bootstrap-5.1.3.bundle.min.js"></script>
+    <script src="./app.js"></script>
 </body>
 
 </html>

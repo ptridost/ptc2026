@@ -1,14 +1,6 @@
 // File: /js/app.js - FINAL & COMPLETE VERSION
 
 $(document).ready(function () {
-  // --- Manual Triggers for ALL Navbar Dropdowns ---
-  $("#userDropdown, #navbarDropdown").on("click", function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    var dropdownInstance = bootstrap.Dropdown.getOrCreateInstance(this);
-    dropdownInstance.toggle();
-  });
-
   // --- Scroll-to-Top Button Logic ---
   const scrollProgress = document.getElementById("progress");
   if (scrollProgress) {

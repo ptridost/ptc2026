@@ -6,6 +6,26 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require('./dbcon.php');
+
+$session_videos = [
+    ['number' => 1, 'title' => 'Textile Sustainability and Circularity', 'youtube_id' => 'Qt6UVab6v9U'],
+    ['number' => 2, 'title' => 'Digital Textile Technologies', 'youtube_id' => 'yiYAUX5KHOs'],
+    ['number' => 3, 'title' => 'Textile Machinery and Industry', 'youtube_id' => 't9Tbz9CV2AU'],
+    ['number' => 4, 'title' => 'Textile Heritage and Conservation', 'youtube_id' => 'TJdxnycItD0'],
+    ['number' => 5, 'title' => 'Textiles in Human Security and Defense', 'youtube_id' => 'kDC05dU5PuU'],
+    ['number' => 6, 'title' => 'Textile and Apparel Design', 'youtube_id' => 'tgHy_V5KVLo'],
+    ['number' => 7, 'title' => 'Nonwoven Textile Innovations', 'youtube_id' => 'jKDVCN1SH30'],
+    ['number' => 8, 'title' => 'Textile Dyes and Colorants', 'youtube_id' => 'TtiKj1nMN7M'],
+    ['number' => 9, 'title' => 'Textile Waste Management and Remediation', 'youtube_id' => 'GLptvVMC6io'],
+    ['number' => 10, 'title' => 'Composite and High-Performance Textiles', 'youtube_id' => 'lv1bEm8F7Ns'],
+    ['number' => 11, 'title' => 'Natural Textile Materials', 'youtube_id' => 'DNHNfa8Y-W4'],
+    ['number' => 12, 'title' => 'Textile Finishing and Functionalization', 'youtube_id' => '0MFjNJRP3HE'],
+    ['number' => 13, 'title' => 'Textile Biotechnology', 'youtube_id' => 'SY7UK9dbRng'],
+    ['number' => 14, 'title' => 'Textile Fiber Assemblies', 'youtube_id' => 'SdSxQoH1Ick'],
+    ['number' => 15, 'title' => 'Textiles in Society and Economy', 'youtube_id' => 'f_YHl-hG-Qw'],
+    ['number' => 16, 'title' => 'Biomedical Textiles', 'youtube_id' => 'gHjM_nKFq-w'],
+    ['number' => 17, 'title' => 'Textile Quality Assurance', 'youtube_id' => 'OjRLjtd310Y'],
+];
 ?>
 <!doctype html>
 <html lang="en">
@@ -28,6 +48,7 @@ require('./dbcon.php');
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" type="text/css" href="./LandingPage.css">
     <link rel="stylesheet" type="text/css" href="./card.css">
+    <link rel="stylesheet" type="text/css" href="./ptc2025-videos.css">
     <link rel="stylesheet" type="text/css" href="./header&footer/footers.css">
     <link rel="stylesheet" type="text/css" href="./header&footer/Navbarstyle.css">
 </head>
@@ -39,16 +60,49 @@ require('./dbcon.php');
     <main>
 
         <div class="page-content-wrapper">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-12">
-                        <video class="shadow-lg w-100" loop muted autoplay playsinline>
-                            <source src="landingpageimg/2025_PTC_Closing_Ceremony.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
+            <section class="ptc-session-videos" aria-labelledby="session-videos-title">
+                <div class="container">
+                    <div class="ptc-session-videos__heading text-center">
+                        <span class="ptc-session-videos__eyebrow">Philippine Textile Congress 2025</span>
+                        <h2 id="session-videos-title">Session Videos</h2>
+                        <p>Watch the recorded discussions from all 17 PTC 2025 sessions.</p>
+                    </div>
+
+                    <div class="row g-4">
+                        <?php foreach ($session_videos as $session): ?>
+                            <?php
+                            $session_number = (int) $session['number'];
+                            $session_title = htmlspecialchars($session['title'], ENT_QUOTES, 'UTF-8');
+                            $youtube_id = rawurlencode($session['youtube_id']);
+                            $youtube_url = 'https://youtu.be/' . $youtube_id;
+                            ?>
+                            <div class="col-12 col-lg-6">
+                                <article class="ptc-session-card h-100">
+                                    <div class="ratio ratio-16x9 ptc-session-card__video">
+                                        <iframe
+                                            src="https://www.youtube-nocookie.com/embed/<?= $youtube_id ?>"
+                                            title="PTC 2025 Session <?= $session_number ?> - <?= $session_title ?>"
+                                            loading="lazy"
+                                            referrerpolicy="strict-origin-when-cross-origin"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                            allowfullscreen></iframe>
+                                    </div>
+                                    <div class="ptc-session-card__body">
+                                        <span class="ptc-session-card__number">Session <?= $session_number ?></span>
+                                        <h3><?= $session_title ?></h3>
+                                        <a href="<?= $youtube_url ?>" target="_blank" rel="noopener noreferrer"
+                                            class="ptc-session-card__link"
+                                            aria-label="Watch PTC 2025 Session <?= $session_number ?> on YouTube">
+                                            Watch on YouTube
+                                            <span aria-hidden="true">&rarr;</span>
+                                        </a>
+                                    </div>
+                                </article>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
-            </div>
+            </section>
 
             <div class="container bannerp1 text-center">
                 <div class="row justify-content-start">

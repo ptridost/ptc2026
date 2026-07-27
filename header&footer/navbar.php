@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
  require_once(dirname(__DIR__) . '/config.php');
 
-$year_suffix = isset($page_event_year) && $page_event_year !== null ? (string)$page_event_year : '2026';
+$year_suffix = '2026';
 $congress_type = $_SESSION['congress_type'] ?? ($_GET['congress_type'] ?? ($congress_type ?? 'PTC'));
 if (isset($congress_type) && $congress_type !== null) {
     $congress_type = (string)$congress_type;
