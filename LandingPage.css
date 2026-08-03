@@ -386,3 +386,109 @@ html {
 .conrc {
   border-radius: 0;
 }
+
+/* Research Colloquia Schedules Section */
+.schedules-section {
+  padding: 60px 0;
+  background-color: #fafafa;
+}
+
+.schedules-section h2 {
+  font-family: TThovesExtrabold, "Poppins", sans-serif;
+  color: #163180;
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.schedules-section p.subtitle {
+  font-family: TTHovesRegular, "Poppins", sans-serif;
+  color: #555;
+  font-size: 1.15rem;
+  margin-bottom: 45px;
+}
+
+.schedule-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  cursor: pointer;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.schedule-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+.schedule-image-container {
+  position: relative;
+  width: 100%;
+  background: transparent;
+  display: block;
+  overflow: hidden;
+}
+
+.schedule-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #163180;
+  text-align: center;
+  padding: 20px;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  background: linear-gradient(135deg, rgba(22, 49, 128, 0.06) 0%, rgba(187, 18, 27, 0.06) 100%);
+}
+
+.schedule-placeholder i {
+  font-size: 3.5rem;
+  color: #bb121b;
+  margin-bottom: 20px;
+  transition: transform 0.3s ease;
+}
+
+.schedule-card:hover .schedule-placeholder i {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.schedule-placeholder-title {
+  font-family: TTHovesBold, "Poppins", sans-serif;
+  font-size: 1.35rem;
+  margin-bottom: 8px;
+  color: #163180;
+}
+
+.schedule-placeholder-date {
+  font-family: TTHovesSemibold, "Poppins", sans-serif;
+  font-size: 1rem;
+  color: #d89f00;
+  font-weight: 600;
+}
+
+.schedule-image-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+
+.schedule-card:hover .schedule-image-container img {
+  transform: scale(1.05);
+}
+
+/* Promo Video Wrapper */
+.promo-video-wrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: #000;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+
+

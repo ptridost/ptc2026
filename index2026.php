@@ -54,45 +54,62 @@ require('./dbcon.php');
                 </div>
             </div>
 
-            <div class="container bannerp1 text-center">
-                <div class="row justify-content-start">
-                    <!--
-                    <center><img src="./img_outside/callforabstract2025.jpg" alt="Your Image Description"
-                            class="shadow-lg img-fluid call-to-action-image"></center>
-                    <div class="container pt-4">
-                        <div class="row g-4">
-                            <div class="col-md-6 d-flex flex-column gap-4">
-                                <div class="square-image-container shadow-lg">
-                                    <img src="tc_assets_2025/tc20251.jpg" alt="Description of image 1">
-                                </div>
-                                <div class="square-image-container shadow-lg">
-                                    <img src="tc_assets_2025/tc20252.jpg" alt="Description of image 2">
-                                </div>
-                                <div class="square-image-container shadow-lg">
-                                    <img src="tc_assets_2025/tc20253.jpg" alt="Description of image 3">
+            
+
+            <!-- Research Colloquia Schedules Section -->
+            <section class="schedules-section">
+                <div class="container text-center">
+                    <h2>Research Colloquia Schedules</h2>
+                    <p class="subtitle">August 24, 2026 - October 01, 2026</p>
+                    
+                    <div class="row g-4 justify-content-center">
+                        <!-- Schedule Card 1 -->
+                        <div class="col-12 col-md-6 col-lg-5">
+                            <div class="schedule-card">
+                                <div class="schedule-image-container">
+                                    <img src="landingpageimg/2026/pictures/Sched_1.jpg" alt="Colloquiums 1 - 4 Schedule" class="w-100 h-100 object-fit-cover" />
                                 </div>
                             </div>
+                        </div>
+                        
+                        <!-- Schedule Card 2 -->
+                        <div class="col-12 col-md-6 col-lg-5">
+                            <div class="schedule-card">
+                                <div class="schedule-image-container">
+                                    <img src="landingpageimg/2026/pictures/Sched_2.jpg" alt="Colloquiums 5 - 8 Schedule" class="w-100 h-100 object-fit-cover" />
+                                </div>
+                            </div>
+                        </div>
 
-                            <div class="col-md-6 d-flex flex-column gap-4">
-                                <div class="square-image-container shadow-lg">
-                                    <img src="tc_assets_2025/tc20254.jpg" alt="Description of image 4">
+                        <!-- Schedule Card 3 -->
+                        <div class="col-12 col-md-6 col-lg-5">
+                            <div class="schedule-card">
+                                <div class="schedule-image-container">
+                                    <img src="landingpageimg/2026/pictures/Sched_3.jpg" alt="Colloquiums 9 - 11 Schedule" class="w-100 h-100 object-fit-cover" />
                                 </div>
-                                <div class="square-image-container shadow-lg">
-                                    <img src="tc_assets_2025/tc20255.jpg" alt="Description of image 5">
-                                </div>
-                                <div class="square-image-container shadow-lg">
-                                    <img src="tc_assets_2025/tc20256.jpg" alt="Description of image 6">
+                            </div>
+                        </div>
+
+                        <!-- Schedule Card 4 -->
+                        <div class="col-12 col-md-6 col-lg-5">
+                            <div class="schedule-card">
+                                <div class="schedule-image-container">
+                                    <img src="landingpageimg/2026/pictures/Sched_4.jpg" alt="Colloquiums 12 - 15 Schedule" class="w-100 h-100 object-fit-cover" />
                                 </div>
                             </div>
                         </div>
                     </div>
-                    -->
+                </div>
+            </section>
+
+            <div class="container bannerp1 text-center">
+                <div class="row justify-content-start">
                     <div class="info pt-5 text-center pb-5">
                         <h1> <span style="color:#BB121B">Philippine</span>
                             <span style="color:#163180">Textile </span><span style="color:#EFC130">Congress</span>
                         </h1>
                         <p> A platform for researchers, students, creatives, industry partners, and textile experts to
-                            converge,converse and collaborate to spur innovation in Philippine textiles.</p>
+                            converge, converse and collaborate to spur innovation in Philippine textiles.</p>
                         <center><a href="registration.php?congress_type=PTC" target="_blank" class="btn btn-md text-center"
                                 id="btn1"><span>REGISTER NOW</span></a></center>
 
@@ -111,6 +128,22 @@ require('./dbcon.php');
                 </div>
             </div>
 
+            <!-- Promotional Highlight Video Section (Centered 1-Column) -->
+            <section class="banner-video-section py-4 mb-5">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-lg-10 col-xl-8">
+                            <div class="promo-video-wrapper shadow-lg position-relative rounded-4 overflow-hidden">
+                                <video id="promoVideo" class="w-100 h-100" controls autoplay loop muted playsinline style="object-fit: cover;">
+                                    <source src="landingpageimg/2026/videos/PTC_VID.mp4" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
             <!--
             <div class="container banner">
                 <div class="row">
