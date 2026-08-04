@@ -466,7 +466,7 @@ $csrf_token = generate_csrf_token();
                         <div class="col-12 my-3 form-check">
                             <input type="checkbox" class="form-check-input" id="terms" required>
                             <label class="form-check-label terms-label" for="terms">I hereby agree with the <a
-                                    target="_blank" href="https://ptri.dost.gov.ph/transparency/privacy-notice">Data
+                                    target="_blank" href="https://abaca.dict.gov.ph/~trtgbsbklaxf/privacy-policy/">Data
                                     Privacy Policy</a> and <a target="_blank"
                                     href="https://www.ptri.dost.gov.ph/transparency/about-us">Terms of
                                     Use</a></label>
