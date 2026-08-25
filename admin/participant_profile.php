@@ -48,31 +48,34 @@ $defaultAttendanceYear = $participantAttendanceYears[0] ?? getCurrentEventYear($
 $selectedYear = filter_input(INPUT_GET, 'attendance_year', FILTER_VALIDATE_INT) ?: $defaultAttendanceYear;
 if ($attendanceYears && !in_array($selectedYear, $attendanceYears, true)) $selectedYear = $attendanceYears[0];
 
-// Match the year-specific CPD calculation used by certificate generation.
-$certificateCpdStmt = $dbcon->prepare("SELECT COUNT(DISTINCT a.session_id) AS sessions_count FROM tblattendance a INNER JOIN tblptcsession s ON s.session_number=a.session_id WHERE a.participant_id=? AND YEAR(a.date_submitted)=? AND LOWER(s.session_head) LIKE 'session%'");
+// Sum the configured CPD units for qualified sessions in the selected event year.
+$certificateCpdStmt = $dbcon->prepare(
+    "SELECT COALESCE(SUM(s.cpd_units), 0) AS total_cpd
+     FROM tblattendance a
+     INNER JOIN tblptcsession s ON s.session_number = a.session_id
+     INNER JOIN tblfeedback f
+        ON f.participant_id = a.participant_id
+        AND f.session_id = a.session_id
+     WHERE a.participant_id = ?
+        AND YEAR(s.session_date) = ?
+        AND LOWER(s.session_head) LIKE 'session%'"
+);
 $certificateCpdStmt->bind_param('ii', $participantId, $selectedYear);
 $certificateCpdStmt->execute();
-$certificateSessionCount = (int) ($certificateCpdStmt->get_result()->fetch_assoc()['sessions_count'] ?? 0);
+$certificateCpdTotal = (float) ($certificateCpdStmt->get_result()->fetch_assoc()['total_cpd'] ?? 0);
 $certificateCpdStmt->close();
-$certificateFeedbackStmt = $dbcon->prepare("SELECT COUNT(*) AS feedback_count FROM tblfeedback WHERE participant_id=? AND YEAR(fDate)=?");
-$certificateFeedbackStmt->bind_param('ii', $participantId, $selectedYear);
-$certificateFeedbackStmt->execute();
-$certificateFeedbackCount = (int) ($certificateFeedbackStmt->get_result()->fetch_assoc()['feedback_count'] ?? 0);
-$certificateFeedbackStmt->close();
-$certificateCpdMap = ['Chemical Engineer' => 25, 'Chemical Technician' => 22, 'Chemist' => 22];
+$certificateEligibleProfessions = ['Chemical Engineer', 'Chemical Technician', 'Chemist'];
 $certificateCpdAwards = [];
-if ($certificateFeedbackCount > 0) {
+if ($certificateCpdTotal > 0) {
     foreach (array_filter(array_map('trim', explode(',', (string) ($participant['profession'] ?? '')))) as $certificateProfession) {
         $certificateProfession = ucwords(strtolower($certificateProfession));
-        if (isset($certificateCpdMap[$certificateProfession])) {
-            $certificateCpdAwards[$certificateProfession] = $certificateSessionCount >= 9
-                ? $certificateCpdMap[$certificateProfession]
-                : $certificateSessionCount;
+        if (in_array($certificateProfession, $certificateEligibleProfessions, true)) {
+            $certificateCpdAwards[$certificateProfession] = $certificateCpdTotal;
         }
     }
 }
 $certificateCpdDisplay = $certificateCpdAwards
-    ? implode(', ', array_map(static fn($profession, $units) => $units . ' (' . $profession . ')', array_keys($certificateCpdAwards), $certificateCpdAwards))
+    ? implode(', ', array_map(static fn($profession, $units) => rtrim(rtrim(number_format((float) $units, 1, '.', ''), '0'), '.') . ' (' . $profession . ')', array_keys($certificateCpdAwards), $certificateCpdAwards))
     : '0';
 $attendancePageSize = 5;
 $attendancePage = max(1, (int) ($_GET['attendance_page'] ?? 1));
