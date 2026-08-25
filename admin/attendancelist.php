@@ -1,249 +1,402 @@
-  <?php
+<?php
+session_start();
 
-  session_start();
+if (empty($_SESSION['admin_id'])) {
+    header('Location: ../Loginn.php');
+    exit();
+}
 
-  
-  // var_dump($_SESSION['admin_id']);
-  // die();
-  if(!empty($_SESSION['admin_id'])){
-    // header("Location: admin/admindashboard.php");
-  }
-  else{
-    header("Location: ../Loginn.php"); 
-  }
+require '../dbcon.php';
 
+$sessionId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+if (!$sessionId) {
+    http_response_code(400);
+    exit('Invalid session ID.');
+}
+
+$searchTerm = trim((string) ($_GET['q'] ?? ''));
+$page = max(1, (int) ($_GET['page'] ?? 1));
+$pageSize = (int) ($_GET['per_page'] ?? 15);
+$allowedPageSizes = [10, 15, 25, 50];
+if (!in_array($pageSize, $allowedPageSizes, true)) {
+    $pageSize = 15;
+}
+
+$sessionStmt = $dbcon->prepare('SELECT session_head, session_title FROM tblptcsession WHERE session_number = ? LIMIT 1');
+$sessionStmt->bind_param('i', $sessionId);
+$sessionStmt->execute();
+$session = $sessionStmt->get_result()->fetch_assoc();
+$sessionStmt->close();
+
+if (!$session) {
+    http_response_code(404);
+    exit('Session not found.');
+}
+
+$searchColumns = "CONCAT_WS(' ', fname, mName, lName, Gender, Country, Institution, Position, date_submitted)";
+$searchClause = $searchTerm === '' ? '' : " AND {$searchColumns} LIKE ?";
+$searchValue = '%' . $searchTerm . '%';
+
+$totalStmt = $dbcon->prepare("SELECT COUNT(DISTINCT participant_id) AS total FROM tblattendance WHERE session_id = ?");
+$totalStmt->bind_param('i', $sessionId);
+$totalStmt->execute();
+$totalParticipants = (int) ($totalStmt->get_result()->fetch_assoc()['total'] ?? 0);
+$totalStmt->close();
+
+$countSql = "SELECT COUNT(*) AS total FROM tblattendance WHERE session_id = ?" . $searchClause;
+$countStmt = $dbcon->prepare($countSql);
+if ($searchTerm === '') {
+    $countStmt->bind_param('i', $sessionId);
+} else {
+    $countStmt->bind_param('is', $sessionId, $searchValue);
+}
+$countStmt->execute();
+$filteredTotal = (int) ($countStmt->get_result()->fetch_assoc()['total'] ?? 0);
+$countStmt->close();
+
+$totalPages = max(1, (int) ceil($filteredTotal / $pageSize));
+$page = min($page, $totalPages);
+$offset = ($page - 1) * $pageSize;
+
+$listSql = "SELECT fname, mName, lName, Gender, Country, Institution, Position, date_submitted
+    FROM tblattendance
+    WHERE session_id = ?" . $searchClause . "
+    ORDER BY date_submitted DESC, attendance_id DESC
+    LIMIT ? OFFSET ?";
+$listStmt = $dbcon->prepare($listSql);
+if ($searchTerm === '') {
+    $listStmt->bind_param('iii', $sessionId, $pageSize, $offset);
+} else {
+    $listStmt->bind_param('isii', $sessionId, $searchValue, $pageSize, $offset);
+}
+$listStmt->execute();
+$attendanceRows = $listStmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$listStmt->close();
+
+$firstRecord = $filteredTotal === 0 ? 0 : $offset + 1;
+$lastRecord = $filteredTotal === 0 ? 0 : min($filteredTotal, $offset + $pageSize);
+
+function attendanceQuery(array $overrides = []): string
+{
+    $params = array_merge($_GET, $overrides);
+    foreach ($params as $key => $value) {
+        if ($value === '' || $value === null) {
+            unset($params[$key]);
+        }
+    }
+    return htmlspecialchars(http_build_query($params));
+}
+
+function pageWindow(int $currentPage, int $totalPages): array
+{
+    if ($totalPages <= 7) {
+        return range(1, $totalPages);
+    }
+
+    $pages = [1, $totalPages];
+    for ($page = $currentPage - 1; $page <= $currentPage + 1; $page++) {
+        if ($page > 1 && $page < $totalPages) {
+            $pages[] = $page;
+        }
+    }
+
+    $pages = array_values(array_unique($pages));
+    sort($pages);
+    return $pages;
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
-<script type="text/javascript" src="js/jquery.min.js"></script>
-   <script type="text/javascript" src="js/Chart.min.js"></script>
-  <head>
-    <style type="text/css">     
-                
-                }
-        </style>
-
-    <!-- Required meta tags -->
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1"/>
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="admindashboard.css">
-    <link rel="stylesheet" type="text/css" href="nav&footer/usernav.css">
-    <link rel="stylesheet" type="text/css" href="nav&footer/footer.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    
-
-
-   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
- <?php  include("nav&footer/recordnav.php" );?>
-    <?php  include("nav&footer/footer.php" );?>
-    <title>Admin Dashboard</title>
-  </head>
-
-
-
- <body>
-
-
-  <?php $dbcon = mysqli_connect("localhost","root","ptc@ptri@picts","sampledb") or die(mysqli_error()); ?>
-  <div class="container con_part">
-<div class="heading" id="title_part">
-<img src="Picture1.png" style = "margin-top: 100px; margin-bottom: -55px; width: 60px; height: 60px;">
-
-<h1  style="margin-left: 70px;">List of Participants Attended the Session /</h1>
-</div>
-<br>
-<form class="search-container" action="attendancelist.php" method="GET">
-  <input id="search-box" type="text" class="search-box" name="q" value="<?php if(isset($_GET['q'])){echo $_GET['q']; } ?>" />
-  <label for="search-box"><span class="fa-solid fa-magnifying-glass"></span></label>
-  <input type="submit" id="search-submit" />
-</form>
- 
-<style>
-body {
-  margin: 5%;
-}
-
-.search-box {
-  transition: width 0.6s, border-radius 0.6s, background 0.6s, box-shadow 0.6s;
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  border: none;
-  cursor: pointer;
-  background: #ebebeb;
-}
-.search-box + label .search-icon {
-  color: black;
-}
-.search-box:hover {
-  color: white;
-  background: #c8c8c8;
-  box-shadow: 0 0 0 5px #3d4752;
-}
-.search-box:hover + label .search-icon {
-  color: white;
-}
-.search-box:focus {
-  transition: width 0.6s cubic-bezier(0, 1.22, 0.66, 1.39), border-radius 0.6s, background 0.6s;
-  outline: none;
-  box-shadow: none;
-  padding-left: 15px;
-  cursor: text;
-  width: 300px;
-  border-radius: auto;
-  background: #ebebeb;
-  color: black;
-}
-.search-box:focus + label .search-icon {
-  color: black;
-}
-.search-box:not(:focus) {
-  text-indent: -5000px;
-}
-
-#search-submit {
-  position: relative;
-  left: -5000px;
-}
-
-.search-icon {
-  position: relative;
-  left: -30px;
-  color: white;
-  cursor: pointer;
-}
-</style>
-
-  <script>
-  window.console = window.console || function(t) {};
-</script>
-<script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-<script src='//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js'></script>
-      <script id="rendered-js" >
-document.addEventListener("touchstart", function () {}, true);
-    </script>
-
-
-<?php
- $servername = "localhost";
-  $username = "root";
-  $password = "ptc@ptri@picts";
-  $dbname = "sampledb";
-
-
-$dbcon = new mysqli($servername, $username, $password, $dbname);
-$sql = "SELECT COUNT(DISTINCT participant_id) AS 'total3' FROM tblattendance WHERE session_id = ".$_GET['id']."";
-$all_session = $dbcon->query($sql);
-
-while($row = mysqli_fetch_assoc($all_session)){
-        
-        $count2 = $row['total3'];
-
-?>
-        <div class="col-md-4 graph" style="text-align: right;">
-            <div class="graph_inner">
-              <h1>Total Number of Participants</h1>
-              <div>
-              <div class="text-center align-middle" id="chart-container " >
-                <h2 class="timer count-title count-number" data-to="<?php echo $count2; ?>" data-speed="1500" style="font-size: 120px; font-family: melody; display: inline-block; text-align: center;"><?php echo $count2; ?></h2>
-              </div>
+    <title>Attendance List</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="admindashboard.css">
+    <link rel="stylesheet" href="nav&footer/usernav.css">
+    <link rel="stylesheet" href="nav&footer/footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: #f5f7fb; }
+        .attendance-page { padding: 7rem 1.5rem 2rem 17rem; }
+        .attendance-shell { max-width: 1280px; margin: 0 auto; }
+        .attendance-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .attendance-header h1 { margin: 0; color: #102a43; font-size: 1.9rem; font-weight: 700; }
+        .attendance-header p { margin: .45rem 0 0; color: #627d98; }
+        .attendance-card, .attendance-stat {
+            border: 1px solid #d9e2ec;
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, .06);
+        }
+        .attendance-stat {
+            min-width: 220px;
+            padding: 1.15rem 1.35rem;
+            text-align: right;
+        }
+        .attendance-stat__label {
+            display: block;
+            color: #627d98;
+            font-size: .75rem;
+            font-weight: 700;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+        .attendance-stat__value {
+            color: #102a43;
+            font-size: 2.6rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .attendance-card { padding: 1.35rem; }
+        .attendance-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .attendance-search {
+            display: flex;
+            align-items: center;
+            width: min(440px, 100%);
+            min-height: 46px;
+            padding: 0 .9rem;
+            border: 1px solid #bcccdc;
+            border-radius: 10px;
+            background: #fff;
+        }
+        .attendance-search:focus-within {
+            border-color: #1668b2;
+            box-shadow: 0 0 0 3px rgba(22, 104, 178, .12);
+        }
+        .attendance-search i { color: #829ab1; }
+        .attendance-search input {
+            width: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            padding: 0 .75rem;
+            color: #243b53;
+            font-size: .92rem;
+        }
+        .attendance-search button {
+            border: 0;
+            background: transparent;
+            color: #829ab1;
+        }
+        .attendance-table { overflow-x: auto; }
+        .attendance-table table { margin-bottom: 0; }
+        .attendance-table thead th {
+            border-bottom-width: 1px;
+            color: #486581;
+            font-size: .78rem;
+            font-weight: 700;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+        }
+        .attendance-table tbody td {
+            padding: 1rem .75rem;
+            color: #243b53;
+            vertical-align: top;
+        }
+        .attendance-table tbody tr:last-child td { border-bottom: 0; }
+        .attendance-name { font-weight: 700; }
+        .attendance-empty {
+            padding: 2.5rem 1rem;
+            text-align: center;
+            color: #627d98;
+        }
+        .attendance-pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1rem;
+            color: #627d98;
+            font-size: .78rem;
+        }
+        .attendance-pagination form { margin: 0; }
+        .attendance-pagination label {
+            display: flex;
+            align-items: center;
+            gap: .55rem;
+            white-space: nowrap;
+        }
+        .attendance-pagination select {
+            width: 74px;
+            border: 1px solid #bcccdc;
+            border-radius: 8px;
+            color: #486581;
+        }
+        .pagination-buttons {
+            display: flex;
+            align-items: center;
+            gap: .35rem;
+        }
+        .pagination-buttons a,
+        .pagination-buttons span {
+            display: inline-flex;
+            min-width: 36px;
+            height: 36px;
+            align-items: center;
+            justify-content: center;
+            gap: .35rem;
+            padding: 0 .75rem;
+            border: 1px solid #bcccdc;
+            border-radius: 8px;
+            color: #486581;
+            background: #fff;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .pagination-buttons a:hover { color: #1668b2; border-color: #1668b2; background: #f0f7fc; }
+        .pagination-buttons .active { color: #fff; border-color: #1668b2; background: #1668b2; }
+        .pagination-buttons .gap { border-color: transparent; background: transparent; }
+        @media (max-width: 991.98px) {
+            .attendance-page { padding: 6.5rem 1rem 1.5rem; }
+            .attendance-header, .attendance-toolbar, .attendance-pagination {
+                align-items: stretch;
+                flex-direction: column;
+            }
+            .attendance-stat { text-align: left; }
+            .attendance-search { width: 100%; }
+            .pagination-buttons { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+<?php include 'nav&footer/recordnav.php'; ?>
+<main class="attendance-page">
+    <div class="attendance-shell">
+        <section class="attendance-header">
+            <div>
+                <h1>Attendance List</h1>
+                <p><?= htmlspecialchars($session['session_head'] . ' - ' . $session['session_title']) ?></p>
             </div>
-          </div>
-       
-      </div>
-  </form>
-<?php
-}
-?>
+            <div class="attendance-stat">
+                <span class="attendance-stat__label">Total Participants</span>
+                <span class="attendance-stat__value"><?= number_format($totalParticipants) ?></span>
+            </div>
+        </section>
 
+        <section class="attendance-card">
+            <div class="attendance-toolbar">
+                <form method="get" id="attendanceSearchForm" class="w-100">
+                    <input type="hidden" name="id" value="<?= $sessionId ?>">
+                    <input type="hidden" name="page" value="1">
+                    <input type="hidden" name="per_page" value="<?= $pageSize ?>">
+                    <label class="attendance-search" for="attendanceSearch">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="search" id="attendanceSearch" name="q" value="<?= htmlspecialchars($searchTerm) ?>" placeholder="Search attendee, gender, country, institution, or position" autocomplete="off">
+                        <button type="button" id="clearAttendanceSearch" aria-label="Clear search"<?= $searchTerm === '' ? ' hidden' : '' ?>><i class="fa-solid fa-xmark"></i></button>
+                    </label>
+                </form>
+            </div>
 
+            <div class="attendance-table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Gender</th>
+                            <th>Country</th>
+                            <th>Institution</th>
+                            <th>Position</th>
+                            <th>Date and Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php if ($attendanceRows): ?>
+                        <?php foreach ($attendanceRows as $row): ?>
+                            <tr>
+                                <td class="attendance-name"><?= htmlspecialchars(trim($row['fname'] . ' ' . $row['mName'] . ' ' . $row['lName'])) ?></td>
+                                <td><?= htmlspecialchars($row['Gender']) ?></td>
+                                <td><?= htmlspecialchars($row['Country']) ?></td>
+                                <td><?= htmlspecialchars($row['Institution']) ?></td>
+                                <td><?= htmlspecialchars($row['Position']) ?></td>
+                                <td><?= date('g:i A, l - d M Y', strtotime($row['date_submitted'])) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6" class="attendance-empty">No attendance records found<?= $searchTerm !== '' ? ' for this search.' : ' for this session yet.' ?></td>
+                        </tr>
+                    <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
 
-<div class="table-responsive">
-<center>
-<table class="table caption-top" style="width: 100%;">
-  <thead>
-    <tr class="tbl_name">
-      <th scope="col">Fullname</th>
-      <th scope="col">Gender</th>
-      <th scope="col">Country</th>
-      <th scope="col">Institution</th>
-      <th scope="col">Position</th>
-      <th scope="col">Date and Time</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php 
- $con = mysqli_connect("localhost","root","ptc@ptri@picts","sampledb");
+            <div class="attendance-pagination">
+                <div>Showing <strong><?= $firstRecord ?>-<?= $lastRecord ?></strong> of <strong><?= $filteredTotal ?></strong><?= $searchTerm !== '' ? ' matching records' : ' records' ?></div>
+                <form method="get">
+                    <input type="hidden" name="id" value="<?= $sessionId ?>">
+                    <input type="hidden" name="q" value="<?= htmlspecialchars($searchTerm) ?>">
+                    <input type="hidden" name="page" value="1">
+                    <label>Rows per page
+                        <select name="per_page" onchange="this.form.submit()">
+                            <?php foreach ($allowedPageSizes as $size): ?>
+                                <option value="<?= $size ?>"<?= $pageSize === $size ? ' selected' : '' ?>><?= $size ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </label>
+                </form>
+                <div class="pagination-buttons">
+                    <a href="?<?= attendanceQuery(['page' => max(1, $page - 1)]) ?>"<?= $page === 1 ? ' style="pointer-events:none;opacity:.45;"' : '' ?>><i class="fa-solid fa-chevron-left"></i><span>Previous</span></a>
+                    <?php
+                    $pages = pageWindow($page, $totalPages);
+                    $previousPageInWindow = null;
+                    foreach ($pages as $windowPage):
+                        if ($previousPageInWindow !== null && $windowPage - $previousPageInWindow > 1): ?>
+                            <span class="gap">...</span>
+                        <?php endif; ?>
+                        <?php if ($windowPage === $page): ?>
+                            <span class="active"><?= $windowPage ?></span>
+                        <?php else: ?>
+                            <a href="?<?= attendanceQuery(['page' => $windowPage]) ?>"><?= $windowPage ?></a>
+                        <?php endif; ?>
+                    <?php
+                        $previousPageInWindow = $windowPage;
+                    endforeach;
+                    ?>
+                    <a href="?<?= attendanceQuery(['page' => min($totalPages, $page + 1)]) ?>"<?= $page === $totalPages ? ' style="pointer-events:none;opacity:.45;"' : '' ?>><span>Next</span><i class="fa-solid fa-chevron-right"></i></a>
+                </div>
+            </div>
+        </section>
+    </div>
+</main>
+<?php include 'nav&footer/footer.php'; ?>
+<script>
+    (function () {
+        const form = document.getElementById('attendanceSearchForm');
+        const input = document.getElementById('attendanceSearch');
+        const clear = document.getElementById('clearAttendanceSearch');
+        let debounceTimer;
 
- if(isset($_GET['q']))
- {
- $filtervalues = $_GET['q'];
-    $query = "SELECT * FROM tblattendance WHERE CONCAT(fname,mname,lname,Gender,Country,Institution,Position,date_submitted) LIKE '%$filtervalues%' ";
-     $query_run = mysqli_query($con, $query);
-
-       if(mysqli_num_rows($query_run) > 0)
-                                        {
-         foreach($query_run as $items)
-          $str = $items['date_submitted'];
-          {
-  ?>
-
-    <tr class="tbl_name">
-      <th scope="row"><?= $items['fname']; ?> <?= $items['mname']; ?> <?= $items['lname']; ?></td>
-      <th scope="row"><?= $items['Gender']; ?></td>
-      <th scope="row"><?= $items['Country']; ?></td>
-      <th scope="row"><?= $items['Institution']; ?></td>
-      <th scope="row"><?= $items['Position']; ?></td>
-      <th scope="row"><?= date('g:i A, l - d M Y', strtotime($str)); ?></td>
-    </tr>
-    <?php
-      }
-      }
-      else
-       {
-        ?>
-        <tr>
-        <td colspan="4">No Record Found</td>
-        </tr>
-        <?php
+        function submitSearch() {
+            form.querySelector('input[name="page"]').value = '1';
+            form.submit();
         }
-        }
-         else{
-  $sql_rc = mysqli_query($dbcon, "SELECT * FROM tblattendance WHERE session_id =".$_GET['id']."");
 
-        while($sql_rc_row = mysqli_fetch_array($sql_rc)){
-          $str = $sql_rc_row['date_submitted'];
+        input.addEventListener('input', function () {
+            clear.hidden = input.value.length === 0;
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(submitSearch, 250);
+        });
 
-  ?>
-  <tbody>
-    <tr>
-      <td><?php echo $sql_rc_row['fname']; ?> <?php echo $sql_rc_row['mname']; ?> <?php echo $sql_rc_row['lname']; ?></td>
-      <td><?php echo $sql_rc_row['Gender']; ?></td>
-      <td><?php echo $sql_rc_row['Country']; ?></td>
-      <td><?php echo $sql_rc_row['Institution']; ?></td>
-      <td><?php echo $sql_rc_row['Position']; ?></td>
-      <th scope="row"><?php echo date('g:i A, l - d M Y', strtotime($str)); ?></th>
-      <td></td>
-    </tr>
-    <input type= "hidden" name= "hidden" value="<?php echo $_GET['id'];?>">
-    <?php 
-  }
-          }
-  ?>
-
-   </tbody>
-   
-  </tbody>
-</table>
-</center>
-</div>
-</div>
-  
-  </body>
-  </html>
+        clear.addEventListener('click', function () {
+            input.value = '';
+            clear.hidden = true;
+            input.focus();
+            submitSearch();
+        });
+    }());
+</script>
+</body>
+</html>
