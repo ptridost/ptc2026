@@ -118,7 +118,7 @@ function pageWindow(int $currentPage, int $totalPages): array
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { background: #f5f7fb; }
-        .attendance-page { padding: 7rem 1.5rem 2rem 17rem; }
+        .attendance-page { padding: 2rem 1.5rem 2rem 17rem; }
         .attendance-shell { max-width: 1280px; margin: 0 auto; }
         .attendance-header {
             display: flex;
@@ -260,7 +260,7 @@ function pageWindow(int $currentPage, int $totalPages): array
         .pagination-buttons .active { color: #fff; border-color: #1668b2; background: #1668b2; }
         .pagination-buttons .gap { border-color: transparent; background: transparent; }
         @media (max-width: 991.98px) {
-            .attendance-page { padding: 6.5rem 1rem 1.5rem; }
+            .attendance-page { padding: 5rem 1rem 1.5rem; }
             .attendance-header, .attendance-toolbar, .attendance-pagination {
                 align-items: stretch;
                 flex-direction: column;
@@ -272,7 +272,7 @@ function pageWindow(int $currentPage, int $totalPages): array
     </style>
 </head>
 <body>
-<?php include 'nav&footer/recordnav.php'; ?>
+<?php include 'nav&footer/usernav.php'; ?>
 <main class="attendance-page">
     <div class="attendance-shell">
         <section class="attendance-header">
