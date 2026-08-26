@@ -62,6 +62,13 @@ while ($row = $feedback_result->fetch_assoc()) {
     $user_feedback[$row['session_id']] = $row['fDate'];
 }
 $stmt_feed->close();
+
+$attended_count_for_year = 0;
+foreach ($all_sessions as $session) {
+    if (isset($user_attendance[$session['session_number']])) {
+        $attended_count_for_year++;
+    }
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -122,11 +129,25 @@ $stmt_feed->close();
         .btn-year-2024:hover, .btn-year-2024.active { background-color: #FED300; color: #000 !important; border-color: #b59400;}
         .year-color-2023 { color: #0E2369; } .btn-year-2023 { color: #0E2369; border-color: #0E2369; background-color: #fff; }
         .btn-year-2023:hover, .btn-year-2023.active { background-color: #0E2369; color: #fff !important; }
+        .performance-actions {
+            display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+            margin-bottom: 2rem; flex-wrap: wrap;
+        }
+        .performance-summary {
+            margin: 0; color: #6c757d; font-family: MelodyRegular, sans-serif; font-size: 1rem;
+        }
+        .btn-download-attendance {
+            display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;
+        }
+        .btn-download-attendance.disabled {
+            pointer-events: none; opacity: 0.65;
+        }
         
         @media (max-width: 767px) {
             .performance-card { flex-direction: column; }
             .performance-card-logo { width: 100%; height: 120px; border-bottom: 1px solid #dee2e6; }
             .performance-card-logo img { object-fit: contain; max-height: 100%; }
+            .performance-actions { flex-direction: column; align-items: stretch; }
         }
     </style>
 </head>
@@ -155,6 +176,18 @@ $stmt_feed->close();
         <div class="text-center mb-5">
             <a href="dashboard.php" class="btn-main-action">
                 <ion-icon name="arrow-back-outline"></ion-icon>Back to Dashboard
+            </a>
+        </div>
+        <div class="performance-actions">
+            <p class="performance-summary">
+                <?php echo number_format($attended_count_for_year); ?> attended session<?php echo $attended_count_for_year === 1 ? '' : 's'; ?> in <?php echo htmlspecialchars($target_year); ?>
+            </p>
+            <a
+                href="download_attendance.php?year=<?php echo urlencode((string) $target_year); ?>"
+                class="btn-ptc btn-ptc--profile btn-ptc--font-regular btn-ptc--primary btn-download-attendance <?php echo $attended_count_for_year === 0 ? 'disabled' : ''; ?>"
+                <?php echo $attended_count_for_year === 0 ? 'aria-disabled="true" tabindex="-1"' : ''; ?>
+            >
+                <i class="fa-solid fa-download"></i>Download <?php echo htmlspecialchars($target_year); ?> Attendance
             </a>
         </div>
         <div class="row justify-content-center">
