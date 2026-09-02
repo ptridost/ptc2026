@@ -117,9 +117,14 @@ function pageWindow(int $currentPage, int $totalPages): array
     <link rel="stylesheet" href="nav&footer/footer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background: #f5f7fb; }
-        .attendance-page { padding: 2rem 1.5rem 2rem 17rem; }
-        .attendance-shell { max-width: 1280px; margin: 0 auto; }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: #f5f7fb;
+        }
+        .attendance-page { flex: 1; padding: 2rem 1.5rem; }
+        .attendance-shell { max-width: none; margin: 0; }
         .attendance-header {
             display: flex;
             align-items: flex-end;
@@ -155,6 +160,8 @@ function pageWindow(int $currentPage, int $totalPages): array
             line-height: 1;
         }
         .attendance-card { padding: 1.35rem; }
+        .attendance-card.is-loading .attendance-table,
+        .attendance-card.is-loading .attendance-pagination { opacity: .55; pointer-events: none; }
         .attendance-toolbar {
             display: flex;
             align-items: center;
@@ -377,12 +384,65 @@ function pageWindow(int $currentPage, int $totalPages): array
         const form = document.getElementById('attendanceSearchForm');
         const input = document.getElementById('attendanceSearch');
         const clear = document.getElementById('clearAttendanceSearch');
+        const card = document.querySelector('.attendance-card');
         let debounceTimer;
+        let searchController;
 
-        function submitSearch() {
-            form.querySelector('input[name="page"]').value = '1';
-            form.submit();
+        async function submitSearch() {
+            const pageInput = form.querySelector('input[name="page"]');
+            const searchParams = new URLSearchParams(new FormData(form));
+
+            pageInput.value = '1';
+            searchParams.set('page', '1');
+
+            if (searchController) {
+                searchController.abort();
+            }
+
+            const controller = new AbortController();
+            searchController = controller;
+            card.classList.add('is-loading');
+
+            const url = new URL(window.location.href);
+            url.search = searchParams.toString();
+
+            try {
+                const response = await fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    signal: controller.signal
+                });
+
+                if (!response.ok) {
+                    throw new Error('Unable to load attendance records.');
+                }
+
+                const documentResponse = new DOMParser().parseFromString(await response.text(), 'text/html');
+                const updatedTable = documentResponse.querySelector('.attendance-table');
+                const updatedPagination = documentResponse.querySelector('.attendance-pagination');
+
+                if (!updatedTable || !updatedPagination) {
+                    throw new Error('Attendance results were not returned.');
+                }
+
+                card.querySelector('.attendance-table').replaceWith(updatedTable);
+                card.querySelector('.attendance-pagination').replaceWith(updatedPagination);
+                history.replaceState(null, '', url);
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    form.submit();
+                }
+            } finally {
+                if (searchController === controller) {
+                    card.classList.remove('is-loading');
+                }
+            }
         }
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            clearTimeout(debounceTimer);
+            submitSearch();
+        });
 
         input.addEventListener('input', function () {
             clear.hidden = input.value.length === 0;
@@ -391,6 +451,7 @@ function pageWindow(int $currentPage, int $totalPages): array
         });
 
         clear.addEventListener('click', function () {
+            clearTimeout(debounceTimer);
             input.value = '';
             clear.hidden = true;
             input.focus();
