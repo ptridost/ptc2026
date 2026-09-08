@@ -310,7 +310,9 @@ $session_years = getAvailableEventYears($dbcon);
                                     //  Not eligible → show modal with reasons
                                     $reasons = [];
 
-                                    $reasons = array_merge($reasons, $eligibility['reasons']);
+                                    if (!$eligibility['eligible']) {
+                                        $reasons[] = "Certificate with CPD units earned will be released once completed the R&D Colloquia and the Closing Ceremony.";
+                                    }
                                     if (!$hasPRC) {
                                         $reasons[] = "A PRC License number is required. Please use the 'Edit Profile' button to add it.";
                                     }
@@ -319,7 +321,9 @@ $session_years = getAvailableEventYears($dbcon);
                                                     date('F j, Y', strtotime($dist_date)) . ".";
                                     }
 
-                                    $reason_html = "<ul><li>" . implode("</li><li>", $reasons) . "</li></ul>";
+                                    $reason_html = count($reasons) === 1
+                                        ? "<p>" . $reasons[0] . "</p>"
+                                        : "<ul><li>" . implode("</li><li>", $reasons) . "</li></ul>";
 
                                     echo '<button type="button" 
                                             class="btn-ptc btn-ptc--profile btn-ptc--font-regular btn-ptc--secondary mt-2 mx-2"
@@ -604,8 +608,8 @@ $session_years = getAvailableEventYears($dbcon);
                     <h5 class="modal-title">No Certificate Issued</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body">
-                    <p id="preparingCertReason"></p>
+                <div class="modal-body text-center">
+                    <p id="preparingCertReason" class="mb-0"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -749,7 +753,7 @@ $session_years = getAvailableEventYears($dbcon);
             // The default message, plus the specific reason
             if (reasonParagraph) {
                 reasonParagraph.innerHTML =
-                    "<br><strong class='text-danger'>" +
+                    "<strong class='text-danger'>" +
                     (reason || 'An unknown issue occurred.') + "</strong>";
             }
         });
