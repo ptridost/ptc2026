@@ -321,9 +321,10 @@ $session_years = getAvailableEventYears($dbcon);
                                                     date('F j, Y', strtotime($dist_date)) . ".";
                                     }
 
-                                    $reason_html = count($reasons) === 1
-                                        ? "<p>" . $reasons[0] . "</p>"
-                                        : "<ul><li>" . implode("</li><li>", $reasons) . "</li></ul>";
+                                    $reason_html = "";
+                                    foreach ($reasons as $reason) {
+                                        $reason_html .= "<p class=\"mb-1\">" . htmlspecialchars($reason) . "</p>";
+                                    }
 
                                     echo '<button type="button" 
                                             class="btn-ptc btn-ptc--profile btn-ptc--font-regular btn-ptc--secondary mt-2 mx-2"
