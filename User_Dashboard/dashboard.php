@@ -308,23 +308,7 @@ $session_years = getAvailableEventYears($dbcon);
                                         </button>';
                                 } else {
                                     //  Not eligible → show modal with reasons
-                                    $reasons = [];
-
-                                    if (!$eligibility['eligible']) {
-                                        $reasons[] = "Certificate with CPD units earned will be released once completed the R&D Colloquia and the Closing Ceremony.";
-                                    }
-                                    if (!$hasPRC) {
-                                        $reasons[] = "A PRC License number is required. Please use the 'Edit Profile' button to add it.";
-                                    }
-                                    if ($dist_date > date('Y-m-d')) {
-                                        $reasons[] = "This certificate for the year $year can be downloaded starting " .
-                                                    date('F j, Y', strtotime($dist_date)) . ".";
-                                    }
-
-                                    $reason_html = "";
-                                    foreach ($reasons as $reason) {
-                                        $reason_html .= "<p class=\"mb-1\">" . htmlspecialchars($reason) . "</p>";
-                                    }
+                                    $reason_html = "<p class=\"mb-1\">Certificate with CPD units earned will be released once completed the R&D Colloquia and the Closing Ceremony.</p>";
 
                                     echo '<button type="button" 
                                             class="btn-ptc btn-ptc--profile btn-ptc--font-regular btn-ptc--secondary mt-2 mx-2"
