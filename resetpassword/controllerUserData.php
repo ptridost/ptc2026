@@ -2,11 +2,11 @@
 session_start();
 require "connection.php";
 require_once "../vendor/autoload.php";
-$host = "smtp.gmail.com";
-$port = "587";
-$tls = "tls";
-$username = "eventsmanagerauthenticate@gmail.com";
-$password = "lwvf dxem ayyb qjnp";
+$host = getenv('PTC_SMTP_HOST') ?: 'smtp.gmail.com';
+$port = (int) (getenv('PTC_SMTP_PORT') ?: 587);
+$tls = getenv('PTC_SMTP_ENCRYPTION') ?: 'tls';
+$username = getenv('PTC_SMTP_USERNAME') ?: 'eventsmanagerauthenticate@gmail.com';
+$password = getenv('PTC_SMTP_PASSWORD') ?: 'lwvf dxem ayyb qjnp';
 $subject = "Password Reset Code";
 $email = "";
 $name = "";
@@ -37,21 +37,34 @@ date_default_timezone_set("Asia/Manila");
         $run_query =  mysqli_query($con, $insert_code);
         if($run_query){
             $bodyContent = 'This is your password reset code: '.$code;
-            $transport = (new Swift_SmtpTransport($host, $port, $tls))
-            ->setUsername($username)
-            ->setPassword($password);
-            $mailer = new Swift_Mailer($transport);
+            if ($username === '' || $password === '') {
+                $errors['mail-error'] = "Password reset email is not configured. Please contact the administrator.";
+            } else {
+                try {
+                    $transport = (new Swift_SmtpTransport($host, $port, $tls))
+                        ->setUsername($username)
+                        ->setPassword($password);
+                    $mailer = new Swift_Mailer($transport);
 
-            $message =(new Swift_Message($subject))
-            ->setFrom([$username => 'Philippine Textile Congress'])
-            ->setTo([$email])
-            ->setBody($bodyContent, 'text/html')
-            ;
-            $info = "We've sent a password reset otp to your email - $email <br><br> Please enter OTP before it expires after <strong> 3 minutes</strong>";
-            $_SESSION['info'] = $info;
-            $_SESSION['email'] = $email;
-            $result = $mailer->send($message);
-            header('location: reset-code.php');
+                    $message = (new Swift_Message($subject))
+                        ->setFrom([$username => 'Philippine Textile Congress'])
+                        ->setTo([$email])
+                        ->setBody($bodyContent, 'text/html');
+
+                    $sent = $mailer->send($message);
+                    if ($sent < 1) {
+                        throw new RuntimeException('SMTP server accepted no recipients.');
+                    }
+
+                    $_SESSION['info'] = "We've sent a password reset OTP to your email - $email <br><br>Please enter it before it expires after <strong>3 minutes</strong>";
+                    $_SESSION['email'] = $email;
+                    header('location: reset-code.php');
+                    exit();
+                } catch (Throwable $exception) {
+                    error_log('Password reset email failed: ' . $exception->getMessage());
+                    $errors['mail-error'] = "We couldn't send the reset email right now. Please try again later or contact the administrator.";
+                }
+            }
             }else{
                 $errors['db-error'] = "Something went wrong!";
             }
