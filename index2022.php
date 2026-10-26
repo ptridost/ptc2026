@@ -26,12 +26,12 @@ require('./dbcon.php');
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link rel="stylesheet" type="text/css" href="./LandingPage.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/Navbarstyle.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/footers.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/NavbarStyle.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/footers.css">
 </head>
 
 <body>
-    <?php include("header&footer/navbar.php"); ?>
+    <?php include("header-footer/navbar.php"); ?>
 
     <main>
         <div class="container" style="margin-top: 100px;">
@@ -179,7 +179,7 @@ require('./dbcon.php');
         </div>
     </div>
 
-    <?php include("header&footer/footer.php"); ?>
+    <?php include("header-footer/footer.php"); ?>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>

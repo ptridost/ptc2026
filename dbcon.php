@@ -2,9 +2,9 @@
 require_once 'config.php';
 // Database connection
 $servername = "localhost";
-$username = "root";
-$password = "ptc@ptri@picts";
-$dbname = "sampledb";
+$username = "ptc_user";
+$password = '$_ptri@Ptc#2026';
+$dbname = "ptc";
 
 $dbcon = new mysqli($servername, $username, $password, $dbname);
 

@@ -10,8 +10,8 @@
     <title>Philippine Textile Congress</title> 
 
     <link rel="stylesheet" type="text/css" href="SpeakersPage.css"/>
-    <link rel="stylesheet" type="text/css" href="./header&footer/Navbarstyle.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/footers.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/NavbarStyle.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/footers.css">
     
     <script defer src="app.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" charset="utf-8"></script>

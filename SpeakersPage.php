@@ -43,8 +43,8 @@
         </div>
     </section>
 
-    <?php include("header&footer/navbar.php" );?>
-    <?php include("header&footer/footer.php" );?>
+    <?php include("header-footer/navbar.php" );?>
+    <?php include("header-footer/footer.php" );?>
     <script>
     let calcScrollValue = () => {
         let scrollProgress = document.getElementById("progress");

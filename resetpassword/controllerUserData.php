@@ -1,16 +1,20 @@
 <?php 
+
+
 session_start();
+
 require "connection.php";
 require_once "../vendor/autoload.php";
 $host = getenv('PTC_SMTP_HOST') ?: 'smtp.gmail.com';
 $port = (int) (getenv('PTC_SMTP_PORT') ?: 587);
 $tls = getenv('PTC_SMTP_ENCRYPTION') ?: 'tls';
-$username = getenv('PTC_SMTP_USERNAME') ?: 'eventsmanagerauthenticate@gmail.com';
-$password = getenv('PTC_SMTP_PASSWORD') ?: 'lwvf dxem ayyb qjnp';
+$username = getenv('PTC_SMTP_USERNAME') ?: 'ptri.picts@ptri.dost.gov.ph';
+$password = getenv('PTC_SMTP_PASSWORD') ?: 'rxbqtktilgnmochb';
 $subject = "Password Reset Code";
 $email = "";
 $name = "";
 $errors = array();
+
 date_default_timezone_set("Asia/Manila");
 
 

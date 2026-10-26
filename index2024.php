@@ -28,12 +28,12 @@ require('./dbcon.php');
 
     <link rel="stylesheet" type="text/css" href="./LandingPage.css">
     <link rel="stylesheet" type="text/css" href="./card.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/Navbarstyle.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/footers.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/NavbarStyle.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/footers.css">
 </head>
 
 <body>
-    <?php include("header&footer/navbar.php"); ?>
+    <?php include("header-footer/navbar.php"); ?>
 
     <main>
         <div class="container" style="margin-top: 120px;">
@@ -142,7 +142,7 @@ require('./dbcon.php');
         </div>
     </div>
 
-    <?php include("header&footer/footer.php"); ?>
+    <?php include("header-footer/footer.php"); ?>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>

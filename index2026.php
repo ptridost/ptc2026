@@ -29,14 +29,14 @@ require('./dbcon.php');
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" type="text/css" href="./LandingPage.css">
     <link rel="stylesheet" type="text/css" href="./card.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/footers.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/Navbarstyle.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/footers.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/NavbarStyle.css">
 </head>
 
 
 <body class = "ptc-2026">
 
-    <?php include("header&footer/navbar.php"); // Includes the "smart" navbar ?>
+    <?php include("header-footer/navbar.php"); // Includes the "smart" navbar ?>
     <main>
 
         <div class="page-content-wrapper">
@@ -110,7 +110,7 @@ require('./dbcon.php');
                         </h1>
                         <p> A platform for researchers, students, creatives, industry partners, and textile experts to
                             converge, converse and collaborate to spur innovation in Philippine textiles.</p>
-                        <center><a href="registration.php?congress_type=PTC" target="_blank" class="btn btn-md text-center"
+                        <center><a href="./registration.php?congress_type=PTC" target="_blank" class="btn btn-md text-center"
                                 id="btn1"><span>REGISTER NOW</span></a></center>
 
                         <script>
@@ -324,7 +324,7 @@ require('./dbcon.php');
         </div>
     </div>
 
-    <?php include("header&footer/footer.php"); ?>
+    <?php include("header-footer/footer.php"); ?>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>

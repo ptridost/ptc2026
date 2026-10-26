@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit'])) {
         exit;
     }
 
-    $recaptchaSecret = '6LcNTkwrAAAAABZ89cmz5eKNQCI6mHLR5nTAvBQN';
+    $recaptchaSecret = '6Le72e8tAAAAAAs1-254BzzYuQvDhy1lYW6RiLlQ';
     $recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
     $verifyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$recaptchaSecret}&response={$recaptchaResponse}");
     $responseData = json_decode($verifyResponse);
@@ -159,12 +159,12 @@ $csrf_token = generate_csrf_token();
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="./registration.css" />
-    <link rel="stylesheet" type="text/css" href="./header&footer/Navbarstyle.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/footers.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/NavbarStyle.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/footers.css">
 </head>
 
 <body <?= $congress_type === 'GTC' ? 'class="gtc-2026"' : '' ?>>
-    <?php include("header&footer/navbar.php"); ?>
+    <?php include("header-footer/navbar.php"); ?>
     <div class="container registration-card">
         <!-- NEW: Left-side branding panel -->
 
@@ -460,7 +460,7 @@ $csrf_token = generate_csrf_token();
                         </div>
 
                         <div class="col-12 mt-3">
-                            <div class="g-recaptcha" data-sitekey="6LcNTkwrAAAAABX9bm94Z0wq7noMopeZuQnQsEsR"></div>
+                            <div class="g-recaptcha" data-sitekey="6Le72e8tAAAAAIJ8VqJXfK5JSklNjObRXu4gEVzH"></div>
                         </div>
 
                         <div class="col-12 my-3 form-check">
@@ -484,7 +484,7 @@ $csrf_token = generate_csrf_token();
         </div>
 
     </div>
-    <?php include("header&footer/footer.php"); ob_end_flush(); ?>
+    <?php include("header-footer/footer.php"); ob_end_flush(); ?>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -496,7 +496,7 @@ $csrf_token = generate_csrf_token();
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script src="/PTC/app.js"></script>
+    <script src="app.js"></script>
     <script>
     $(document).ready(function() {
 

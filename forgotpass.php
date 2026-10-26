@@ -1,6 +1,6 @@
 <html lang="en">
-         <link rel="stylesheet" type="text/css" href="/header&footer/footers.css">
-     <link rel="stylesheet" type="text/css" href="/header&footer/Navbarstyle.css">
+         <link rel="stylesheet" type="text/css" href="/header-footer/footers.css">
+     <link rel="stylesheet" type="text/css" href="/header-footer/NavbarStyle.css">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -28,14 +28,14 @@
   
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:wght@700;800&family=Roboto:wght@700;900&display=swap" rel="stylesheet">
   
-   <link rel="stylesheet" type="text/css" href="/header&footer/footers.css">
-     <link rel="stylesheet" type="text/css" href="/header&footer/Navbarstyle.css">
+   <link rel="stylesheet" type="text/css" href="/header-footer/footers.css">
+     <link rel="stylesheet" type="text/css" href="/header-footer/NavbarStyle.css">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.20.0/js/mdb.min.js" integrity="sha512-XFd1m0eHgU1F05yOmuzEklFHtiacLVbtdBufAyZwFR0zfcq7vc6iJuxerGPyVFOXlPGgM8Uhem9gwzMI8SJ5uw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link rel="stylesheet" type="text/css" href="/header&footer/footers.css">
-    <link rel="stylesheet" type="text/css" href="/header&footer/Navbarstyle.css">
+  <link rel="stylesheet" type="text/css" href="/header-footer/footers.css">
+    <link rel="stylesheet" type="text/css" href="/header-footer/NavbarStyle.css">
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="/resources/demos/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>

@@ -10,8 +10,8 @@
 
     <title>Hello, world!</title>
     <link rel="stylesheet" type="text/css" href="prev.css">
-         <link rel="stylesheet" type="text/css" href="/header&footer/footers.css">
-     <link rel="stylesheet" type="text/css" href="/header&footer/Navbarstyle.css">
+         <link rel="stylesheet" type="text/css" href="/header-footer/footers.css">
+     <link rel="stylesheet" type="text/css" href="/header-footer/NavbarStyle.css">
   </head>
   <body>
     <div class="container-fluid">
@@ -340,8 +340,8 @@
 
  
   
-   <?php  include("header&footer/navbar.php" );?>
-   <?php  include("header&footer/footer.php" );?>
+   <?php  include("header-footer/navbar.php" );?>
+   <?php  include("header-footer/footer.php" );?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
   </body>

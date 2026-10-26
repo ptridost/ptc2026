@@ -21,13 +21,13 @@ require('./dbcon.php');
         xintegrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <link rel="stylesheet" type="text/css" href="./header&footer/Navbarstyle.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/footers.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/NavbarStyle.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/footers.css">
     <link rel="stylesheet" type="text/css" href="./speakersPage.css">
 </head>
 
 <body>
-    <?php include("header&footer/navbar.php"); ?>
+    <?php include("header-footer/navbar.php"); ?>
     <main>
         <div class="container-fluid speakers-hero">
             <div class="wrapper">
@@ -65,7 +65,7 @@ require('./dbcon.php');
         </section>
     </main>
     <div id="progress"><span id="progress-value"><i class="fas fa-arrow-up"></i></span></div>
-    <?php include("header&footer/footer.php"); ?>
+    <?php include("header-footer/footer.php"); ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"

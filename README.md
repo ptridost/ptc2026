@@ -17,7 +17,7 @@ The root `.htaccess` currently sets:
 - `DirectoryIndex index2026.php`
 
 So your local homepage should be:
-- `http://localhost/PTC/`
+- `http://localhost`
 
 ### Database
 Main DB connections are defined in:
@@ -80,6 +80,6 @@ Certificates are generated as PDFs using Dompdf:
 You can preview the certificate format locally using `TEST_MODE=true` (bypasses attendance eligibility checks):
 
 - Local (XAMPP):
-  - `http://localhost/PTC/admin/certificate/generate_certificate.php?id=<participant_id>&year=2025&TEST_MODE=true`
+  - `http://localhostadmin/certificate/generate_certificate.php?id=<participant_id>&year=2025&TEST_MODE=true`
 
 Replace `<participant_id>` with an existing `participant.id` in your database.

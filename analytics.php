@@ -28,12 +28,12 @@ $page_event_year = getCurrentEventYear($dbcon);
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link rel="stylesheet" type="text/css" href="./analytics2024.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/Navbarstyle.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/footers.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/NavbarStyle.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/footers.css">
 </head>
 
 <body>
-    <?php include("header&footer/navbar.php"); ?>
+    <?php include("header-footer/navbar.php"); ?>
 
     <main class="container-fluid analytics-dashboard">
 
@@ -297,7 +297,7 @@ $page_event_year = getCurrentEventYear($dbcon);
 
     </main>
 
-    <?php include("header&footer/footer.php"); ?>
+    <?php include("header-footer/footer.php"); ?>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>

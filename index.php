@@ -27,8 +27,8 @@ require('./dbcon.php');
 
     <link rel="stylesheet" type="text/css" href="./LandingPage.css">
     <link rel="stylesheet" type="text/css" href="./card.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/footers.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/Navbarstyle.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/footers.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/NavbarStyle.css">
     
     <link rel="mask-icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-b4b4269c16397ad2f0f7a01bcdf513a1994f4c94b8af2f191c09eb0d601762b1.svg" color="#111" />
       
@@ -249,8 +249,8 @@ require('./dbcon.php');
   </div>
 </div>
     <?php
-    include("./header&footer/navbar.php" );
-    include("./header&footer/footer.php" );
+    include("./header-footer/navbar.php" );
+    include("./header-footer/footer.php" );
     $dbcon->close();
     ?>
     <script>

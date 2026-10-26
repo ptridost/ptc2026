@@ -15,7 +15,7 @@ if (isset($_POST['submit'])) {
     }
 
     // 2. Validate reCAPTCHA (optional, can be removed if not needed)
-    $recaptchaSecret = '6LcNTkwrAAAAABZ89cmz5eKNQCI6mHLR5nTAvBQN'; // Your secret key
+    $recaptchaSecret = '6LdFIPAtAAAAAHmLgsAHN21GfY6H0PSoaaXIZzoU'; // Your secret key
     $recaptchaResponse = $_POST['g-recaptcha-response'] ?? '';
     $verifyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret={$recaptchaSecret}&response={$recaptchaResponse}");
     $responseData = json_decode($verifyResponse);

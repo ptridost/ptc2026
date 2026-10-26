@@ -59,13 +59,13 @@ if (isset($_GET['status']) && $_GET['status'] == 'success') {
         href="https://th.bing.com/th/id/OIP.gFmJnHNp6W9CRH9d587CJgHaHa?pid=ImgDet&rs=1" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="contact.css">
-    <link rel="stylesheet" type="text/css" href="../header&footer/Navbarstyle.css">
-    <link rel="stylesheet" type="text/css" href="../header&footer/footers.css">
+    <link rel="stylesheet" type="text/css" href="../header-footer/NavbarStyle.css">
+    <link rel="stylesheet" type="text/css" href="../header-footer/footers.css">
 </head>
 
 <body>
 
-    <?php include("../header&footer/navbar.php"); ?>
+    <?php include("../header-footer/navbar.php"); ?>
 
     <main class="container contact-page">
         <div class="row mt-5">
@@ -159,7 +159,7 @@ if (isset($_GET['status']) && $_GET['status'] == 'success') {
         </div>
     </main>
 
-    <?php include("../header&footer/footer.php"); ?>
+    <?php include("../header-footer/footer.php"); ?>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -168,7 +168,7 @@ if (isset($_GET['status']) && $_GET['status'] == 'success') {
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../PTC/app.js"></script>
+    <script src="..app.js"></script>
 
     <script>
     // SweetAlert for success message

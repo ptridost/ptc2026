@@ -49,14 +49,14 @@ $session_videos = [
     <link rel="stylesheet" type="text/css" href="./LandingPage.css">
     <link rel="stylesheet" type="text/css" href="./card.css">
     <link rel="stylesheet" type="text/css" href="./ptc2025-videos.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/footers.css">
-    <link rel="stylesheet" type="text/css" href="./header&footer/Navbarstyle.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/footers.css">
+    <link rel="stylesheet" type="text/css" href="./header-footer/NavbarStyle.css">
 </head>
 
 
 <body>
 
-    <?php include("header&footer/navbar.php"); // Includes the "smart" navbar ?>
+    <?php include("header-footer/navbar.php"); // Includes the "smart" navbar ?>
     <main>
 
         <div class="page-content-wrapper">
@@ -336,7 +336,7 @@ $session_videos = [
         </div>
     </div>
 
-    <?php include("header&footer/footer.php"); ?>
+    <?php include("header-footer/footer.php"); ?>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>

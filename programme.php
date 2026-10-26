@@ -22,8 +22,8 @@ include_once 'functions.php';
 
     <!-- Bootstrap CSS -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-<link rel="stylesheet" type="text/css" href="/header&footer/footers.css">
-<link rel="stylesheet" type="text/css" href="/header&footer/Navbarstyle.css">
+<link rel="stylesheet" type="text/css" href="/header-footer/footers.css">
+<link rel="stylesheet" type="text/css" href="/header-footer/NavbarStyle.css">
 
 
 </head>
@@ -69,7 +69,7 @@ include_once 'functions.php';
 </div>
 </div>
     
-    <?php  include("header&footer/navbar.php" );?>
-   <?php  include("header&footer/footer.php" );?>
+    <?php  include("header-footer/navbar.php" );?>
+   <?php  include("header-footer/footer.php" );?>
 </body>
 </html>

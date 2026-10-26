@@ -48,12 +48,12 @@ $congress_type = isset($_GET['congress_type']) && in_array($_GET['congress_type'
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link rel="stylesheet" type="text/css" href="./login.css" />
-    <link rel="stylesheet" type="text/css" href="./header&footer/Navbarstyle.css" />
-    <link rel="stylesheet" type="text/css" href="./header&footer/footers.css" />
+    <link rel="stylesheet" type="text/css" href="./header-footer/NavbarStyle.css" />
+    <link rel="stylesheet" type="text/css" href="./header-footer/footers.css" />
 </head>
 
 <body>
-    <?php include("header&footer/navbar.php"); ?>
+    <?php include("header-footer/navbar.php"); ?>
 
     <main class="container login-container">
         <div class="login-card">
@@ -97,7 +97,7 @@ $congress_type = isset($_GET['congress_type']) && in_array($_GET['congress_type'
 
                             <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                             <div class="g-recaptcha mb-3 d-flex justify-content-center"
-                                data-sitekey="6LcNTkwrAAAAABX9bm94Z0wq7noMopeZuQnQsEsR"></div>
+                                data-sitekey="6LdFIPAtAAAAAEioBf-8r6qJdT2B8mx97Bj_kJqh"></div>
 
                             <div class="text-center">
                                 <button class="btn-login" type="submit" name="submit" id="submit">Log In</button>
@@ -111,7 +111,7 @@ $congress_type = isset($_GET['congress_type']) && in_array($_GET['congress_type'
         </div>
     </main>
 
-    <?php include("header&footer/footer.php"); ?>
+    <?php include("header-footer/footer.php"); ?>
 
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script src="./jquery.min.js"></script>
