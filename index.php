@@ -1,4 +1,5 @@
 <?php
+define('BASE_PATH', '');
 // if(isset($_COOKIE['visit'])){
 // header("Location:maintenance.php");
 // }
@@ -96,7 +97,7 @@ require('./dbcon.php');
             <div class="col-md-12 vid">
                 <center> 
                     <video height="50%" width="100%" loop muted autoplay="autoplay" >
-                    <source src="landingpageimg/PTC_Teaser_Oct_2025.mp4" type="video/mp4">
+                    <source src="<php? echo BASE_BATH; ?>/landingpageimg/PTC_Teaser_Oct_2025.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
                 </center>

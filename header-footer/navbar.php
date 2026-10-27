@@ -1,4 +1,5 @@
 <?php
+define('BASE_PATH', '');
 // File: header-footer/navbar.php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
